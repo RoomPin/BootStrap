@@ -10,6 +10,9 @@
 <!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
 <style>
@@ -871,18 +874,67 @@ function setRole(role) {
   document.getElementById('role-tenant').classList.toggle('active', role === 'tenant');
   document.getElementById('owner-fields').style.display = role === 'owner' ? 'block' : 'none';
   document.getElementById('tenant-fields').style.display = role === 'tenant' ? 'block' : 'none';
+  setupPickerForRole(role);
 }
 
 function initPickerMap() {
   pickerMap = L.map('map-picker', { center: HINJEWADI, zoom: 15, zoomControl: true });
   osmTiles().addTo(pickerMap);
-  pickerMap.on('click', (e) => {
-    const { lat, lng } = e.latlng;
-    if (pickerMarker) pickerMap.removeLayer(pickerMarker);
-    pickerMarker = L.marker([lat, lng], { icon: pickerIconFn() }).addTo(pickerMap);
-    document.getElementById('pin-location').textContent =
-      `📍 Pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)} — Hinjewadi, Pune`;
-  });
+
+  const currentRole = document.getElementById('role-owner').classList.contains('active') ? 'owner' : 'tenant';
+  setupPickerForRole(currentRole);
+}
+
+function setupPickerForRole(role) {
+  if (!pickerMap) return;
+
+  // Clear any existing drawn items and controls
+  if (window._pickerDrawLayer) pickerMap.removeLayer(window._pickerDrawLayer);
+  if (window._pickerDrawControl) pickerMap.removeControl(window._pickerDrawControl);
+  if (pickerMarker) { pickerMap.removeLayer(pickerMarker); pickerMarker = null; }
+  pickerMap.off('click');
+
+  document.getElementById('pin-location').textContent = role === 'owner'
+    ? 'Click on the map to pin your exact property location'
+    : 'Draw a circle on the map to mark your preferred area';
+
+  if (role === 'owner') {
+    // Owner: simple click-to-pin
+    pickerMap.on('click', (e) => {
+      const { lat, lng } = e.latlng;
+      if (pickerMarker) pickerMap.removeLayer(pickerMarker);
+      pickerMarker = L.marker([lat, lng], { icon: pickerIconFn() }).addTo(pickerMap);
+      document.getElementById('pin-location').textContent =
+        `📍 Pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)} — Hinjewadi, Pune`;
+    });
+
+  } else {
+    // Tenant: draw a circle to mark preferred area
+    window._pickerDrawLayer = new L.FeatureGroup().addTo(pickerMap);
+    window._pickerDrawControl = new L.Control.Draw({
+      draw: {
+        circle: {
+          shapeOptions: { color: '#2563a8', fillColor: '#e8f0fa', fillOpacity: 0.35, weight: 2 }
+        },
+        marker: false, polygon: false, polyline: false,
+        rectangle: false, circlemarker: false
+      },
+      edit: { featureGroup: window._pickerDrawLayer }
+    });
+    pickerMap.addControl(window._pickerDrawControl);
+
+    pickerMap.on(L.Draw.Event.CREATED, (e) => {
+      window._pickerDrawLayer.clearLayers();
+      window._pickerDrawLayer.addLayer(e.layer);
+      const radius = (e.layer.getRadius() / 1000).toFixed(2); // km
+      const center = e.layer.getLatLng();
+      document.getElementById('pin-location').textContent =
+        `🔵 Area selected — ${radius} km radius around ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
+      
+      // Store for later use (e.g. filtering suggestions)
+      window._tenantSearchArea = { lat: center.lat, lng: center.lng, radiusKm: parseFloat(radius) };
+    });
+  }
 }
 
 function submitListing() {
