@@ -290,7 +290,7 @@ input[type=date]:focus{border-color:var(--blue)}
 <body>
 
 <!-- ══════════ PROFILE SETUP OVERLAY ══════════ -->
-<div id="page-setup" class="active">
+<div id="page-setup">
   <div class="setup-card">
     <div class="setup-logo">Room<span>Pin</span></div>
     <div class="setup-sub">Find rooms &amp; flatmates in Hinjewadi — on a map.</div>
@@ -771,7 +771,9 @@ function finishSetup() {
   saveProfile();
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
-  initPreviewMap();
+  
+  // Send them directly to their profile to see their details
+  showPage('profile'); 
 }
 
 function saveProfile() {
@@ -823,8 +825,15 @@ function resetProfile() {
 // PAGE ROUTING
 // ══════════════════════════════════════
 function showPage(page) {
+  // THE BOUNCER: Show setup if they want to view profile/create but aren't logged in
+  if ((page === 'profile' || page === 'create') && !profile) {
+    document.getElementById('page-setup').classList.add('active');
+    return; 
+  }
+
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
+  
   if (page === 'explore') { if (!exploreMap) setTimeout(initExploreMap, 60); else refreshExplore(); }
   if (page === 'create')  { checkTenantAlreadyListed(); if (!pickerMap) setTimeout(initPickerMap, 60); }
   if (page === 'profile') renderProfilePage();
@@ -1406,12 +1415,12 @@ function deleteMyListing(idx) {
 // INIT
 // ══════════════════════════════════════
 window.addEventListener('load', () => {
-  if (loadProfile()) {
-    document.getElementById('page-setup').classList.remove('active');
+  loadProfile();
+  if (profile) {
     applyProfileToUI();
-    initPreviewMap();
   }
-  // else setup overlay stays visible
+  // Always initialize the map for the landing page so it looks good for guests
+  initPreviewMap(); 
 });
 </script>
 </body>
