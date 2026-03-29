@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoomPin — Hinjewadi, Pune</title>
+<title>RoomPin — Delhi NCR</title>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -304,6 +304,17 @@ input[type=date]:focus{border-color:var(--blue)}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:4px}
+
+/* Autocomplete & Explore Search Styles */
+.autocomplete-wrapper { position: relative; display: flex; flex: 1; width: 100%; }
+.autocomplete-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gray-200); border-radius: 6px; box-shadow: var(--shadow-md); max-height: 200px; overflow-y: auto; z-index: 2000; display: none; margin-top: 4px; text-align: left; }
+.autocomplete-item { padding: 10px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid var(--gray-100); color: var(--text); }
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover { background: var(--blue-light); color: var(--blue); }
+
+.explore-search { position: absolute; top: 16px; left: 50px; right: 16px; z-index: 500; display: flex; gap: 8px; max-width: 320px; }
+.explore-search input { width: 100%; padding: 0 16px; height: 44px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 13px; box-shadow: var(--shadow); outline: none; }
+.explore-search input:focus { border-color: var(--blue); }
 </style>
 </head>
 <body>
@@ -311,7 +322,7 @@ input[type=date]:focus{border-color:var(--blue)}
 <div id="page-setup">
   <div class="setup-card">
     <div class="setup-logo">Room<span>Pin</span></div>
-    <div class="setup-sub">Find rooms &amp; flatmates in Hinjewadi — on a map.</div>
+    <div class="setup-sub">Find rooms &amp; flatmates in Delhi NCR — on a map.</div>
 
     <div class="setup-step active" id="setup-step-1">
       <div class="setup-label">Your Details</div>
@@ -331,7 +342,7 @@ input[type=date]:focus{border-color:var(--blue)}
         <div class="role-card" id="rc-tenant" onclick="selectRole('tenant')">
           <div class="icon">🔍</div>
           <h3>I'm looking for a room</h3>
-          <p>I want to find a room or flatmate in Hinjewadi</p>
+          <p>I want to find a room or flatmate in Delhi</p>
         </div>
       </div>
       <button class="setup-btn" id="step2-btn" onclick="finishSetup()" disabled>Get Started →</button>
@@ -350,7 +361,7 @@ input[type=date]:focus{border-color:var(--blue)}
 
 <div id="page-landing" class="page active">
   <div class="hero">
-    <div class="hero-badge">Hinjewadi, Pune — Phase 1, 2 &amp; 3</div>
+    <div class="hero-badge">Delhi NCR — All major areas</div>
     <h1>Find Rooms &amp; Flatmates —<br><em>On a Map</em></h1>
     <p>No more scrolling endless WhatsApp and Telegram messages. Pinned, filtered, and direct.</p>
     <div class="hero-cta">
@@ -379,7 +390,7 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="why-inner">
       <div class="section-label">Why this exists</div>
       <div class="section-title">Flat searching is broken.</div>
-      <p class="why-p">WhatsApp groups. Telegram channels. Random posts on housing forums. Broker calls at odd hours. Finding a room near your Hinjewadi office is chaos. RoomPin brings everything into one structured, map-based experience.</p>
+      <p class="why-p">WhatsApp groups. Telegram channels. Random posts on housing forums. Broker calls at odd hours. Finding a room near your Delhi office is chaos. RoomPin brings everything into one structured, map-based experience.</p>
       <div class="why-stats">
         <div class="why-stat"><div class="num">₹0</div><div class="lbl">Broker fees, ever</div></div>
         <div class="why-stat"><div class="num">1 pin</div><div class="lbl">Per listing, on the map</div></div>
@@ -435,6 +446,12 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="listing-cards" id="listing-cards"></div>
   </div>
   <div class="map-area">
+    <div class="explore-search">
+      <div class="autocomplete-wrapper">
+        <input type="text" id="explore-search-input" placeholder="Search location in Delhi..." oninput="handleSearch(this.value, 'explore-results', exploreMap, false)">
+        <div id="explore-results" class="autocomplete-results"></div>
+      </div>
+    </div>
     <div id="map"></div>
     <div class="map-legend">
       <div class="legend-row"><div class="ldot g"></div> Owner listing</div>
@@ -634,19 +651,26 @@ input[type=date]:focus{border-color:var(--blue)}
         <div class="fg"><label>About You</label><textarea id="t-bed-desc" placeholder="e.g. MBA student at Symbiosis, non-smoker, looking for male flatmates..."></textarea></div>
       </div>
 
-      <div class="map-picker-card">
-        <div class="map-picker-title" id="map-picker-title">📍 Drop Your Pin on the Map</div>
-        
-        <div class="map-search-bar" id="map-search-bar">
-          <input type="text" id="map-search-input" placeholder="Search a society or landmark (e.g., Megapolis)">
-          <button type="button" onclick="searchMapLocation()">Search</button>
+      <!-- Hidden until property type is selected -->
+      <div id="create-map-section" style="display:none">
+        <div class="map-picker-card">
+          <div class="map-picker-title" id="map-picker-title">📍 Drop Your Pin on the Map</div>
+          
+          <!-- Autocomplete Search Bar (Owners only) -->
+          <div class="map-search-bar" id="map-search-bar">
+            <div class="autocomplete-wrapper">
+              <input type="text" id="map-search-input" placeholder="Search a society or landmark..." oninput="handleSearch(this.value, 'create-results', pickerMap, true)">
+              <div id="create-results" class="autocomplete-results"></div>
+            </div>
+          </div>
+
+          <div id="map-picker"></div>
+          <div class="map-picker-info"><span id="pin-location">Click on the map to set your location</span></div>
         </div>
 
-        <div id="map-picker"></div>
-        <div class="map-picker-info"><span id="pin-location">Click on the map to set your location</span></div>
+        <button class="submit-btn" onclick="submitListing()">Publish Listing →</button>
       </div>
 
-      <button class="submit-btn" onclick="submitListing()">Publish Listing →</button>
     </div>
   </div>
 </div>
@@ -679,7 +703,7 @@ input[type=date]:focus{border-color:var(--blue)}
   <div class="footer-inner">
     <div>
       <div class="footer-logo">Room<span>Pin</span></div>
-      <div class="footer-sub">Currently serving Pune — Hinjewadi only</div>
+      <div class="footer-sub">Currently serving Delhi NCR only</div>
     </div>
     <div class="footer-links"><a>About</a><a>Contact</a><a>Privacy</a></div>
   </div>
@@ -689,7 +713,7 @@ input[type=date]:focus{border-color:var(--blue)}
   <div class="success-card">
     <div class="success-icon">✅</div>
     <h3>Listing Published!</h3>
-    <p>Your listing is now live on the map. People in Hinjewadi can find and contact you directly.</p>
+    <p>Your listing is now live on the map. People in Delhi can find and contact you directly.</p>
     <div class="success-btns">
       <button class="btn btn-primary" style="justify-content:center" onclick="goToExploreAfterPost()">View on Map →</button>
       <button class="btn btn-secondary" style="justify-content:center;display:none" id="post-another-btn" onclick="closeSuccess()">Post Another Listing</button>
@@ -701,25 +725,26 @@ input[type=date]:focus{border-color:var(--blue)}
 // ══════════════════════════════════════
 // DATA & STATE
 // ══════════════════════════════════════
-const HINJEWADI = [18.5924, 73.7360];
+const DELHI = [28.6139, 77.2090];
+const OPERATING_RADIUS_KM = 50;
 
 // Mock listings (owners only — tenants post search areas)
 const MOCK_OWNER_LISTINGS = [
-  { id:'m1', role:'owner', name:'Vikram Nair',    phone:'98765 43210', lat:18.5924, lng:73.7360, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:12000, deposit:24000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'Fully furnished apartment near Wipro Gate 1. AC room, 24hr water, secure society.' },
-  { id:'m2', role:'owner', name:'Pooja Mehta',    phone:'91234 56789', lat:18.5882, lng:73.7405, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'1', rent:7500, deposit:15000, movein:'2025-05-15', gender:'Female', furnishing:'Semi-furnished', desc:'Budget-friendly sharing near Rajiv Gandhi IT Park. All girls, no smokers.' },
-  { id:'m3', role:'owner', name:'Sneha Kulkarni', phone:'87654 32109', lat:18.5845, lng:73.7383, propType:'entire', bhk:'1 BHK', rent:18000, deposit:36000, movein:'2025-05-20', gender:'Any', furnishing:'Fully furnished', desc:'Fully furnished 1BHK ideal for a couple or single professional. Parking included.' },
-  { id:'m4', role:'owner', name:'Amit Singh',     phone:'99887 66554', lat:18.5978, lng:73.7373, propType:'bed',    bedType:'Double Sharing', peopleInRoom:'1', rent:8500, deposit:17000, movein:'2025-05-30', gender:'Male', furnishing:'Fully furnished', desc:'Double sharing near Phase 3. Mess food optional. Good PMPML connectivity.' },
-  { id:'m5', role:'owner', name:'Karan Shah',     phone:'66554 33221', lat:18.5898, lng:73.7343, propType:'room',   bhk:'3 BHK+', peopleInFlat:'2', rent:14000, deposit:28000, movein:'2025-05-25', gender:'Any', furnishing:'Unfurnished', desc:'Modern apartment with gym and parking. Near Hinjewadi Phase 1 main road.' },
-  { id:'m6', role:'owner', name:'Divya Reddy',    phone:'88990 11223', lat:18.5863, lng:73.7293, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:11000, deposit:22000, movein:'2025-06-15', gender:'Female', furnishing:'Semi-furnished', desc:'2-sharing in gated society near Phase 2. Clean, no broker.' },
-  { id:'m7', role:'owner', name:'Rohan Verma',    phone:'44332 11009', lat:18.5872, lng:73.7363, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'2', rent:6500, deposit:13000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'3-sharing male PG near Phase 2. Meals included. Ideal for freshers.' },
-  { id:'m8', role:'owner', name:'Anita Bhat',     phone:'33221 00998', lat:18.5928, lng:73.7398, propType:'entire', bhk:'2 BHK', rent:28000, deposit:56000, movein:'2025-06-20', gender:'Any', furnishing:'Fully furnished', desc:'Premium 2BHK for professionals or small family. Fully furnished, AC, modular kitchen.' },
+  { id:'m1', role:'owner', name:'Vikram Nair',    phone:'98765 43210', lat:28.6139, lng:77.2090, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:12000, deposit:24000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'Fully furnished apartment. AC room, 24hr water, secure society.' },
+  { id:'m2', role:'owner', name:'Pooja Mehta',    phone:'91234 56789', lat:28.6097, lng:77.2135, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'1', rent:7500, deposit:15000, movein:'2025-05-15', gender:'Female', furnishing:'Semi-furnished', desc:'Budget-friendly sharing. All girls, no smokers.' },
+  { id:'m3', role:'owner', name:'Sneha Kulkarni', phone:'87654 32109', lat:28.6060, lng:77.2113, propType:'entire', bhk:'1 BHK', rent:18000, deposit:36000, movein:'2025-05-20', gender:'Any', furnishing:'Fully furnished', desc:'Fully furnished 1BHK ideal for a couple or single professional. Parking included.' },
+  { id:'m4', role:'owner', name:'Amit Singh',     phone:'99887 66554', lat:28.6193, lng:77.2103, propType:'bed',    bedType:'Double Sharing', peopleInRoom:'1', rent:8500, deposit:17000, movein:'2025-05-30', gender:'Male', furnishing:'Fully furnished', desc:'Double sharing. Mess food optional. Good connectivity.' },
+  { id:'m5', role:'owner', name:'Karan Shah',     phone:'66554 33221', lat:28.6113, lng:77.2073, propType:'room',   bhk:'3 BHK+', peopleInFlat:'2', rent:14000, deposit:28000, movein:'2025-05-25', gender:'Any', furnishing:'Unfurnished', desc:'Modern apartment with gym and parking. Near main road.' },
+  { id:'m6', role:'owner', name:'Divya Reddy',    phone:'88990 11223', lat:28.6078, lng:77.2023, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:11000, deposit:22000, movein:'2025-06-15', gender:'Female', furnishing:'Semi-furnished', desc:'2-sharing in gated society. Clean, no broker.' },
+  { id:'m7', role:'owner', name:'Rohan Verma',    phone:'44332 11009', lat:28.6087, lng:77.2093, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'2', rent:6500, deposit:13000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'3-sharing male PG. Meals included. Ideal for freshers.' },
+  { id:'m8', role:'owner', name:'Anita Bhat',     phone:'33221 00998', lat:28.6143, lng:77.2128, propType:'entire', bhk:'2 BHK', rent:28000, deposit:56000, movein:'2025-06-20', gender:'Any', furnishing:'Fully furnished', desc:'Premium 2BHK for professionals or small family. Fully furnished, AC, modular kitchen.' },
 ];
 
 const MOCK_TENANT_LISTINGS = [
-  { id:'t1', role:'tenant', name:'Arjun Desai',   phone:'90123 45678', lat:18.5952, lng:73.7325, radiusKm:0.8, propType:'room',   budget:12000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'Software engineer at Infosys. Non-smoker, neat, prefer quiet flatmate.' },
-  { id:'t2', role:'tenant', name:'Priya Joshi',   phone:'77665 44332', lat:18.5833, lng:73.7425, radiusKm:1.0, propType:'entire', budget:20000, movein:'2025-06-10', gender:'Female', furnishing:'Any', desc:'UX designer at Persistent. Looking for 1BHK for myself.' },
-  { id:'t3', role:'tenant', name:'Meera Nambiar', phone:'55443 22110', lat:18.5942, lng:73.7413, radiusKm:0.6, propType:'bed',    budget:8000,  movein:'2025-07-01', gender:'Female', furnishing:'Semi-furnished', desc:'HR at Wipro. Looking for female double sharing, Phase 1 or 2.' },
-  { id:'t4', role:'tenant', name:'Rahul Patil',   phone:'76543 21098', lat:18.5912, lng:73.7455, radiusKm:1.2, propType:'bed',    budget:9000,  movein:'2025-07-01', gender:'Male', furnishing:'Any', desc:'MBA intern at Cognizant. Budget conscious, flexible on area.' },
+  { id:'t1', role:'tenant', name:'Arjun Desai',   phone:'90123 45678', lat:28.6167, lng:77.2055, radiusKm:0.8, propType:'room',   budget:12000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'Software engineer. Non-smoker, neat, prefer quiet flatmate.' },
+  { id:'t2', role:'tenant', name:'Priya Joshi',   phone:'77665 44332', lat:28.6048, lng:77.2155, radiusKm:1.0, propType:'entire', budget:20000, movein:'2025-06-10', gender:'Female', furnishing:'Any', desc:'UX designer. Looking for 1BHK for myself.' },
+  { id:'t3', role:'tenant', name:'Meera Nambiar', phone:'55443 22110', lat:28.6157, lng:77.2143, radiusKm:0.6, propType:'bed',    budget:8000,  movein:'2025-07-01', gender:'Female', furnishing:'Semi-furnished', desc:'HR. Looking for female double sharing.' },
+  { id:'t4', role:'tenant', name:'Rahul Patil',   phone:'76543 21098', lat:28.6127, lng:77.2185, radiusKm:1.2, propType:'bed',    budget:9000,  movein:'2025-07-01', gender:'Male', furnishing:'Any', desc:'MBA intern. Budget conscious, flexible on area.' },
 ];
 
 // App state
@@ -741,6 +766,7 @@ let selectedPropType = null;
 let selectedTenantLooking = null;
 let pinLat = null, pinLng = null;
 let circleCenter = null, circleRadiusKm = null;
+let searchTimeout = null;
 
 // ══════════════════════════════════════
 // PROFILE SETUP
@@ -774,8 +800,6 @@ function finishSetup() {
   saveProfile();
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
-  
-  // Send directly to profile
   showPage('profile'); 
 }
 
@@ -801,7 +825,7 @@ function applyProfileToUI() {
   document.getElementById('create-title').textContent = profile.role === 'owner' ? 'Post a Room' : 'Post Your Search';
   document.getElementById('create-sub').textContent = profile.role === 'owner'
     ? 'List your property. Free. No broker.'
-    : 'Tell people what you\'re looking for.';
+    : 'Tell people what you're looking for.';
 
   // Show correct form sections
   document.getElementById('prop-type-card').style.display      = profile.role === 'owner' ? 'block' : 'none';
@@ -829,7 +853,6 @@ function resetProfile() {
 // PAGE ROUTING
 // ══════════════════════════════════════
 function showPage(page) {
-  // THE BOUNCER: Show setup if they want to view profile/create but aren't logged in
   if ((page === 'profile' || page === 'create') && !profile) {
     document.getElementById('page-setup').classList.add('active');
     return; 
@@ -838,7 +861,6 @@ function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   
-  // Global footer visibility toggle
   const footer = document.getElementById('global-footer');
   if (footer) footer.style.display = (page === 'explore') ? 'none' : 'block';
 
@@ -875,7 +897,7 @@ function osmTiles() {
 // ══════════════════════════════════════
 function initPreviewMap() {
   if (previewMap) return;
-  previewMap = L.map('preview-map', { center:HINJEWADI, zoom:14, zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false, keyboard:false, touchZoom:false, attributionControl:false });
+  previewMap = L.map('preview-map', { center:DELHI, zoom:14, zoomControl:false, dragging:false, scrollWheelZoom:false, doubleClickZoom:false, keyboard:false, touchZoom:false, attributionControl:false });
   osmTiles().addTo(previewMap);
   MOCK_OWNER_LISTINGS.slice(0,5).forEach(l => L.marker([l.lat,l.lng], { icon:ownerIcon }).addTo(previewMap));
   MOCK_TENANT_LISTINGS.slice(0,3).forEach(l => {
@@ -887,7 +909,7 @@ function initPreviewMap() {
 // EXPLORE MAP
 // ══════════════════════════════════════
 function initExploreMap() {
-  exploreMap = L.map('map', { center:HINJEWADI, zoom:15 });
+  exploreMap = L.map('map', { center:DELHI, zoom:14 });
   osmTiles().addTo(exploreMap);
   markerLayer = L.layerGroup().addTo(exploreMap);
   circleLayer = L.layerGroup().addTo(exploreMap);
@@ -1220,6 +1242,8 @@ function selectPropType(type) {
     document.getElementById('fields-'+t+'-owner').classList.toggle('show', t===type);
     document.getElementById('fields-'+t+'-tenant') && document.getElementById('fields-'+t+'-tenant').classList.remove('show');
   });
+  document.getElementById('create-map-section').style.display = 'block';
+  if (pickerMap) setTimeout(() => pickerMap.invalidateSize(), 100);
 }
 
 function selectTenantLooking(type) {
@@ -1229,52 +1253,76 @@ function selectTenantLooking(type) {
     document.getElementById('fields-'+t+'-tenant').classList.toggle('show', t===type);
     document.getElementById('fields-'+t+'-owner').classList.remove('show');
   });
+  document.getElementById('create-map-section').style.display = 'block';
+  if (pickerMap) setTimeout(() => pickerMap.invalidateSize(), 100);
 }
 
-async function searchMapLocation() {
-  const query = document.getElementById('map-search-input').value.trim();
-  if (!query) return;
-  
-  // Appending Hinjewadi to ensure localized results
-  const fullQuery = encodeURIComponent(query + ' Hinjewadi Pune');
-  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${fullQuery}&limit=1`;
-  
-  try {
-    const res = await fetch(url);
-    const data = await res.json();
-    
-    if (data && data.length > 0) {
-      const lat = parseFloat(data[0].lat);
-      const lon = parseFloat(data[0].lon);
-      
-      pickerMap.setView([lat, lon], 16);
-      
-      // Auto drop pin for owner
-      if (profile.role === 'owner') {
-        if (pickerMarker) pickerMap.removeLayer(pickerMarker);
-        pickerMarker = L.marker([lat,lon], { icon:pickerIconFn() }).addTo(pickerMap);
-        pinLat = lat; pinLng = lon;
-        
-        // Make the location name pretty
-        const shortName = data[0].display_name.split(',')[0];
-        document.getElementById('pin-location').textContent = `📍 Pinned at ${shortName}`;
+async function handleSearch(query, resultsId, targetMap, isCreate) {
+  const resDiv = document.getElementById(resultsId);
+  if (!query || query.length < 3) { resDiv.style.display = 'none'; return; }
+
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(async () => {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`;
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data && data.length > 0) {
+        resDiv.innerHTML = '';
+        data.forEach(item => {
+          const div = document.createElement('div');
+          div.className = 'autocomplete-item';
+          div.textContent = item.display_name;
+          div.onclick = () => selectLocation(item, resultsId, targetMap, isCreate);
+          resDiv.appendChild(div);
+        });
+        resDiv.style.display = 'block';
+      } else {
+        resDiv.innerHTML = '<div class="autocomplete-item" style="color:#999">No results found</div>';
+        resDiv.style.display = 'block';
       }
-    } else {
-      alert("Location not found. Try a different society or landmark name.");
-    }
-  } catch(e) {
-    console.error("Map search error:", e);
+    } catch(e) { console.error(e); }
+  }, 400); 
+}
+
+function selectLocation(item, resultsId, targetMap, isCreate) {
+  document.getElementById(resultsId).style.display = 'none';
+  const lat = parseFloat(item.lat);
+  const lon = parseFloat(item.lon);
+
+  const dist = haversineKm(DELHI[0], DELHI[1], lat, lon);
+  if (dist > OPERATING_RADIUS_KM) {
+    alert("We are currently not operating in this area. Please select a location in or near Delhi.");
+    return;
+  }
+
+  targetMap.setView([lat, lon], 15);
+
+  if (isCreate && profile.role === 'owner') {
+    if (pickerMarker) targetMap.removeLayer(pickerMarker);
+    pickerMarker = L.marker([lat,lon], { icon:pickerIconFn() }).addTo(targetMap);
+    pinLat = lat; pinLng = lon;
+    const shortName = item.display_name.split(',')[0];
+    document.getElementById('pin-location').textContent = `📍 Pinned at ${shortName}`;
+    document.getElementById('map-search-input').value = shortName;
+  } else if (!isCreate) {
+    document.getElementById('explore-search-input').value = item.display_name.split(',')[0];
   }
 }
 
 function initPickerMap() {
   if (!profile) return;
-  pickerMap = L.map('map-picker', { center:HINJEWADI, zoom:15 });
+  pickerMap = L.map('map-picker', { center:DELHI, zoom:14 });
   osmTiles().addTo(pickerMap);
 
   if (profile.role === 'owner') {
     pickerMap.on('click', (e) => {
       const { lat, lng } = e.latlng;
+      if (haversineKm(DELHI[0], DELHI[1], lat, lng) > OPERATING_RADIUS_KM) {
+        alert("We are currently not operating in this area.");
+        return;
+      }
       if (pickerMarker) pickerMap.removeLayer(pickerMarker);
       pickerMarker = L.marker([lat,lng], { icon:pickerIconFn() }).addTo(pickerMap);
       pinLat = lat; pinLng = lng;
@@ -1292,10 +1340,14 @@ function initPickerMap() {
     });
     pickerMap.addControl(drawControl);
     pickerMap.on(L.Draw.Event.CREATED, (e) => {
+      const center = e.layer.getLatLng();
+      if (haversineKm(DELHI[0], DELHI[1], center.lat, center.lng) > OPERATING_RADIUS_KM) {
+        alert("We are currently not operating in this area.");
+        return;
+      }
       drawnItems.clearLayers();
       drawnItems.addLayer(e.layer);
       const radius = e.layer.getRadius() / 1000;
-      const center = e.layer.getLatLng();
       circleCenter = { lat:center.lat, lng:center.lng };
       circleRadiusKm = parseFloat(radius.toFixed(2));
       document.getElementById('pin-location').textContent =
