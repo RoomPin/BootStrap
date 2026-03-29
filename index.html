@@ -22,7 +22,7 @@
   --shadow:0 2px 12px rgba(0,0,0,.08);--shadow-md:0 4px 24px rgba(0,0,0,.13);
 }
 html{scroll-behavior:smooth}
-body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden; display:flex; flex-direction:column; min-height:100vh;}
 
 /* ── NAV ── */
 nav{
@@ -47,7 +47,7 @@ nav{
 .profile-icon{width:34px;height:34px;border-radius:50%;background:var(--blue);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;flex-shrink:0}
 
 /* ── PAGES ── */
-.page{display:none}
+.page{display:none; flex:1;}
 .page.active{display:block}
 #page-explore.active{display:flex}
 #page-profile.active{display:block}
@@ -66,7 +66,7 @@ nav{
 .setup-step{display:none}
 .setup-step.active{display:block}
 .setup-label{font-size:12px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase;margin-bottom:18px}
-.setup-input{width:100%;padding:11px 13px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:14px;color:var(--text);font-family:inherit;outline:none;margin-bottom:12px;transition:border-color .15s}
+.setup-input{width:100%;padding:11px 13px;border:1.5px solid var(--gray-200);border-radius:9px;font-size:14px;color:var(--text);font-family:inherit;outline:none;margin-bottom:12px;transition:border-color .15s; height:46px; box-sizing:border-box;}
 .setup-input:focus{border-color:var(--blue)}
 .role-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px}
 .role-card{border:2px solid var(--gray-200);border-radius:10px;padding:18px 14px;text-align:center;cursor:pointer;transition:all .15s}
@@ -114,7 +114,9 @@ nav{
 .why-stat{border-left:2px solid var(--green-pin);padding-left:13px}
 .why-stat .num{font-family:'Instrument Serif',serif;font-size:26px;color:white;line-height:1}
 .why-stat .lbl{font-size:11px;color:rgba(255,255,255,.5);margin-top:3px}
-footer{border-top:1px solid var(--gray-200);padding:24px}
+
+/* Global Footer */
+#main-footer{border-top:1px solid var(--gray-200);padding:24px; background:var(--white); margin-top: auto;}
 .footer-inner{max-width:880px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .footer-logo{font-family:'Instrument Serif',serif;font-size:16px;color:var(--blue);line-height:1}
 .footer-logo span{color:var(--green)}
@@ -123,7 +125,7 @@ footer{border-top:1px solid var(--gray-200);padding:24px}
 .footer-links a{font-size:12px;color:var(--gray-600);text-decoration:none;cursor:pointer}
 
 /* ════════ EXPLORE ════════ */
-#page-explore{flex-direction:row;height:100vh;padding-top:56px}
+#page-explore{flex-direction:row;height:100vh;padding-top:56px; overflow:hidden;}
 .filters-panel{width:280px;min-width:260px;height:100%;overflow-y:auto;border-right:1px solid var(--gray-200);background:white;z-index:10;display:flex;flex-direction:column}
 .filters-header{padding:14px 16px 10px;border-bottom:1px solid var(--gray-200)}
 .filters-header h2{font-size:14px;font-weight:600;color:var(--blue)}
@@ -221,9 +223,19 @@ input[type=date]:focus{border-color:var(--blue)}
 .fg{margin-bottom:12px}
 .fg:last-child{margin-bottom:0}
 .fg label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:4px}
-.fg input,.fg select,.fg textarea{width:100%;padding:9px 11px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:13px;color:var(--text);background:white;font-family:inherit;outline:none;transition:border-color .15s}
+/* Strict Uniform Box Styling for Inputs */
+.fg input:not([type="file"]), .fg select {
+  width:100%; padding:0 11px; height:42px; border:1.5px solid var(--gray-200); 
+  border-radius:7px; font-size:13px; color:var(--text); background:white; 
+  font-family:inherit; outline:none; transition:border-color .15s; box-sizing:border-box;
+}
+.fg textarea {
+  width:100%; padding:9px 11px; border:1.5px solid var(--gray-200); border-radius:7px;
+  font-size:13px; color:var(--text); background:white; font-family:inherit; outline:none;
+  transition:border-color .15s; box-sizing:border-box; resize:vertical; min-height:76px; line-height:1.5;
+}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue)}
-.fg textarea{resize:vertical;min-height:76px;line-height:1.5}
+
 .prop-type-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}
 @media(max-width:460px){.prop-type-cards{grid-template-columns:1fr}}
 .prop-card{border:2px solid var(--gray-200);border-radius:8px;padding:12px 10px;text-align:center;cursor:pointer;transition:all .15s}
@@ -234,7 +246,14 @@ input[type=date]:focus{border-color:var(--blue)}
 .dynamic-fields{display:none}
 .dynamic-fields.show{display:block}
 .map-picker-card{background:white;border:1.5px solid var(--gray-200);border-radius:11px;overflow:hidden;margin-bottom:12px}
-.map-picker-title{padding:12px 16px 9px;font-size:10px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--gray-100)}
+.map-picker-title{padding:12px 16px 9px;font-size:10px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase; border-bottom:1px solid var(--gray-100)}
+
+/* Custom Map Search Bar */
+.map-search-bar{display:none; padding:12px 16px; border-bottom:1px solid var(--gray-100); gap:8px; background:var(--gray-50);}
+.map-search-bar input{flex:1; padding:0 12px; height:36px; border:1.5px solid var(--gray-200); border-radius:6px; font-size:13px; outline:none; font-family:inherit;}
+.map-search-bar input:focus{border-color:var(--blue);}
+.map-search-bar button{padding:0 16px; height:36px; background:var(--blue); color:white; border:none; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;}
+
 #map-picker{height:210px}
 .map-picker-info{padding:8px 16px;background:var(--blue-light);font-size:12px;color:var(--blue-mid);display:flex;gap:5px;align-items:center}
 .photo-upload{border:2px dashed var(--gray-200);border-radius:7px;padding:18px;text-align:center;cursor:pointer;transition:all .15s}
@@ -250,7 +269,7 @@ input[type=date]:focus{border-color:var(--blue)}
 .already-listed-card .btn-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
 
 /* ════════ PROFILE PAGE ════════ */
-#page-profile{padding-top:56px;background:var(--gray-50);min-height:100vh}
+#page-profile{padding-top:56px;background:var(--gray-50); flex:1;}
 .profile-inner{max-width:640px;margin:0 auto;padding:32px 20px 80px}
 .profile-hd{margin-bottom:24px}
 .profile-hd h1{font-family:'Instrument Serif',serif;font-size:27px;font-weight:400;color:var(--blue);margin-bottom:4px}
@@ -289,13 +308,11 @@ input[type=date]:focus{border-color:var(--blue)}
 </head>
 <body>
 
-<!-- ══════════ PROFILE SETUP OVERLAY ══════════ -->
 <div id="page-setup">
   <div class="setup-card">
     <div class="setup-logo">Room<span>Pin</span></div>
     <div class="setup-sub">Find rooms &amp; flatmates in Hinjewadi — on a map.</div>
 
-    <!-- Step 1: Name + Phone -->
     <div class="setup-step active" id="setup-step-1">
       <div class="setup-label">Your Details</div>
       <input class="setup-input" id="setup-name" type="text" placeholder="Full Name" oninput="checkStep1()">
@@ -303,7 +320,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <button class="setup-btn" id="step1-btn" onclick="goStep2()" disabled>Continue →</button>
     </div>
 
-    <!-- Step 2: Role -->
     <div class="setup-step" id="setup-step-2">
       <div class="setup-label">I am...</div>
       <div class="role-cards">
@@ -323,7 +339,6 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </div>
 
-<!-- ══════════ NAV ══════════ -->
 <nav>
   <div class="nav-logo" onclick="showPage('landing')">Room<span>Pin</span></div>
   <div class="nav-links">
@@ -333,7 +348,6 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </nav>
 
-<!-- ══════════ LANDING ══════════ -->
 <div id="page-landing" class="page active">
   <div class="hero">
     <div class="hero-badge">Hinjewadi, Pune — Phase 1, 2 &amp; 3</div>
@@ -373,18 +387,8 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
     </div>
   </div>
-  <footer>
-    <div class="footer-inner">
-      <div>
-        <div class="footer-logo">Room<span>Pin</span></div>
-        <div class="footer-sub">Currently serving Pune — Hinjewadi only</div>
-      </div>
-      <div class="footer-links"><a>About</a><a>Contact</a><a>Privacy</a></div>
-    </div>
-  </footer>
 </div>
 
-<!-- ══════════ EXPLORE ══════════ -->
 <div id="page-explore" class="page">
   <div class="filters-panel">
     <div class="filters-header">
@@ -403,7 +407,7 @@ input[type=date]:focus{border-color:var(--blue)}
       <div class="filter-label">Property Type</div>
       <div class="filter-chips" id="proptype-chips">
         <button class="chip active" onclick="toggleChip(this,'proptype')">Any</button>
-        <button class="chip" onclick="toggleChip(this,'proptype')">Entire Flat</button>
+        <button class="chip" onclick="toggleChip(this,'proptype')">Entire Apartment</button>
         <button class="chip" onclick="toggleChip(this,'proptype')">Private Room</button>
         <button class="chip" onclick="toggleChip(this,'proptype')">Shared Bed</button>
       </div>
@@ -446,7 +450,6 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </div>
 
-<!-- ══════════ CREATE LISTING ══════════ -->
 <div id="page-create" class="page">
   <div class="create-inner">
     <div class="create-hd">
@@ -454,7 +457,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <p id="create-sub">Free. Direct. No broker involved.</p>
     </div>
 
-    <!-- Tenant already has listing -->
     <div id="already-listed" style="display:none">
       <div class="already-listed-card">
         <div style="font-size:36px;margin-bottom:10px">📋</div>
@@ -467,16 +469,14 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
     </div>
 
-    <!-- Actual form -->
     <div id="listing-form">
 
-      <!-- Property Type Selector (owner only) -->
       <div class="form-card" id="prop-type-card">
         <div class="form-card-title">What are you offering?</div>
         <div class="prop-type-cards">
           <div class="prop-card" id="pt-entire" onclick="selectPropType('entire')">
             <div class="picon">🏠</div>
-            <h4>Entire Flat</h4>
+            <h4>Entire Apartment</h4>
           </div>
           <div class="prop-card" id="pt-room" onclick="selectPropType('room')">
             <div class="picon">🚪</div>
@@ -489,13 +489,12 @@ input[type=date]:focus{border-color:var(--blue)}
         </div>
       </div>
 
-      <!-- Tenant looking for selector -->
       <div class="form-card" id="tenant-looking-card" style="display:none">
         <div class="form-card-title">What are you looking for?</div>
         <div class="prop-type-cards">
           <div class="prop-card" id="tl-entire" onclick="selectTenantLooking('entire')">
             <div class="picon">🏠</div>
-            <h4>Entire Flat</h4>
+            <h4>Entire Apartment</h4>
           </div>
           <div class="prop-card" id="tl-room" onclick="selectTenantLooking('room')">
             <div class="picon">🚪</div>
@@ -508,11 +507,10 @@ input[type=date]:focus{border-color:var(--blue)}
         </div>
       </div>
 
-      <!-- OWNER: Entire Flat fields -->
       <div class="form-card dynamic-fields" id="fields-entire-owner">
-        <div class="form-card-title">Flat Details</div>
+        <div class="form-card-title">Apartment Details</div>
         <div class="form-row">
-          <div class="fg"><label>Flat Size</label>
+          <div class="fg"><label>Apartment Size</label>
             <select id="o-entire-bhk"><option value="">Select</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK+</option></select>
           </div>
           <div class="fg"><label>Monthly Rent (₹)</label><input type="number" id="o-entire-rent" placeholder="25000"></div>
@@ -521,24 +519,19 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="fg"><label>Security Deposit (₹)</label><input type="number" id="o-entire-deposit" placeholder="50000"></div>
           <div class="fg"><label>Available From</label><input type="date" id="o-entire-movein"></div>
         </div>
-        <div class="fg"><label>Description</label><textarea id="o-entire-desc" placeholder="Describe the flat — furnishing, amenities, nearby landmarks..."></textarea></div>
-        <div class="fg" style="margin-top:12px">
-          <div class="photo-upload" onclick="this.querySelector('input').click()">
-            <input type="file" multiple accept="image/*">
-            <div style="font-size:22px;opacity:.35">📷</div>
-            <p>Upload flat photos</p><span>2–4 images · JPG, PNG</span>
-          </div>
+        <div class="fg"><label>Furnishing</label>
+          <select id="o-entire-furnishing"><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
         </div>
+        <div class="fg"><label>Description</label><textarea id="o-entire-desc" placeholder="Describe the apartment — furnishing, amenities, nearby landmarks..."></textarea></div>
       </div>
 
-      <!-- OWNER: Private Room fields -->
       <div class="form-card dynamic-fields" id="fields-room-owner">
         <div class="form-card-title">Room Details</div>
         <div class="form-row">
-          <div class="fg"><label>Flat Size</label>
+          <div class="fg"><label>Apartment Size</label>
             <select id="o-room-bhk"><option value="">Select</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK+</option></select>
           </div>
-          <div class="fg"><label>People in Flat (currently)</label>
+          <div class="fg"><label>People in Apartment</label>
             <select id="o-room-people"><option value="">Select</option><option>1</option><option>2</option><option>3+</option></select>
           </div>
         </div>
@@ -552,24 +545,19 @@ input[type=date]:focus{border-color:var(--blue)}
             <select id="o-room-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
           </div>
         </div>
-        <div class="fg"><label>Description</label><textarea id="o-room-desc" placeholder="Describe the room — furnishing, attached bath, flat amenities..."></textarea></div>
-        <div class="fg" style="margin-top:12px">
-          <div class="photo-upload" onclick="this.querySelector('input').click()">
-            <input type="file" multiple accept="image/*">
-            <div style="font-size:22px;opacity:.35">📷</div>
-            <p>Upload room photos</p><span>2–4 images · JPG, PNG</span>
-          </div>
+        <div class="fg"><label>Furnishing</label>
+          <select id="o-room-furnishing"><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
         </div>
+        <div class="fg"><label>Description</label><textarea id="o-room-desc" placeholder="Describe the room — attached bath, apartment amenities..."></textarea></div>
       </div>
 
-      <!-- OWNER: Shared Bed fields -->
       <div class="form-card dynamic-fields" id="fields-bed-owner">
         <div class="form-card-title">Shared Room Details</div>
         <div class="form-row">
           <div class="fg"><label>Room Type</label>
             <select id="o-bed-type"><option value="">Select</option><option>Double Sharing</option><option>Triple Sharing</option></select>
           </div>
-          <div class="fg"><label>People in Room (currently)</label>
+          <div class="fg"><label>People in Room</label>
             <select id="o-bed-people"><option value="">Select</option><option>1</option><option>2</option></select>
           </div>
         </div>
@@ -583,34 +571,33 @@ input[type=date]:focus{border-color:var(--blue)}
             <select id="o-bed-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
           </div>
         </div>
-        <div class="fg"><label>Description</label><textarea id="o-bed-desc" placeholder="Describe the room — attached bath, AC, locker, flat floor..."></textarea></div>
-        <div class="fg" style="margin-top:12px">
-          <div class="photo-upload" onclick="this.querySelector('input').click()">
-            <input type="file" multiple accept="image/*">
-            <div style="font-size:22px;opacity:.35">📷</div>
-            <p>Upload room photos</p><span>2–4 images · JPG, PNG</span>
-          </div>
+        <div class="fg"><label>Furnishing</label>
+          <select id="o-bed-furnishing"><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
         </div>
+        <div class="fg"><label>Description</label><textarea id="o-bed-desc" placeholder="Describe the room — attached bath, locker, apartment floor..."></textarea></div>
       </div>
 
-      <!-- TENANT: Entire Flat fields -->
       <div class="form-card dynamic-fields" id="fields-entire-tenant">
         <div class="form-card-title">Preferences</div>
         <div class="form-row">
-          <div class="fg"><label>Flat Size Preference</label>
+          <div class="fg"><label>Apartment Size Preference</label>
             <select id="t-entire-bhk"><option>Any</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK+</option></select>
           </div>
           <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-entire-budget" placeholder="25000"></div>
         </div>
-        <div class="fg"><label>Move-in Date</label><input type="date" id="t-entire-movein"></div>
+        <div class="form-row">
+          <div class="fg"><label>Move-in Date</label><input type="date" id="t-entire-movein"></div>
+          <div class="fg"><label>Furnishing Preference</label>
+            <select id="t-entire-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+          </div>
+        </div>
         <div class="fg"><label>About You</label><textarea id="t-entire-desc" placeholder="e.g. Working at Wipro, couple, need parking, prefer furnished..."></textarea></div>
       </div>
 
-      <!-- TENANT: Private Room fields -->
       <div class="form-card dynamic-fields" id="fields-room-tenant">
         <div class="form-card-title">Preferences</div>
         <div class="form-row">
-          <div class="fg"><label>Flat Size Preference</label>
+          <div class="fg"><label>Apartment Size Preference</label>
             <select id="t-room-bhk"><option>Any</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK+</option></select>
           </div>
           <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-room-budget" placeholder="12000"></div>
@@ -621,10 +608,12 @@ input[type=date]:focus{border-color:var(--blue)}
             <select id="t-room-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
           </div>
         </div>
+        <div class="fg"><label>Furnishing Preference</label>
+          <select id="t-room-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+        </div>
         <div class="fg"><label>About You</label><textarea id="t-room-desc" placeholder="e.g. Software engineer at Infosys, non-smoker, early to bed..."></textarea></div>
       </div>
 
-      <!-- TENANT: Shared Bed fields -->
       <div class="form-card dynamic-fields" id="fields-bed-tenant">
         <div class="form-card-title">Preferences</div>
         <div class="form-row">
@@ -639,12 +628,20 @@ input[type=date]:focus{border-color:var(--blue)}
             <select id="t-bed-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
           </div>
         </div>
+        <div class="fg"><label>Furnishing Preference</label>
+          <select id="t-bed-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+        </div>
         <div class="fg"><label>About You</label><textarea id="t-bed-desc" placeholder="e.g. MBA student at Symbiosis, non-smoker, looking for male flatmates..."></textarea></div>
       </div>
 
-      <!-- Map Picker -->
       <div class="map-picker-card">
         <div class="map-picker-title" id="map-picker-title">📍 Drop Your Pin on the Map</div>
+        
+        <div class="map-search-bar" id="map-search-bar">
+          <input type="text" id="map-search-input" placeholder="Search a society or landmark (e.g., Megapolis)">
+          <button type="button" onclick="searchMapLocation()">Search</button>
+        </div>
+
         <div id="map-picker"></div>
         <div class="map-picker-info"><span id="pin-location">Click on the map to set your location</span></div>
       </div>
@@ -654,7 +651,6 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </div>
 
-<!-- ══════════ PROFILE PAGE ══════════ -->
 <div id="page-profile" class="page">
   <div class="profile-inner">
     <div class="profile-hd">
@@ -662,7 +658,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <p>Your account and listings</p>
     </div>
 
-    <!-- Profile Info Card -->
     <div class="profile-card">
       <div class="profile-card-title">Account</div>
       <div class="profile-avatar" id="profile-avatar">?</div>
@@ -671,7 +666,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <div id="profile-role-display"></div>
     </div>
 
-    <!-- Listings Card -->
     <div class="profile-card">
       <div class="profile-card-title" id="profile-listings-title">My Listings</div>
       <div id="profile-listings-body"></div>
@@ -681,7 +675,16 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </div>
 
-<!-- Success -->
+<footer id="global-footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">Room<span>Pin</span></div>
+      <div class="footer-sub">Currently serving Pune — Hinjewadi only</div>
+    </div>
+    <div class="footer-links"><a>About</a><a>Contact</a><a>Privacy</a></div>
+  </div>
+</footer>
+
 <div class="success-overlay" id="success-overlay">
   <div class="success-card">
     <div class="success-icon">✅</div>
@@ -702,26 +705,26 @@ const HINJEWADI = [18.5924, 73.7360];
 
 // Mock listings (owners only — tenants post search areas)
 const MOCK_OWNER_LISTINGS = [
-  { id:'m1', role:'owner', name:'Vikram Nair',    phone:'98765 43210', lat:18.5924, lng:73.7360, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:12000, deposit:24000, movein:'2025-06-01', gender:'Male',   desc:'Fully furnished flat near Wipro Gate 1. AC room, 24hr water, secure society.' },
-  { id:'m2', role:'owner', name:'Pooja Mehta',    phone:'91234 56789', lat:18.5882, lng:73.7405, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'1', rent:7500, deposit:15000, movein:'2025-05-15', gender:'Female', desc:'Budget-friendly sharing near Rajiv Gandhi IT Park. All girls, no smokers.' },
-  { id:'m3', role:'owner', name:'Sneha Kulkarni', phone:'87654 32109', lat:18.5845, lng:73.7383, propType:'entire', bhk:'1 BHK', rent:18000, deposit:36000, movein:'2025-05-20', gender:'Any',    desc:'Fully furnished 1BHK ideal for a couple or single professional. Parking included.' },
-  { id:'m4', role:'owner', name:'Amit Singh',     phone:'99887 66554', lat:18.5978, lng:73.7373, propType:'bed',    bedType:'Double Sharing', peopleInRoom:'1', rent:8500, deposit:17000, movein:'2025-05-30', gender:'Male',   desc:'Double sharing near Phase 3. Mess food optional. Good PMPML connectivity.' },
-  { id:'m5', role:'owner', name:'Karan Shah',     phone:'66554 33221', lat:18.5898, lng:73.7343, propType:'room',   bhk:'3 BHK+', peopleInFlat:'2', rent:14000, deposit:28000, movein:'2025-05-25', gender:'Any',    desc:'Modern flat with gym and parking. Near Hinjewadi Phase 1 main road.' },
-  { id:'m6', role:'owner', name:'Divya Reddy',    phone:'88990 11223', lat:18.5863, lng:73.7293, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:11000, deposit:22000, movein:'2025-06-15', gender:'Female', desc:'2-sharing in gated society near Phase 2. Clean, no broker.' },
-  { id:'m7', role:'owner', name:'Rohan Verma',    phone:'44332 11009', lat:18.5872, lng:73.7363, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'2', rent:6500, deposit:13000, movein:'2025-06-01', gender:'Male',   desc:'3-sharing male PG near Phase 2. Meals included. Ideal for freshers.' },
-  { id:'m8', role:'owner', name:'Anita Bhat',     phone:'33221 00998', lat:18.5928, lng:73.7398, propType:'entire', bhk:'2 BHK', rent:28000, deposit:56000, movein:'2025-06-20', gender:'Any',    desc:'Premium 2BHK for professionals or small family. Fully furnished, AC, modular kitchen.' },
+  { id:'m1', role:'owner', name:'Vikram Nair',    phone:'98765 43210', lat:18.5924, lng:73.7360, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:12000, deposit:24000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'Fully furnished apartment near Wipro Gate 1. AC room, 24hr water, secure society.' },
+  { id:'m2', role:'owner', name:'Pooja Mehta',    phone:'91234 56789', lat:18.5882, lng:73.7405, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'1', rent:7500, deposit:15000, movein:'2025-05-15', gender:'Female', furnishing:'Semi-furnished', desc:'Budget-friendly sharing near Rajiv Gandhi IT Park. All girls, no smokers.' },
+  { id:'m3', role:'owner', name:'Sneha Kulkarni', phone:'87654 32109', lat:18.5845, lng:73.7383, propType:'entire', bhk:'1 BHK', rent:18000, deposit:36000, movein:'2025-05-20', gender:'Any', furnishing:'Fully furnished', desc:'Fully furnished 1BHK ideal for a couple or single professional. Parking included.' },
+  { id:'m4', role:'owner', name:'Amit Singh',     phone:'99887 66554', lat:18.5978, lng:73.7373, propType:'bed',    bedType:'Double Sharing', peopleInRoom:'1', rent:8500, deposit:17000, movein:'2025-05-30', gender:'Male', furnishing:'Fully furnished', desc:'Double sharing near Phase 3. Mess food optional. Good PMPML connectivity.' },
+  { id:'m5', role:'owner', name:'Karan Shah',     phone:'66554 33221', lat:18.5898, lng:73.7343, propType:'room',   bhk:'3 BHK+', peopleInFlat:'2', rent:14000, deposit:28000, movein:'2025-05-25', gender:'Any', furnishing:'Unfurnished', desc:'Modern apartment with gym and parking. Near Hinjewadi Phase 1 main road.' },
+  { id:'m6', role:'owner', name:'Divya Reddy',    phone:'88990 11223', lat:18.5863, lng:73.7293, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:11000, deposit:22000, movein:'2025-06-15', gender:'Female', furnishing:'Semi-furnished', desc:'2-sharing in gated society near Phase 2. Clean, no broker.' },
+  { id:'m7', role:'owner', name:'Rohan Verma',    phone:'44332 11009', lat:18.5872, lng:73.7363, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'2', rent:6500, deposit:13000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'3-sharing male PG near Phase 2. Meals included. Ideal for freshers.' },
+  { id:'m8', role:'owner', name:'Anita Bhat',     phone:'33221 00998', lat:18.5928, lng:73.7398, propType:'entire', bhk:'2 BHK', rent:28000, deposit:56000, movein:'2025-06-20', gender:'Any', furnishing:'Fully furnished', desc:'Premium 2BHK for professionals or small family. Fully furnished, AC, modular kitchen.' },
 ];
 
 const MOCK_TENANT_LISTINGS = [
-  { id:'t1', role:'tenant', name:'Arjun Desai',   phone:'90123 45678', lat:18.5952, lng:73.7325, radiusKm:0.8, propType:'room',   budget:12000, movein:'2025-06-01', gender:'Male',   desc:'Software engineer at Infosys. Non-smoker, neat, prefer quiet flatmate.' },
-  { id:'t2', role:'tenant', name:'Priya Joshi',   phone:'77665 44332', lat:18.5833, lng:73.7425, radiusKm:1.0, propType:'entire', budget:20000, movein:'2025-06-10', gender:'Female', desc:'UX designer at Persistent. Looking for 1BHK for myself.' },
-  { id:'t3', role:'tenant', name:'Meera Nambiar', phone:'55443 22110', lat:18.5942, lng:73.7413, radiusKm:0.6, propType:'bed',    budget:8000,  movein:'2025-07-01', gender:'Female', desc:'HR at Wipro. Looking for female double sharing, Phase 1 or 2.' },
-  { id:'t4', role:'tenant', name:'Rahul Patil',   phone:'76543 21098', lat:18.5912, lng:73.7455, radiusKm:1.2, propType:'bed',    budget:9000,  movein:'2025-07-01', gender:'Male',   desc:'MBA intern at Cognizant. Budget conscious, flexible on area.' },
+  { id:'t1', role:'tenant', name:'Arjun Desai',   phone:'90123 45678', lat:18.5952, lng:73.7325, radiusKm:0.8, propType:'room',   budget:12000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'Software engineer at Infosys. Non-smoker, neat, prefer quiet flatmate.' },
+  { id:'t2', role:'tenant', name:'Priya Joshi',   phone:'77665 44332', lat:18.5833, lng:73.7425, radiusKm:1.0, propType:'entire', budget:20000, movein:'2025-06-10', gender:'Female', furnishing:'Any', desc:'UX designer at Persistent. Looking for 1BHK for myself.' },
+  { id:'t3', role:'tenant', name:'Meera Nambiar', phone:'55443 22110', lat:18.5942, lng:73.7413, radiusKm:0.6, propType:'bed',    budget:8000,  movein:'2025-07-01', gender:'Female', furnishing:'Semi-furnished', desc:'HR at Wipro. Looking for female double sharing, Phase 1 or 2.' },
+  { id:'t4', role:'tenant', name:'Rahul Patil',   phone:'76543 21098', lat:18.5912, lng:73.7455, radiusKm:1.2, propType:'bed',    budget:9000,  movein:'2025-07-01', gender:'Male', furnishing:'Any', desc:'MBA intern at Cognizant. Budget conscious, flexible on area.' },
 ];
 
 // App state
 let profile = null;
-let myListings = []; // owner: array of listings; tenant: array with max 1
+let myListings = []; 
 let lastPostedListing = null;
 
 // Map instances
@@ -772,7 +775,7 @@ function finishSetup() {
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
   
-  // Send them directly to their profile to see their details
+  // Send directly to profile
   showPage('profile'); 
 }
 
@@ -804,10 +807,11 @@ function applyProfileToUI() {
   document.getElementById('prop-type-card').style.display      = profile.role === 'owner' ? 'block' : 'none';
   document.getElementById('tenant-looking-card').style.display = profile.role === 'tenant' ? 'block' : 'none';
 
-  // Map picker label
+  // Map picker label & search bar
   document.getElementById('map-picker-title').textContent = profile.role === 'owner'
     ? '📍 Pin Your Property Location'
     : '🔵 Draw Your Search Area';
+  document.getElementById('map-search-bar').style.display = profile.role === 'owner' ? 'flex' : 'none';
 
   document.getElementById('pin-location').textContent = profile.role === 'owner'
     ? 'Click on the map to pin your exact property location'
@@ -834,13 +838,17 @@ function showPage(page) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   
+  // Global footer visibility toggle
+  const footer = document.getElementById('global-footer');
+  if (footer) footer.style.display = (page === 'explore') ? 'none' : 'block';
+
   if (page === 'explore') { if (!exploreMap) setTimeout(initExploreMap, 60); else refreshExplore(); }
   if (page === 'create')  { checkTenantAlreadyListed(); if (!pickerMap) setTimeout(initPickerMap, 60); }
   if (page === 'profile') renderProfilePage();
 }
 
 // ══════════════════════════════════════
-// MAP ICONS
+// MAP ICONS & TILES
 // ══════════════════════════════════════
 function makeIcon(color, size=26) {
   const s = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${Math.round(size*1.3)}" viewBox="0 0 26 34">
@@ -891,10 +899,8 @@ function refreshExplore() {
 }
 
 function getAllListings() {
-  // Combine mock + user's own listings
   const ownerListings = [...MOCK_OWNER_LISTINGS];
   const tenantListings = [...MOCK_TENANT_LISTINGS];
-
   if (profile && profile.role === 'owner') {
     myListings.forEach(l => ownerListings.push({ ...l, ismine: true }));
   }
@@ -913,7 +919,7 @@ function applyFilters() {
   let filteredOwners = ownerListings.filter(l => {
     if (typeFilter === 'tenant') return false;
     if (proptypeFilter !== 'Any') {
-      const map = { 'Entire Flat':'entire', 'Private Room':'room', 'Shared Bed':'bed' };
+      const map = { 'Entire Apartment':'entire', 'Private Room':'room', 'Shared Bed':'bed' };
       if (l.propType !== map[proptypeFilter]) return false;
     }
     if (l.rent > rentMax) return false;
@@ -934,7 +940,6 @@ function applyFilters() {
   updateCount(filteredOwners.length + filteredTenants.length);
 }
 
-// ─── Haversine distance (km) ───
 function haversineKm(lat1, lng1, lat2, lng2) {
   const R = 6371;
   const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -943,7 +948,6 @@ function haversineKm(lat1, lng1, lat2, lng2) {
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// Get tenant's own search area (for match logic)
 function getMySearchArea() {
   if (!profile || profile.role !== 'tenant' || myListings.length === 0) return null;
   const l = myListings[0];
@@ -957,12 +961,10 @@ function renderMarkers(owners, tenants) {
   circleLayer.clearLayers();
   const myArea = getMySearchArea();
 
-  // Owner pins
   owners.forEach(l => {
     const icon = l.ismine ? myOwnerIcon : ownerIcon;
     const m = L.marker([l.lat, l.lng], { icon });
 
-    // Match logic for tenants
     let matchHTML = '';
     if (myArea && !l.ismine) {
       const dist = haversineKm(myArea.lat, myArea.lng, l.lat, l.lng);
@@ -974,12 +976,11 @@ function renderMarkers(owners, tenants) {
 
     const badgeClass = l.ismine ? 'mine' : 'owner';
     const badgeText  = l.ismine ? '🟠 YOUR LISTING' : '🏠 OWNER';
-    const rentLabel  = propTypeLabel(l.propType);
-
+    
     m.bindPopup(`<div class="popup-inner">
       <div class="popup-badge ${badgeClass}">${badgeText}</div>
       <div class="popup-rent">₹${l.rent.toLocaleString()}/mo</div>
-      <div class="popup-meta">${rentLabel} · ${l.gender || 'Any'}</div>
+      <div class="popup-meta">${propTypeLabel(l.propType)} · ${l.gender || 'Any'}</div>
       ${matchHTML}
       <button class="popup-btn" onclick="showDetail('${l.id}','owner')">View Details →</button>
     </div>`, { maxWidth:240, closeButton:false });
@@ -988,7 +989,6 @@ function renderMarkers(owners, tenants) {
     markerLayer.addLayer(m);
   });
 
-  // Tenant circles
   tenants.forEach(l => {
     const color  = l.ismine ? '#a855f7' : '#3b82f6';
     const fillC  = l.ismine ? '#f3e8ff' : '#e8f0fa';
@@ -1010,7 +1010,7 @@ function renderMarkers(owners, tenants) {
 }
 
 function propTypeLabel(pt) {
-  return pt === 'entire' ? 'Entire Flat' : pt === 'room' ? 'Private Room' : 'Shared Bed';
+  return pt === 'entire' ? 'Entire Apartment' : pt === 'room' ? 'Private Room' : 'Shared Bed';
 }
 
 // ══════════════════════════════════════
@@ -1038,37 +1038,38 @@ function showDetail(id, role) {
 
   const ownBanner = l.ismine ? `<div class="own-listing-banner">This is your listing</div>` : '';
 
-  // Build detail fields based on propType
   let fields = '';
   if (isOwner) {
     if (l.propType === 'entire') {
       fields = `
-        <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Flat</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Apartment</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${l.bhk||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`;
+        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
+        <div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
     } else if (l.propType === 'room') {
       fields = `
         <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Flat</div><div class="dp-field-val">${l.bhk||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${l.bhk||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">People in flat</div><div class="dp-field-val">${l.peopleInFlat||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`;
     } else {
       fields = `
         <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">${l.bedType||'Shared Bed'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">People in room</div><div class="dp-field-val">${l.peopleInRoom||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`;
     }
   } else {
     fields = `
       <div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div>
+      <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'Any'}</div></div>
       <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Search radius</div><div class="dp-field-val">${l.radiusKm||'—'} km</div></div>`;
+      <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>`;
   }
 
   const contactSection = l.ismine
@@ -1188,7 +1189,7 @@ function resetFilters() {
 }
 
 // ══════════════════════════════════════
-// CREATE LISTING
+// CREATE LISTING & MAP SEARCH
 // ══════════════════════════════════════
 function checkTenantAlreadyListed() {
   if (!profile) return;
@@ -1212,7 +1213,6 @@ function deleteTenantListing() {
   setTimeout(initPickerMap, 100);
 }
 
-// Property type for owner
 function selectPropType(type) {
   selectedPropType = type;
   ['entire','room','bed'].forEach(t => {
@@ -1222,7 +1222,6 @@ function selectPropType(type) {
   });
 }
 
-// Looking for (tenant)
 function selectTenantLooking(type) {
   selectedTenantLooking = type;
   ['entire','room','bed'].forEach(t => {
@@ -1232,14 +1231,48 @@ function selectTenantLooking(type) {
   });
 }
 
-// ── PICKER MAP ──
+async function searchMapLocation() {
+  const query = document.getElementById('map-search-input').value.trim();
+  if (!query) return;
+  
+  // Appending Hinjewadi to ensure localized results
+  const fullQuery = encodeURIComponent(query + ' Hinjewadi Pune');
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${fullQuery}&limit=1`;
+  
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    
+    if (data && data.length > 0) {
+      const lat = parseFloat(data[0].lat);
+      const lon = parseFloat(data[0].lon);
+      
+      pickerMap.setView([lat, lon], 16);
+      
+      // Auto drop pin for owner
+      if (profile.role === 'owner') {
+        if (pickerMarker) pickerMap.removeLayer(pickerMarker);
+        pickerMarker = L.marker([lat,lon], { icon:pickerIconFn() }).addTo(pickerMap);
+        pinLat = lat; pinLng = lon;
+        
+        // Make the location name pretty
+        const shortName = data[0].display_name.split(',')[0];
+        document.getElementById('pin-location').textContent = `📍 Pinned at ${shortName}`;
+      }
+    } else {
+      alert("Location not found. Try a different society or landmark name.");
+    }
+  } catch(e) {
+    console.error("Map search error:", e);
+  }
+}
+
 function initPickerMap() {
   if (!profile) return;
   pickerMap = L.map('map-picker', { center:HINJEWADI, zoom:15 });
   osmTiles().addTo(pickerMap);
 
   if (profile.role === 'owner') {
-    // Click to pin
     pickerMap.on('click', (e) => {
       const { lat, lng } = e.latlng;
       if (pickerMarker) pickerMap.removeLayer(pickerMarker);
@@ -1249,7 +1282,6 @@ function initPickerMap() {
         `📍 Pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
     });
   } else {
-    // Draw circle
     drawnItems = new L.FeatureGroup().addTo(pickerMap);
     drawControl = new L.Control.Draw({
       draw: {
@@ -1276,30 +1308,20 @@ function submitListing() {
   if (!profile) return;
 
   if (profile.role === 'owner') {
-    if (!selectedPropType) { alert('Please select what you are offering (Entire Flat / Private Room / Shared Bed).'); return; }
+    if (!selectedPropType) { alert('Please select what you are offering (Entire Apartment / Private Room / Shared Bed).'); return; }
     if (!pinLat) { alert('Please drop a pin on the map for your property location.'); return; }
 
-    // Read form fields based on propType
-    let listing = {
-      id: 'u' + Date.now(),
-      role: 'owner',
-      name: profile.name,
-      phone: profile.phone,
-      lat: pinLat, lng: pinLng,
-      propType: selectedPropType,
-      ismine: true
-    };
+    let listing = { id: 'u' + Date.now(), role: 'owner', name: profile.name, phone: profile.phone, lat: pinLat, lng: pinLng, propType: selectedPropType, ismine: true };
+    
     if (selectedPropType === 'entire') {
-      listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, rent: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein: document.getElementById('o-entire-movein').value, desc: document.getElementById('o-entire-desc').value };
+      listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, rent: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein: document.getElementById('o-entire-movein').value, furnishing: document.getElementById('o-entire-furnishing').value, desc: document.getElementById('o-entire-desc').value };
     } else if (selectedPropType === 'room') {
-      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, peopleInFlat: document.getElementById('o-room-people').value, rent: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein: document.getElementById('o-room-movein').value, gender: document.getElementById('o-room-gender').value, desc: document.getElementById('o-room-desc').value };
+      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, peopleInFlat: document.getElementById('o-room-people').value, rent: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein: document.getElementById('o-room-movein').value, gender: document.getElementById('o-room-gender').value, furnishing: document.getElementById('o-room-furnishing').value, desc: document.getElementById('o-room-desc').value };
     } else {
-      listing = { ...listing, bedType: document.getElementById('o-bed-type').value, peopleInRoom: document.getElementById('o-bed-people').value, rent: parseInt(document.getElementById('o-bed-rent').value)||7000, deposit: parseInt(document.getElementById('o-bed-deposit').value)||0, movein: document.getElementById('o-bed-movein').value, gender: document.getElementById('o-bed-gender').value, desc: document.getElementById('o-bed-desc').value };
+      listing = { ...listing, bedType: document.getElementById('o-bed-type').value, peopleInRoom: document.getElementById('o-bed-people').value, rent: parseInt(document.getElementById('o-bed-rent').value)||7000, deposit: parseInt(document.getElementById('o-bed-deposit').value)||0, movein: document.getElementById('o-bed-movein').value, gender: document.getElementById('o-bed-gender').value, furnishing: document.getElementById('o-bed-furnishing').value, desc: document.getElementById('o-bed-desc').value };
     }
     myListings.push(listing);
     lastPostedListing = listing;
-
-    // Show "Post Another" option for owners
     document.getElementById('post-another-btn').style.display = 'flex';
 
   } else {
@@ -1307,24 +1329,16 @@ function submitListing() {
     if (!selectedTenantLooking) { alert('Please select what you are looking for.'); return; }
     if (!circleCenter) { alert('Please draw a circle on the map for your preferred search area.'); return; }
 
-    let listing = {
-      id: 'u' + Date.now(),
-      role: 'tenant',
-      name: profile.name,
-      phone: profile.phone,
-      lat: circleCenter.lat, lng: circleCenter.lng,
-      radiusKm: circleRadiusKm,
-      propType: selectedTenantLooking,
-      ismine: true
-    };
+    let listing = { id: 'u' + Date.now(), role: 'tenant', name: profile.name, phone: profile.phone, lat: circleCenter.lat, lng: circleCenter.lng, radiusKm: circleRadiusKm, propType: selectedTenantLooking, ismine: true };
+    
     if (selectedTenantLooking === 'entire') {
-      listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: document.getElementById('t-entire-movein').value, desc: document.getElementById('t-entire-desc').value };
+      listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: document.getElementById('t-entire-movein').value, furnishing: document.getElementById('t-entire-furnishing').value, desc: document.getElementById('t-entire-desc').value };
     } else if (selectedTenantLooking === 'room') {
-      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: document.getElementById('t-room-movein').value, gender: document.getElementById('t-room-gender').value, desc: document.getElementById('t-room-desc').value };
+      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: document.getElementById('t-room-movein').value, gender: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, desc: document.getElementById('t-room-desc').value };
     } else {
-      listing = { ...listing, bedType: document.getElementById('t-bed-type').value, budget: parseInt(document.getElementById('t-bed-budget').value)||7000, movein: document.getElementById('t-bed-movein').value, gender: document.getElementById('t-bed-gender').value, desc: document.getElementById('t-bed-desc').value };
+      listing = { ...listing, bedType: document.getElementById('t-bed-type').value, budget: parseInt(document.getElementById('t-bed-budget').value)||7000, movein: document.getElementById('t-bed-movein').value, gender: document.getElementById('t-bed-gender').value, furnishing: document.getElementById('t-bed-furnishing').value, desc: document.getElementById('t-bed-desc').value };
     }
-    myListings = [listing]; // tenant can only have 1
+    myListings = [listing];
     lastPostedListing = listing;
     document.getElementById('post-another-btn').style.display = 'none';
   }
@@ -1335,9 +1349,8 @@ function submitListing() {
 
 function goToExploreAfterPost() {
   closeSuccess();
-  // Pre-apply filters based on what was posted
   if (lastPostedListing) {
-    const ptMap = { entire:'Entire Flat', room:'Private Room', bed:'Shared Bed' };
+    const ptMap = { entire:'Entire Apartment', room:'Private Room', bed:'Shared Bed' };
     const pt = ptMap[lastPostedListing.propType];
     if (pt) {
       proptypeFilter = pt;
@@ -1419,7 +1432,6 @@ window.addEventListener('load', () => {
   if (profile) {
     applyProfileToUI();
   }
-  // Always initialize the map for the landing page so it looks good for guests
   initPreviewMap(); 
 });
 </script>
