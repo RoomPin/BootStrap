@@ -1151,48 +1151,51 @@ function initExploreMap() {
   markerLayer = L.layerGroup().addTo(exploreMap);
   circleLayer = L.layerGroup().addTo(exploreMap);
   refreshExplore();
+
+  // ADD THIS LINE: Fetch new pins every time the user stops dragging the map!
+  exploreMap.on('moveend', refreshExplore);
 }
 
-// 1. Fetch fresh data from the cloud
+// 1. Fetch fresh data ONLY for the visible map area
 async function fetchLiveListings() {
-  // We use a cool Supabase trick here: 'profiles(name, phone)' 
-  // This automatically grabs the user's name from the profiles table and attaches it to their listing!
+  if (!exploreMap) return;
+
+  // Ask the Leaflet map for the exact coordinates of the screen corners
+  const bounds = exploreMap.getBounds();
+  const southLat = bounds.getSouthWest().lat;
+  const northLat = bounds.getNorthEast().lat;
+  const westLng = bounds.getSouthWest().lng;
+  const eastLng = bounds.getNorthEast().lng;
+
+  // Tell Supabase: "Only give me rows where the Latitude and Longitude fit inside this box"
   const { data, error } = await _supabase
     .from('listings')
-    .select(`*, profiles(name, phone)`);
+    .select(`*, profiles(name, phone)`)
+    .gte('lat', southLat)
+    .lte('lat', northLat)
+    .gte('lng', westLng)
+    .lte('lng', eastLng);
 
   if (error) {
     console.error("Error fetching map data:", error);
     return;
   }
 
-  // 2. Translate the database rows back into the format your UI expects
+  // 2. Translate the database rows back into the UI format
   liveListings = data.map(row => {
     const isOwner = row.role === 'owner';
     const isMine = profile && profile.id === row.user_id;
 
     let uiListing = {
-      id: row.id,
-      role: row.role,
-      name: row.profiles?.name || 'User',
-      phone: row.profiles?.phone || 'No phone',
-      lat: parseFloat(row.lat),
-      lng: parseFloat(row.lng),
-      propType: row.prop_type,
-      ismine: isMine,
-      movein: row.movein_date,
-      gender: row.gender_pref || 'Any',
-      furnishing: row.furnishing || 'Any',
-      brokerage: row.brokerage || 'No',
-      bhk: row.bhk,
-      desc: row.description,
-      
-      // Specifics
+      id: row.id, role: row.role,
+      name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
+      lat: parseFloat(row.lat), lng: parseFloat(row.lng),
+      propType: row.prop_type, ismine: isMine, movein: row.movein_date,
+      gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any',
+      brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
       radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
-      bedType: row.bed_type,
-      capacity: row.capacity_allowed,
-      peopleInFlat: row.people_in_flat,
-      peopleInRoom: row.people_in_room,
+      bedType: row.bed_type, capacity: row.capacity_allowed,
+      peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
       people: row.tenant_people_count
     };
 
@@ -1202,11 +1205,9 @@ async function fetchLiveListings() {
     } else {
       uiListing.budget = parseFloat(row.price);
     }
-
     return uiListing;
   });
 
-  // 3. Now that we have the live data, draw the map!
   applyFilters();
 }
 
