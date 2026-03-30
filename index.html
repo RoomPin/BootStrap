@@ -1554,14 +1554,24 @@ function initPickerMap() {
   }
 }
 
-function submitListing() {
+async function submitListing() {
   if (!profile) return;
 
-  if (profile.role === 'owner') {
-    if (!selectedPropType) { alert('Please select what you are offering (Entire Apartment / Private Room / Shared Bed).'); return; }
-    if (!pinLat) { alert('Please drop a pin on the map for your property location.'); return; }
+  // Change button text so user knows it's loading
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.textContent = "Publishing to map...";
 
-    let listing = { id: 'u' + Date.now(), role: 'owner', name: profile.name, phone: profile.phone, lat: pinLat, lng: pinLng, propType: selectedPropType, ismine: true };
+  let listing = { role: profile.role, name: profile.name, phone: profile.phone, ismine: true };
+
+  // 1. GATHER DATA (Exactly as your UI expects it)
+  if (profile.role === 'owner') {
+    if (!selectedPropType) { alert('Please select what you are offering.'); resetBtn(btn); return; }
+    if (!pinLat) { alert('Please drop a pin on the map.'); resetBtn(btn); return; }
+
+    listing.lat = pinLat; 
+    listing.lng = pinLng; 
+    listing.propType = selectedPropType;
     
     if (selectedPropType === 'entire') {
       listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, capacity: document.getElementById('o-entire-people').value, brokerage: document.getElementById('o-entire-brokerage').value, rent: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein: document.getElementById('o-entire-movein').value, furnishing: document.getElementById('o-entire-furnishing').value, desc: document.getElementById('o-entire-desc').value };
@@ -1570,16 +1580,15 @@ function submitListing() {
     } else {
       listing = { ...listing, bedType: document.getElementById('o-bed-type').value, peopleInRoom: document.getElementById('o-bed-people').value, brokerage: document.getElementById('o-bed-brokerage').value, rent: parseInt(document.getElementById('o-bed-rent').value)||7000, deposit: parseInt(document.getElementById('o-bed-deposit').value)||0, movein: document.getElementById('o-bed-movein').value, gender: document.getElementById('o-bed-gender').value, furnishing: document.getElementById('o-bed-furnishing').value, desc: document.getElementById('o-bed-desc').value };
     }
-    myListings.push(listing);
-    lastPostedListing = listing;
-    document.getElementById('post-another-btn').style.display = 'flex';
-
   } else {
     // Tenant
-    if (!selectedTenantLooking) { alert('Please select what you are looking for.'); return; }
-    if (!circleCenter) { alert('Please draw a circle on the map for your preferred search area.'); return; }
+    if (!selectedTenantLooking) { alert('Please select what you are looking for.'); resetBtn(btn); return; }
+    if (!circleCenter) { alert('Please draw a circle on the map.'); resetBtn(btn); return; }
 
-    let listing = { id: 'u' + Date.now(), role: 'tenant', name: profile.name, phone: profile.phone, lat: circleCenter.lat, lng: circleCenter.lng, radiusKm: circleRadiusKm, propType: selectedTenantLooking, ismine: true };
+    listing.lat = circleCenter.lat; 
+    listing.lng = circleCenter.lng; 
+    listing.radiusKm = circleRadiusKm; 
+    listing.propType = selectedTenantLooking;
     
     if (selectedTenantLooking === 'entire') {
       listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, people: document.getElementById('t-entire-people').value, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: document.getElementById('t-entire-movein').value, furnishing: document.getElementById('t-entire-furnishing').value, desc: document.getElementById('t-entire-desc').value };
@@ -1588,13 +1597,69 @@ function submitListing() {
     } else {
       listing = { ...listing, bedType: document.getElementById('t-bed-type').value, budget: parseInt(document.getElementById('t-bed-budget').value)||7000, movein: document.getElementById('t-bed-movein').value, gender: document.getElementById('t-bed-gender').value, furnishing: document.getElementById('t-bed-furnishing').value, desc: document.getElementById('t-bed-desc').value };
     }
-    myListings = [listing];
-    lastPostedListing = listing;
-    document.getElementById('post-another-btn').style.display = 'none';
   }
 
-  saveProfile();
+  // 2. TRANSLATE DATA FOR SUPABASE
+  // This maps your UI fields to the exact columns in your database
+  const dbListingData = {
+    user_id: profile.id, // Links listing to the current user
+    role: listing.role,
+    prop_type: listing.propType,
+    lat: listing.lat,
+    lng: listing.lng,
+    radius_km: listing.radiusKm || null,
+    price: listing.rent || listing.budget || 0, // Combines rent and budget into price
+    deposit: listing.deposit || 0,
+    movein_date: listing.movein || null,
+    gender_pref: listing.gender || null,
+    furnishing: listing.furnishing || null,
+    brokerage: listing.brokerage || null,
+    bhk: listing.bhk || null,
+    description: listing.desc || null,
+    bed_type: listing.bedType || null,
+    capacity_allowed: listing.capacity || null,
+    people_in_flat: listing.peopleInFlat || null,
+    people_in_room: listing.peopleInRoom || null,
+    tenant_people_count: listing.people || null,
+    created_at: new Date().toISOString() // Forces the exact timestamp!
+  };
+
+  // 3. SEND TO SUPABASE
+  const { data, error } = await _supabase
+    .from('listings')
+    .insert([dbListingData])
+    .select();
+
+  if (error) {
+    console.error("Listing save error:", error);
+    alert("Something went wrong saving your listing. Check the console.");
+    resetBtn(btn);
+    return;
+  }
+
+  // 4. UPDATE UI ON SUCCESS
+  // Give our local listing the real ID generated by Supabase
+  listing.id = data[0].id;
+
+  if (profile.role === 'owner') {
+    myListings.push(listing);
+    document.getElementById('post-another-btn').style.display = 'flex';
+  } else {
+    myListings = [listing];
+    document.getElementById('post-another-btn').style.display = 'none';
+  }
+  
+  lastPostedListing = listing;
+  saveProfile(); // Caches it locally so the profile page updates instantly
+  
   document.getElementById('success-overlay').classList.add('show');
+  resetBtn(btn);
+}
+
+// Helper to reset the button
+function resetBtn(btn) {
+  btn.disabled = false;
+  btn.textContent = "Publish Listing →";
 }
 
 function goToExploreAfterPost() {
