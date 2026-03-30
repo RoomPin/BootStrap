@@ -1523,24 +1523,26 @@ function selectLocation(item, resultsId, targetMapName, isCreate) {
   const lat = parseFloat(item.lat);
   const lon = parseFloat(item.lon);
 
+  // Check if it's outside Hinjewadi operating area
   const dist = haversineKm(OPERATING_CENTER[0], OPERATING_CENTER[1], lat, lon);
   if (dist > OPERATING_RADIUS_KM) {
     alert(`We are currently only operating within ${OPERATING_RADIUS_KM}km of Hinjewadi. Please select a closer location.`);
     return;
   }
 
+  // 1. Jump the map to the searched area
   const targetMap = targetMapName === 'explore' ? exploreMap : pickerMap;
   if (targetMap) targetMap.setView([lat, lon], 15);
 
-  if (isCreate && profile && profile.role === 'owner') {
-    if (pickerMarker) targetMap.removeLayer(pickerMarker);
-    pickerMarker = L.marker([lat,lon], { icon:pickerIconFn() }).addTo(targetMap);
-    pinLat = lat; pinLng = lon;
-    const shortName = item.display_name.split(',')[0];
-    document.getElementById('pin-location').textContent = `📍 Pinned at ${shortName}`;
+  const shortName = item.display_name.split(',')[0];
+
+  // 2. Just update the text box (do NOT drop a pin automatically)
+  if (isCreate) {
+    // This runs for BOTH Owners and Tenants when they are creating a listing
     document.getElementById('map-search-input').value = shortName;
-  } else if (!isCreate) {
-    document.getElementById('explore-search-input').value = item.display_name.split(',')[0];
+  } else {
+    // This runs for anyone using the search bar on the Explore Map
+    document.getElementById('explore-search-input').value = shortName;
   }
 }
 
