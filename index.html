@@ -11,6 +11,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400;1,700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -346,7 +348,6 @@ input[type=date]:focus{border-color:var(--blue)}
 </head>
 <body>
 
-<!-- PROFILE SETUP -->
 <div id="page-setup">
   <div class="setup-card">
     <div class="setup-logo">Room<span>Pin</span></div>
@@ -368,7 +369,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <button class="setup-btn" id="step1-btn" onclick="goStep2()" disabled>Continue →</button>
     </div>
 
-    <!-- Step 2 Restored without "I am..." label -->
     <div class="setup-step" id="setup-step-2">
       <div class="role-cards">
         <div class="role-card" id="rc-owner" onclick="selectRole('owner')">
@@ -569,10 +569,8 @@ input[type=date]:focus{border-color:var(--blue)}
         </div>
       </div>
 
-      <!-- Progressive Display: Hidden until property type is selected -->
       <div id="create-map-section" style="display:none">
         
-        <!-- Owner: Entire Apartment -->
         <div class="form-card dynamic-fields" id="fields-entire-owner">
           <div class="form-card-title">Apartment Details</div>
           <div class="form-row">
@@ -602,7 +600,6 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="fg"><label>Description</label><textarea id="o-entire-desc" placeholder="Describe the apartment — furnishing, amenities, nearby landmarks..."></textarea></div>
         </div>
 
-        <!-- Owner: Private Room -->
         <div class="form-card dynamic-fields" id="fields-room-owner">
           <div class="form-card-title">Room Details</div>
           <div class="form-row">
@@ -640,7 +637,6 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="fg"><label>Description</label><textarea id="o-room-desc" placeholder="Describe the room — attached bath, apartment amenities..."></textarea></div>
         </div>
 
-        <!-- Owner: Shared Bed -->
         <div class="form-card dynamic-fields" id="fields-bed-owner">
           <div class="form-card-title">Shared Room Details</div>
           <div class="form-row">
@@ -672,7 +668,6 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="fg"><label>Description</label><textarea id="o-bed-desc" placeholder="Describe the room — attached bath, locker, apartment floor..."></textarea></div>
         </div>
 
-        <!-- Tenant: Entire Apartment -->
         <div class="form-card dynamic-fields" id="fields-entire-tenant">
           <div class="form-card-title">Preferences</div>
           <div class="form-row">
@@ -693,7 +688,6 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="fg"><label>About You</label><textarea id="t-entire-desc" placeholder="e.g. Working at Wipro, couple, need parking, prefer furnished..."></textarea></div>
         </div>
 
-        <!-- Tenant: Private Room -->
         <div class="form-card dynamic-fields" id="fields-room-tenant">
           <div class="form-card-title">Preferences</div>
           <div class="form-row">
@@ -719,7 +713,6 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="fg"><label>About You</label><textarea id="t-room-desc" placeholder="e.g. Software engineer at Infosys, non-smoker, early to bed..."></textarea></div>
         </div>
 
-        <!-- Tenant: Shared Bed -->
         <div class="form-card dynamic-fields" id="fields-bed-tenant">
           <div class="form-card-title">Preferences</div>
           <div class="form-row">
@@ -756,9 +749,7 @@ input[type=date]:focus{border-color:var(--blue)}
 
         <button class="submit-btn" onclick="submitListing()">Publish Listing →</button>
       </div>
-      <!-- End Progressive Display -->
-
-    </div>
+      </div>
   </div>
 </div>
 
@@ -769,7 +760,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <p>Your account and listings</p>
     </div>
 
-    <!-- UPDATED PROFILE CARD (Flex Layout) -->
     <div class="profile-card" style="display:flex; justify-content:space-between; align-items:center; gap:20px;">
       <div>
         <div class="profile-card-title">Account</div>
@@ -818,6 +808,17 @@ input[type=date]:focus{border-color:var(--blue)}
 </div>
 
 <script>
+// ══════════════════════════════════════
+// SUPABASE SETUP (Step 3)
+// ══════════════════════════════════════
+const { createClient } = supabase;
+
+// COPY AND PASTE YOUR KEYS HERE:
+const supabaseUrl = 'https://gtgahphxuzvotrheyyaw.supabase.co';
+const supabaseKey = 'sb_publishable_1L8tasN-T01VDqU8L2y6bQ_r1dDG_I5';
+
+const _supabase = createClient(supabaseUrl, supabaseKey);
+
 // ══════════════════════════════════════
 // DATA & STATE
 // ══════════════════════════════════════
@@ -907,15 +908,44 @@ function selectRole(role) {
   document.getElementById('step2-btn').disabled = false;
 }
 
-function finishSetup() {
+// Supabase Updated finishSetup (Step 4 & Cleanup)
+async function finishSetup() {
   if (!selectedRole) return;
-  profile = {
-    name:  document.getElementById('setup-name').value.trim(),
+  
+  // Disable the button and change text so the user knows it's loading
+  const btn = document.getElementById('step2-btn');
+  btn.disabled = true;
+  btn.textContent = "Saving...";
+
+  // 1. Prepare the data exactly as it matches your Supabase columns
+  const newProfileData = {
+    name: document.getElementById('setup-name').value.trim(),
     phone: document.getElementById('setup-phone').value.trim(),
-    role:  selectedRole,
-    photo: null
+    role: selectedRole
   };
-  saveProfile();
+
+  // 2. Send it to the Supabase 'profiles' table
+  const { data, error } = await _supabase
+    .from('profiles')
+    .insert([newProfileData])
+    .select(); // .select() tells Supabase to send the newly created row back to us
+
+  if (error) {
+    console.error("Error saving to database:", error);
+    alert("Something went wrong saving your profile.");
+    btn.disabled = false;
+    btn.textContent = "Complete Setup →";
+    return;
+  }
+
+  // 3. Success! Update our local profile variable with the official database row
+  profile = data[0];
+  
+  // 4. We still use local storage to cache the data so the rest of your app continues 
+  // to function perfectly while we work on setting up the listings database next.
+  saveProfile(); 
+
+  // 5. Move to the next screen
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
   showPage('profile'); 
