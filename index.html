@@ -1101,35 +1101,32 @@ function osmTiles() {
 }
 
 // ══════════════════════════════════════
-// PREVIEW MAP (Landing)
+// PREVIEW MAP (Landing Page Hero)
 // ══════════════════════════════════════
-function initPreviewMap(containerId, listing) {
-  const mapElement = document.getElementById(containerId);
+function initPreviewMap() {
+  const mapElement = document.getElementById('preview-map');
   if (!mapElement) return;
 
-  // Create the mini-map focused on the listing's coordinates
-  const map = L.map(containerId, { 
+  // Create a static, non-interactive map of Hinjewadi for the landing page
+  previewMap = L.map('preview-map', { 
+    center: OPERATING_CENTER,
+    zoom: 13.5,
     zoomControl: false, 
     dragging: false, 
-    scrollWheelZoom: false 
-  }).setView([listing.lat, listing.lng], 14);
+    scrollWheelZoom: false,
+    doubleClickZoom: false
+  });
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap'
-  }).addTo(map);
+  }).addTo(previewMap);
 
-  // Draw a pin for owners, or a circle for tenants
-  if (listing.role === 'owner') {
-    L.marker([listing.lat, listing.lng]).addTo(map);
-  } else {
-    const radiusMeters = (listing.radiusKm || 1) * 1000;
-    L.circle([listing.lat, listing.lng], {
-      color: '#3b82f6',
-      fillColor: '#3b82f6',
-      fillOpacity: 0.2,
-      radius: radiusMeters
-    }).addTo(map);
-  }
+  // Add a few visual-only pins so the homepage looks active!
+  L.marker([18.5924, 73.7360], { icon: ownerIcon }).addTo(previewMap);
+  L.marker([18.5820, 73.7420], { icon: ownerIcon }).addTo(previewMap);
+  L.circle([18.6010, 73.7250], {
+    color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 900
+  }).addTo(previewMap);
 }
 
 // ══════════════════════════════════════
