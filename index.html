@@ -498,11 +498,7 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
     </div>
     <div id="map"></div>
-    <div class="map-legend">
-      <div class="legend-row"><div class="ldot g"></div> Owner listing</div>
-      <div class="legend-row"><div class="ldot b"></div> Tenant search area</div>
-      <div class="legend-row"><div class="ldot o"></div> Your listing (owner)</div>
-      <div class="legend-row"><div class="ldot p"></div> Your search area (tenant)</div>
+    <div class="map-legend" id="dynamic-map-legend">
     </div>
     <div class="detail-panel" id="detail-panel">
       <button class="dp-close" onclick="closeDetail()">×</button>
@@ -934,6 +930,7 @@ async function finishSetup() {
   // 5. Move to the next screen
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
+  updateMapLegend();
   showPage('profile'); 
 }
 
@@ -949,6 +946,26 @@ function loadProfile() {
   return false;
 }
 
+function updateMapLegend() {
+  const legendDiv = document.getElementById('dynamic-map-legend');
+  if (!legendDiv) return;
+
+  // Everyone sees these two by default
+  let html = `
+    <div class="legend-row"><div class="ldot g"></div> Owner listing</div>
+    <div class="legend-row"><div class="ldot b"></div> Tenant search area</div>
+  `;
+
+  // Add the personalized 3rd row depending on who is logged in
+  if (profile && profile.role === 'owner') {
+    html += `<div class="legend-row"><div class="ldot o"></div> Your listing</div>`;
+  } else if (profile && profile.role === 'tenant') {
+    html += `<div class="legend-row"><div class="ldot p"></div> Your search area</div>`;
+  }
+
+  legendDiv.innerHTML = html;
+}
+  
 function applyProfileToUI() {
   if (!profile) return;
   // Nav profile button
@@ -1933,6 +1950,7 @@ async function deleteMyListing(idx) {
 // ══════════════════════════════════════
 window.addEventListener('load', () => {
   loadProfile();
+  updateMapLegend();
   if (profile) {
     applyProfileToUI();
   }
