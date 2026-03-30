@@ -973,17 +973,74 @@ function applyProfileToUI() {
   }
 }
 
-function uploadProfilePhoto(e) {
+async function uploadProfilePhoto(e) {
   const file = e.target.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function(event) {
-      profile.photo = event.target.result;
-      saveProfile();
-      renderProfilePage();
-    };
-    reader.readAsDataURL(file);
+  if (!file || !profile || !profile.id) return;
+
+  // Show loading indicator
+  const avatarDiv = document.getElementById('profile-avatar');
+  avatarDiv.innerHTML = '<span style="font-size:14px">⏳ Loading...</span>';
+
+  // 1. DELETE THE OLD PHOTO (If they are replacing one)
+  if (profile.photo) {
+    const oldFileName = profile.photo.split('/avatars/').pop();
+    if (oldFileName) {
+      await _supabase.storage.from('avatars').remove([oldFileName]);
+    }
   }
+
+  // 2. UPLOAD THE NEW PHOTO
+  const fileExtension = file.name.split('.').pop();
+  const fileName = `${profile.id}-${Date.now()}.${fileExtension}`; 
+
+  const { data: uploadData, error: uploadError } = await _supabase
+    .storage
+    .from('avatars')
+    .upload(fileName, file);
+
+  if (uploadError) {
+    console.error("Upload error:", uploadError);
+    alert("Something went wrong uploading your photo.");
+    renderProfilePage(); 
+    return;
+  }
+
+  // 3. GET THE NEW PUBLIC LINK
+  const { data: publicUrlData } = _supabase
+    .storage
+    .from('avatars')
+    .getPublicUrl(fileName);
+
+  const photoUrl = publicUrlData.publicUrl;
+
+  // 4. SAVE THE NEW LINK TO THE DATABASE (With Trackers!)
+  console.log("🕵️ Tracker 1: Attempting to update ID:", profile.id); 
+  console.log("🕵️ Tracker 2: With this URL:", photoUrl); 
+
+  const { data: updateData, error: dbError } = await _supabase
+    .from('profiles')
+    .update({ photo_url: photoUrl })
+    .eq('id', profile.id)
+    .select(); 
+
+  console.log("🕵️ Tracker 3: Supabase responded with:", updateData); 
+
+  if (dbError) {
+    console.error("Database error:", dbError);
+    alert("Photo uploaded, but couldn't link it to your profile.");
+    return;
+  }
+  
+  // If Supabase returns an empty array, it means it didn't find the profile!
+  if (!updateData || updateData.length === 0) {
+     alert("Wait! Supabase didn't find your profile ID to update.");
+     return;
+  }
+
+  // 5. SUCCESS! UPDATE THE UI
+  profile.photo = photoUrl;
+  saveProfile();
+  renderProfilePage(); 
 }
 
 function resetProfile() {
