@@ -825,30 +825,13 @@ const _supabase = createClient(supabaseUrl, supabaseKey);
 const OPERATING_CENTER = [18.5924, 73.7360]; // Hinjewadi
 const OPERATING_RADIUS_KM = 25; // Strict operating boundary
 
-// Mock listings (owners only — tenants post search areas)
-const MOCK_OWNER_LISTINGS = [
-  { id:'m1', role:'owner', name:'Vikram Nair',    phone:'98765 43210', lat:18.5924, lng:73.7360, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:12000, deposit:24000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', brokerage:'No', desc:'Fully furnished apartment near Wipro Gate 1. AC room, 24hr water, secure society.' },
-  { id:'m2', role:'owner', name:'Pooja Mehta',    phone:'91234 56789', lat:18.5882, lng:73.7405, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'1', rent:7500, deposit:15000, movein:'2025-05-15', gender:'Female', furnishing:'Semi-furnished', brokerage:'No', desc:'Budget-friendly sharing near Rajiv Gandhi IT Park. All girls, no smokers.' },
-  { id:'m3', role:'owner', name:'Sneha Kulkarni', phone:'87654 32109', lat:18.5845, lng:73.7383, propType:'entire', bhk:'1 BHK', rent:18000, deposit:36000, movein:'2025-05-20', gender:'Any', furnishing:'Fully furnished', brokerage:'Yes', desc:'Fully furnished 1BHK ideal for a couple or single professional. Parking included.' },
-  { id:'m4', role:'owner', name:'Amit Singh',     phone:'99887 66554', lat:18.5978, lng:73.7373, propType:'bed',    bedType:'Double Sharing', peopleInRoom:'1', rent:8500, deposit:17000, movein:'2025-05-30', gender:'Male', furnishing:'Fully furnished', brokerage:'No', desc:'Double sharing near Phase 3. Mess food optional. Good PMPML connectivity.' },
-  { id:'m5', role:'owner', name:'Karan Shah',     phone:'66554 33221', lat:18.5898, lng:73.7343, propType:'room',   bhk:'3 BHK+', peopleInFlat:'2', rent:14000, deposit:28000, movein:'2025-05-25', gender:'Any', furnishing:'Unfurnished', brokerage:'Yes', desc:'Modern apartment with gym and parking. Near Hinjewadi Phase 1 main road.' },
-  { id:'m6', role:'owner', name:'Divya Reddy',    phone:'88990 11223', lat:18.5863, lng:73.7293, propType:'room',   bhk:'2 BHK', peopleInFlat:'1', rent:11000, deposit:22000, movein:'2025-06-15', gender:'Female', furnishing:'Semi-furnished', brokerage:'No', desc:'2-sharing in gated society near Phase 2. Clean, no broker.' },
-  { id:'m7', role:'owner', name:'Rohan Verma',    phone:'44332 11009', lat:18.5872, lng:73.7363, propType:'bed',    bedType:'Triple Sharing', peopleInRoom:'2', rent:6500, deposit:13000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', brokerage:'No', desc:'3-sharing male PG near Phase 2. Meals included. Ideal for freshers.' },
-  { id:'m8', role:'owner', name:'Anita Bhat',     phone:'33221 00998', lat:18.5928, lng:73.7398, propType:'entire', bhk:'2 BHK', rent:28000, deposit:56000, movein:'2025-06-20', gender:'Any', furnishing:'Fully furnished', brokerage:'Yes', desc:'Premium 2BHK for professionals or small family. Fully furnished, AC, modular kitchen.' },
-];
-
-const MOCK_TENANT_LISTINGS = [
-  { id:'t1', role:'tenant', name:'Arjun Desai',   phone:'90123 45678', lat:18.5952, lng:73.7325, radiusKm:0.8, propType:'room',   budget:12000, movein:'2025-06-01', gender:'Male', furnishing:'Fully furnished', desc:'Software engineer at Infosys. Non-smoker, neat, prefer quiet flatmate.' },
-  { id:'t2', role:'tenant', name:'Priya Joshi',   phone:'77665 44332', lat:18.5833, lng:73.7425, radiusKm:1.0, propType:'entire', budget:20000, movein:'2025-06-10', gender:'Female', furnishing:'Any', desc:'UX designer at Persistent. Looking for 1BHK for myself.' },
-  { id:'t3', role:'tenant', name:'Meera Nambiar', phone:'55443 22110', lat:18.5942, lng:73.7413, radiusKm:0.6, propType:'bed',    budget:8000,  movein:'2025-07-01', gender:'Female', furnishing:'Semi-furnished', desc:'HR at Wipro. Looking for female double sharing, Phase 1 or 2.' },
-  { id:'t4', role:'tenant', name:'Rahul Patil',   phone:'76543 21098', lat:18.5912, lng:73.7455, radiusKm:1.2, propType:'bed',    budget:9000,  movein:'2025-07-01', gender:'Male', furnishing:'Any', desc:'MBA intern at Cognizant. Budget conscious, flexible on area.' },
-];
 
 // App state
 let profile = null;
 let myListings = []; 
 let lastPostedListing = null;
-
+let liveListings = []; // NEW: This will hold the live data from the cloud
+  
 // Map instances
 let exploreMap = null, pickerMap = null, previewMap = null;
 let markerLayer = null, circleLayer = null;
@@ -1084,22 +1067,74 @@ function initExploreMap() {
   refreshExplore();
 }
 
-function refreshExplore() {
+// 1. Fetch fresh data from the cloud
+async function fetchLiveListings() {
+  // We use a cool Supabase trick here: 'profiles(name, phone)' 
+  // This automatically grabs the user's name from the profiles table and attaches it to their listing!
+  const { data, error } = await _supabase
+    .from('listings')
+    .select(`*, profiles(name, phone)`);
+
+  if (error) {
+    console.error("Error fetching map data:", error);
+    return;
+  }
+
+  // 2. Translate the database rows back into the format your UI expects
+  liveListings = data.map(row => {
+    const isOwner = row.role === 'owner';
+    const isMine = profile && profile.id === row.user_id;
+
+    let uiListing = {
+      id: row.id,
+      role: row.role,
+      name: row.profiles?.name || 'User',
+      phone: row.profiles?.phone || 'No phone',
+      lat: parseFloat(row.lat),
+      lng: parseFloat(row.lng),
+      propType: row.prop_type,
+      ismine: isMine,
+      movein: row.movein_date,
+      gender: row.gender_pref || 'Any',
+      furnishing: row.furnishing || 'Any',
+      brokerage: row.brokerage || 'No',
+      bhk: row.bhk,
+      desc: row.description,
+      
+      // Specifics
+      radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
+      bedType: row.bed_type,
+      capacity: row.capacity_allowed,
+      peopleInFlat: row.people_in_flat,
+      peopleInRoom: row.people_in_room,
+      people: row.tenant_people_count
+    };
+
+    if (isOwner) {
+      uiListing.rent = parseFloat(row.price);
+      uiListing.deposit = parseFloat(row.deposit);
+    } else {
+      uiListing.budget = parseFloat(row.price);
+    }
+
+    return uiListing;
+  });
+
+  // 3. Now that we have the live data, draw the map!
   applyFilters();
 }
 
-function getAllListings() {
-  const ownerListings = [...MOCK_OWNER_LISTINGS];
-  const tenantListings = [...MOCK_TENANT_LISTINGS];
-  if (profile && profile.role === 'owner') {
-    myListings.forEach(l => ownerListings.push({ ...l, ismine: true }));
-  }
-  if (profile && profile.role === 'tenant' && myListings.length > 0) {
-    tenantListings.push({ ...myListings[0], ismine: true });
-  }
-  return { ownerListings, tenantListings };
+// Every time you open the Explore page, it asks the cloud for new pins
+function refreshExplore() {
+  fetchLiveListings();
 }
 
+// The map filters just look at our liveListings array now
+function getAllListings() {
+  const ownerListings = liveListings.filter(l => l.role === 'owner');
+  const tenantListings = liveListings.filter(l => l.role === 'tenant');
+  return { ownerListings, tenantListings };
+}
 function applyFilters() {
   if (!exploreMap) return;
   const { ownerListings, tenantListings } = getAllListings();
