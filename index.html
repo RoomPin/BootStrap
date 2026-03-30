@@ -1437,12 +1437,38 @@ function checkTenantAlreadyListed() {
   }
 }
 
-function deleteTenantListing() {
-  if (!confirm('Delete your current listing?')) return;
+async function deleteTenantListing() {
+  if (!confirm('Delete your current search area? It will be removed from the map.')) return;
+
+  // 1. Tell Supabase to delete it from the cloud
+  if (myListings.length > 0 && myListings[0].id) {
+    const { error } = await _supabase
+      .from('listings')
+      .delete()
+      .eq('id', myListings[0].id); // Delete the tenant's only listing
+
+    if (error) {
+      console.error("Error deleting:", error);
+      alert("Could not delete listing from the database.");
+      return;
+    }
+  }
+
+  // 2. Remove it locally and reset the UI
   myListings = [];
   saveProfile();
   checkTenantAlreadyListed();
-  if (pickerMap) { pickerMap.remove(); pickerMap = null; pickerMarker = null; drawnItems = null; drawControl = null; }
+  
+  if (pickerMap) { 
+    pickerMap.remove(); 
+    pickerMap = null; 
+    pickerMarker = null; 
+    drawnItems = null; 
+    drawControl = null; 
+  }
+
+  // 3. Refresh the Explore map so the ghost circle disappears!
+  if (exploreMap) refreshExplore();
 }
 
 function revealCreateMap() {
@@ -1787,12 +1813,32 @@ function renderProfilePage() {
   }
 }
 
-function deleteMyListing(idx) {
-  if (!confirm('Delete this listing?')) return;
+async function deleteMyListing(idx) {
+  if (!confirm('Delete this listing? It will be removed from the map permanently.')) return;
+  
+  const listingToDelete = myListings[idx];
+
+  // 1. Tell Supabase to delete it from the cloud
+  if (listingToDelete.id) {
+    const { error } = await _supabase
+      .from('listings')
+      .delete()
+      .eq('id', listingToDelete.id); // Finds the exact row to delete
+
+    if (error) {
+      console.error("Error deleting:", error);
+      alert("Could not delete listing from the database.");
+      return;
+    }
+  }
+
+  // 2. Remove it from local memory and update the UI
   myListings.splice(idx, 1);
   saveProfile();
   renderProfilePage();
-  if (exploreMap) applyFilters();
+  
+  // 3. Refresh the map so the pin disappears instantly!
+  if (exploreMap) refreshExplore(); 
 }
 
 // ══════════════════════════════════════
