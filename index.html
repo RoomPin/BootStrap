@@ -965,7 +965,7 @@ function applyProfileToUI() {
     document.getElementById('map-picker-title').textContent = profile.role === 'owner'
       ? '📍 Pin Your Property Location'
       : '🔵 Draw Your Search Area';
-    document.getElementById('map-search-bar').style.display = profile.role === 'owner' ? 'flex' : 'none';
+    document.getElementById('map-search-bar').style.display = 'flex';
 
     document.getElementById('pin-location').textContent = profile.role === 'owner'
       ? 'Click on the map to pin your exact property location'
