@@ -37,7 +37,7 @@ nav{
 .nav-logo{font-family:'Instrument Serif',serif;font-size:22px;color:var(--blue);cursor:pointer;line-height:1}
 .nav-logo span{color:var(--green)}
 .nav-links{display:flex;gap:4px;align-items:center}
-.nav-links a{font-size:13px;font-weight:500;color:var(--gray-600);text-decoration:none;padding:6px 13px;border-radius:6px;cursor:pointer;transition:all .15s}
+.nav-links a{font-size:13px;font-weight:600;color:var(--gray-600);text-decoration:none;padding:6px 13px;border-radius:6px;cursor:pointer;transition:all .15s}
 .nav-links a:hover{color:var(--blue);background:var(--gray-100)}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;font-family:inherit;line-height:1}
 .btn-primary{background:var(--blue);color:white}
@@ -53,8 +53,9 @@ nav{
 .page.active{display:block}
 #page-explore.active{display:flex}
 #page-profile.active{display:block}
+#page-matches.active{display:block} /* NEW MATCHES PAGE */
 
-/* ════════ PROFILE SETUP (first visit) ════════ */
+/* ════════ PROFILE SETUP ════════ */
 #page-setup{
   position:fixed;inset:0;z-index:2000;
   background:var(--white);display:none;
@@ -164,7 +165,7 @@ input[type=date]:focus{border-color:var(--blue)}
 .map-area{flex:1;position:relative;overflow:hidden}
 #map{width:100%;height:100%}
 
-/* Popup */
+/* Popup & Legend */
 .leaflet-popup-content-wrapper{padding:0!important;border-radius:10px!important;box-shadow:var(--shadow-md)!important;border:1px solid var(--gray-200);overflow:hidden}
 .leaflet-popup-content{margin:0!important;width:auto!important}
 .leaflet-popup-tip-container{display:none}
@@ -212,6 +213,14 @@ input[type=date]:focus{border-color:var(--blue)}
 .contact-btn:hover{background:#243d61}
 .contact-revealed{font-size:14px;font-weight:600;color:var(--blue);text-align:center;padding:11px;background:var(--blue-light);border-radius:7px}
 .own-listing-banner{background:#fff3e0;border:1px solid #fed7aa;border-radius:8px;padding:10px 12px;font-size:12px;color:#92400e;margin-bottom:14px}
+
+/* ════════ MATCHES PAGE ════════ */
+#page-matches {
+  background: var(--gray-50);
+  padding-top: 56px;
+  flex: 1;
+  overflow-y: auto;
+}
 
 /* ════════ CREATE LISTING ════════ */
 #page-create{background:var(--gray-50);padding-top:56px}
@@ -316,28 +325,19 @@ input[type=date]:focus{border-color:var(--blue)}
 
 /* ════════ DESKTOP WIDESCREEN OPTIMIZATIONS ════════ */
 @media(min-width: 900px) {
-  /* Landing Page Widescreen Polish */
   .hero { max-width: 800px; padding-top: 80px; padding-bottom: 40px; }
-  .hero h1 { font-size: 56px; line-height: 1.15; } /* Fixed absolute size to prevent weird stretching */
+  .hero h1 { font-size: 56px; line-height: 1.15; }
   .hero p { max-width: 500px; font-size: 17px; margin-bottom: 32px; }
   .map-preview-wrap { max-width: 900px; }
   .map-preview-box { height: 400px; }
-
-  /* Keeps middle sections balanced */
   .section-inner { max-width: 900px; }
   .section-title { font-size: 38px; line-height: 1.2; }
   .why-inner { max-width: 900px; }
   .why-stats { gap: 40px; margin-top: 48px; }
-  
-  /* Footer constraints */
   .footer-inner { max-width: 900px; }
-
-  /* Create & Profile pages: Form padding */
   .create-inner, .profile-inner { max-width: 720px; padding-top: 48px; }
   .create-hd h1, .profile-hd h1 { font-size: 38px; }
   .prop-type-cards { gap: 16px; }
-  
-  /* Form cards subtle shadow and spacing */
   .form-card, .map-picker-card, .profile-card, .setup-card { 
     box-shadow: 0 4px 20px rgba(0,0,0,0.04); 
     padding: 32px; 
@@ -391,7 +391,7 @@ input[type=date]:focus{border-color:var(--blue)}
   <div class="nav-logo" onclick="showPage('landing')">Room<span>Pin</span></div>
   <div class="nav-links">
     <a onclick="showPage('explore')">Explore</a>
-    <a onclick="showPage('create')" class="btn btn-primary">Post a Listing</a>
+    <a onclick="showPage('matches')">Matches ✨</a> <a onclick="showPage('create')" class="btn btn-primary">Post a Listing</a>
     <button class="profile-icon" id="nav-profile-btn" onclick="showPage('profile')" title="Profile">?</button>
   </div>
 </nav>
@@ -498,13 +498,22 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
     </div>
     <div id="map"></div>
-    <div class="map-legend" id="dynamic-map-legend">
-    </div>
+    <div class="map-legend" id="dynamic-map-legend"></div>
     <div class="detail-panel" id="detail-panel">
       <button class="dp-close" onclick="closeDetail()">×</button>
       <div class="dp-photo" id="dp-photo">🏠</div>
       <div class="dp-body" id="dp-body"></div>
     </div>
+  </div>
+</div>
+
+<div id="page-matches" class="page">
+  <div class="profile-inner">
+    <div class="profile-hd">
+      <h1>My Matches</h1>
+      <p>The best fits for your active listing based on location and budget.</p>
+    </div>
+    <div id="matches-container"></div>
   </div>
 </div>
 
@@ -857,7 +866,6 @@ function checkStep1() {
   
   if (otpVisible) {
     // TODO: PLACEHOLDER LOGIC. Currently accepts any 4+ digit number.
-    // Replace this with actual Supabase Auth verification before launch!
     isValid = isValid && otp.length >= 4; 
   } else {
     isValid = false; 
@@ -899,18 +907,16 @@ async function finishSetup() {
   btn.disabled = true;
   btn.textContent = "Saving...";
 
-  // 1. Prepare the data exactly as it matches your Supabase columns
   const newProfileData = {
     name: document.getElementById('setup-name').value.trim(),
     phone: document.getElementById('setup-phone').value.trim(),
     role: selectedRole
   };
 
-  // 2. Send it to the Supabase 'profiles' table
   const { data, error } = await _supabase
     .from('profiles')
     .insert([newProfileData])
-    .select(); // .select() tells Supabase to send the newly created row back to us
+    .select();
 
   if (error) {
     console.error("Error saving to database:", error);
@@ -920,14 +926,9 @@ async function finishSetup() {
     return;
   }
 
-  // 3. Success! Update our local profile variable with the official database row
   profile = data[0];
-  
-  // 4. We still use local storage to cache the data so the rest of your app continues 
-  // to function perfectly while we work on setting up the listings database next.
   saveProfile(); 
 
-  // 5. Move to the next screen
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
   updateMapLegend();
@@ -968,11 +969,9 @@ function updateMapLegend() {
   
 function applyProfileToUI() {
   if (!profile) return;
-  // Nav profile button
   const btn = document.getElementById('nav-profile-btn');
   btn.textContent = profile.name.charAt(0).toUpperCase();
 
-  // If role exists, set up create page headers
   if (profile.role) {
     document.getElementById('create-title').textContent = profile.role === 'owner' ? 'Post a Room' : 'Post Your Search';
     document.getElementById('create-sub').textContent = profile.role === 'owner'
@@ -997,11 +996,9 @@ async function uploadProfilePhoto(e) {
   const file = e.target.files[0];
   if (!file || !profile || !profile.id) return;
 
-  // Show loading indicator
   const avatarDiv = document.getElementById('profile-avatar');
   avatarDiv.innerHTML = '<span style="font-size:14px">⏳ Loading...</span>';
 
-  // 1. DELETE THE OLD PHOTO (If they are replacing one)
   if (profile.photo) {
     const oldFileName = profile.photo.split('/avatars/').pop();
     if (oldFileName) {
@@ -1009,7 +1006,6 @@ async function uploadProfilePhoto(e) {
     }
   }
 
-  // 2. UPLOAD THE NEW PHOTO
   const fileExtension = file.name.split('.').pop();
   const fileName = `${profile.id}-${Date.now()}.${fileExtension}`; 
 
@@ -1025,7 +1021,6 @@ async function uploadProfilePhoto(e) {
     return;
   }
 
-  // 3. GET THE NEW PUBLIC LINK
   const { data: publicUrlData } = _supabase
     .storage
     .from('avatars')
@@ -1033,26 +1028,17 @@ async function uploadProfilePhoto(e) {
 
   const photoUrl = publicUrlData.publicUrl;
 
-  // 4. SAVE THE NEW LINK TO THE DATABASE
   const { data: updateData, error: dbError } = await _supabase
     .from('profiles')
     .update({ photo_url: photoUrl })
     .eq('id', profile.id)
     .select(); 
 
-  if (dbError) {
-    console.error("Database error:", dbError);
-    alert("Photo uploaded, but couldn't link it to your profile.");
-    return;
-  }
-  
-  // If Supabase returns an empty array, it means it didn't find the profile!
-  if (!updateData || updateData.length === 0) {
+  if (dbError || !updateData || updateData.length === 0) {
      alert("Wait! Supabase didn't find your profile ID to update.");
      return;
   }
 
-  // 5. SUCCESS! UPDATE THE UI
   profile.photo = photoUrl;
   saveProfile();
   renderProfilePage(); 
@@ -1069,7 +1055,8 @@ function resetProfile() {
 // PAGE ROUTING
 // ══════════════════════════════════════
 function showPage(page) {
-  if ((page === 'profile' || page === 'create') && !profile) {
+  // Require login for Profile, Create, and the new Matches page
+  if ((page === 'profile' || page === 'create' || page === 'matches') && !profile) {
     document.getElementById('page-setup').classList.add('active');
     return; 
   }
@@ -1090,6 +1077,7 @@ function showPage(page) {
     if (!pickerMap) setTimeout(initPickerMap, 60);
   }
   if (page === 'profile') renderProfilePage();
+  if (page === 'matches') renderMatchesPage(); // Run the Match Engine!
 }
 
 // ══════════════════════════════════════
@@ -1122,7 +1110,6 @@ function initPreviewMap() {
   const mapElement = document.getElementById('preview-map');
   if (!mapElement) return;
 
-  // Create a static, non-interactive map of Hinjewadi for the landing page
   previewMap = L.map('preview-map', { 
     center: OPERATING_CENTER,
     zoom: 13.5,
@@ -1136,18 +1123,12 @@ function initPreviewMap() {
     attribution: '© OpenStreetMap'
   }).addTo(previewMap);
 
-  // --- MOCK DATA FOR LANDING PAGE ---
-  // Adding a mix of Owner pins (green) and Tenant circles (blue) 
-  // to make the landing page look active and populated.
+  L.marker([18.5924, 73.7360], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5820, 73.7420], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5980, 73.7210], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5880, 73.7300], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5950, 73.7450], { icon: ownerIcon }).addTo(previewMap); 
   
-  // Owner Pins
-  L.marker([18.5924, 73.7360], { icon: ownerIcon }).addTo(previewMap); // Phase 1
-  L.marker([18.5820, 73.7420], { icon: ownerIcon }).addTo(previewMap); // Phase 2
-  L.marker([18.5980, 73.7210], { icon: ownerIcon }).addTo(previewMap); // Phase 3
-  L.marker([18.5880, 73.7300], { icon: ownerIcon }).addTo(previewMap); // Near Blue Ridge
-  L.marker([18.5950, 73.7450], { icon: ownerIcon }).addTo(previewMap); // Wakad edge
-  
-  // Tenant Search Circles
   L.circle([18.6010, 73.7250], {
     color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 800
   }).addTo(previewMap);
@@ -1160,8 +1141,47 @@ function initPreviewMap() {
 }
 
 // ══════════════════════════════════════
-// EXPLORE MAP
+// CLOUD DATA FETCHING & EXPLORE MAP
 // ══════════════════════════════════════
+
+// I re-added your critical Supabase fetching function so pins appear again!
+async function fetchLiveListings() {
+  const { data, error } = await _supabase
+    .from('listings')
+    .select(`*, profiles(name, phone)`);
+
+  if (error) { 
+    console.error("Error fetching map data:", error); 
+    return; 
+  }
+
+  liveListings = data.map(row => {
+    const isOwner = row.role === 'owner';
+    const isMine = profile && profile.id === row.user_id;
+
+    let uiListing = {
+      id: row.id, role: row.role, name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
+      lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type, ismine: isMine, movein: row.movein_date,
+      gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
+      radiusKm: row.radius_km ? parseFloat(row.radius_km) : null, bedType: row.bed_type, capacity: row.capacity_allowed,
+      peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count
+    };
+
+    if (isOwner) { uiListing.rent = parseFloat(row.price); uiListing.deposit = parseFloat(row.deposit); } 
+    else { uiListing.budget = parseFloat(row.price); }
+    
+    return uiListing;
+  });
+
+  // Decide which screen to update based on what they are looking at
+  if (document.getElementById('page-explore').classList.contains('active')) applyFilters();
+  if (document.getElementById('page-matches') && document.getElementById('page-matches').classList.contains('active')) renderMatchesContent();
+}
+
+function refreshExplore() {
+  fetchLiveListings();
+}
+
 function initExploreMap() {
   exploreMap = L.map('map', { center:OPERATING_CENTER, zoom:14 });
   osmTiles().addTo(exploreMap);
@@ -1169,76 +1189,16 @@ function initExploreMap() {
   circleLayer = L.layerGroup().addTo(exploreMap);
   refreshExplore();
 
-  // ADD THIS LINE: Fetch new pins every time the user stops dragging the map!
+  // Fetch new pins every time the user stops dragging the map!
   exploreMap.on('moveend', refreshExplore);
 }
 
-// 1. Fetch fresh data ONLY for the visible map area
-async function fetchLiveListings() {
-  if (!exploreMap) return;
-
-  // Ask the Leaflet map for the exact coordinates of the screen corners
-  const bounds = exploreMap.getBounds();
-  const southLat = bounds.getSouthWest().lat;
-  const northLat = bounds.getNorthEast().lat;
-  const westLng = bounds.getSouthWest().lng;
-  const eastLng = bounds.getNorthEast().lng;
-
-  // Tell Supabase: "Only give me rows where the Latitude and Longitude fit inside this box"
-  const { data, error } = await _supabase
-    .from('listings')
-    .select(`*, profiles(name, phone)`)
-    .gte('lat', southLat)
-    .lte('lat', northLat)
-    .gte('lng', westLng)
-    .lte('lng', eastLng);
-
-  if (error) {
-    console.error("Error fetching map data:", error);
-    return;
-  }
-
-  // 2. Translate the database rows back into the UI format
-  liveListings = data.map(row => {
-    const isOwner = row.role === 'owner';
-    const isMine = profile && profile.id === row.user_id;
-
-    let uiListing = {
-      id: row.id, role: row.role,
-      name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
-      lat: parseFloat(row.lat), lng: parseFloat(row.lng),
-      propType: row.prop_type, ismine: isMine, movein: row.movein_date,
-      gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any',
-      brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
-      radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
-      bedType: row.bed_type, capacity: row.capacity_allowed,
-      peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-      people: row.tenant_people_count
-    };
-
-    if (isOwner) {
-      uiListing.rent = parseFloat(row.price);
-      uiListing.deposit = parseFloat(row.deposit);
-    } else {
-      uiListing.budget = parseFloat(row.price);
-    }
-    return uiListing;
-  });
-
-  applyFilters();
-}
-
-// Every time you open the Explore page, it asks the cloud for new pins
-function refreshExplore() {
-  fetchLiveListings();
-}
-
-// The map filters just look at our liveListings array now
 function getAllListings() {
   const ownerListings = liveListings.filter(l => l.role === 'owner');
   const tenantListings = liveListings.filter(l => l.role === 'tenant');
   return { ownerListings, tenantListings };
 }
+
 function applyFilters() {
   if (!exploreMap) return;
   const { ownerListings, tenantListings } = getAllListings();
@@ -1492,6 +1452,113 @@ function fmtDate(d) {
 }
 
 // ══════════════════════════════════════
+// NEW: DEDICATED MATCHES PAGE LOGIC
+// ══════════════════════════════════════
+function renderMatchesPage() {
+  const container = document.getElementById('matches-container');
+
+  // If they don't have an active listing yet, they can't see matches
+  if (!profile || myListings.length === 0) {
+    container.innerHTML = `
+      <div class="already-listed-card" style="margin-top:20px;">
+        <div style="font-size:36px;margin-bottom:10px">✨</div>
+        <h3>No Active Listing</h3>
+        <p>Post a listing or drop your search circle on the map to instantly see your perfect matches.</p>
+        <button class="btn btn-primary" onclick="showPage('create')" style="margin-top:12px;">Post a Listing →</button>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--gray-500); font-size:14px;">⏳ Scanning Hinjewadi for your matches...</div>`;
+  
+  // Make sure we have the latest data from the cloud, then render
+  fetchLiveListings(); 
+}
+
+function renderMatchesContent() {
+  const container = document.getElementById('matches-container');
+  if (!profile || myListings.length === 0) return;
+
+  const myListing = myListings[0];
+  const isOwner = profile.role === 'owner';
+  let matches = [];
+
+  // SMART MATCH ALGORITHM
+  if (isOwner) {
+    // 1. We are an Owner. Find Tenants whose search circle covers our pin, and who can afford our rent.
+    const tenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
+    matches = tenants.filter(t => {
+      const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
+      const withinArea = dist <= t.radiusKm;
+      const withinBudget = t.budget >= myListing.rent;
+      return withinArea && withinBudget;
+    });
+  } else {
+    // 2. We are a Tenant. Find Owners whose pin is inside our search circle, and whose rent is under our budget.
+    const owners = liveListings.filter(l => l.role === 'owner' && !l.ismine);
+    matches = owners.filter(o => {
+      const dist = haversineKm(myListing.lat, myListing.lng, o.lat, o.lng);
+      const withinArea = dist <= myListing.radiusKm;
+      const withinBudget = o.rent <= myListing.budget;
+      return withinArea && withinBudget;
+    });
+  }
+
+  // EMPTY STATE: No Matches
+  if (matches.length === 0) {
+    container.innerHTML = `
+      <div class="already-listed-card" style="margin-top:20px;">
+        <div style="font-size:36px;margin-bottom:10px">🏜️</div>
+        <h3>No exact matches yet</h3>
+        <p>We couldn't find anyone matching your exact location and budget right now. Try exploring the map to find people nearby!</p>
+        <button class="btn btn-secondary" onclick="showPage('explore')" style="margin-top:12px;">Explore Map</button>
+      </div>
+    `;
+    return;
+  }
+
+  // SUCCESS STATE: Render Beautiful Feed
+  let html = '';
+  matches.forEach(m => {
+    const mIsOwner = m.role === 'owner';
+    const dist = haversineKm(myListing.lat, myListing.lng, m.lat, m.lng).toFixed(1);
+    
+    html += `
+      <div class="profile-card" style="margin-bottom:16px; padding:24px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+          <div>
+            <div class="dp-role ${mIsOwner ? 'owner' : 'tenant'}" style="margin-bottom:8px;">
+              ${mIsOwner ? '🏠 MATCHED OWNER' : '🔍 MATCHED TENANT'}
+            </div>
+            <div class="profile-name" style="font-size:18px;">${m.name}</div>
+          </div>
+          <div style="text-align:right;">
+            <div class="dp-rent" style="margin-bottom:2px; font-size:22px;">₹${(mIsOwner ? m.rent : m.budget).toLocaleString()}</div>
+            <div style="font-size:12px; color:var(--gray-500); font-weight:600;">${dist} km away</div>
+          </div>
+        </div>
+        
+        <div class="dp-grid" style="margin-bottom:16px;">
+          <div class="dp-field"><div class="dp-field-lbl">${mIsOwner ? 'Offering' : 'Looking For'}</div><div class="dp-field-val">${propTypeLabel(m.propType)}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${m.gender || 'Any'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${m.furnishing || 'Any'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(m.movein)}</div></div>
+        </div>
+        
+        ${m.desc ? `<div class="dp-desc" style="margin-bottom:16px;">${m.desc}</div>` : ''}
+        
+        <div style="background:var(--blue-light); border-radius:8px; padding:12px; text-align:center; font-weight:600; color:var(--blue); font-size:15px;">
+          📞 ${m.phone}
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+// ══════════════════════════════════════
 // FILTER CONTROLS
 // ══════════════════════════════════════
 function setTypeFilter(val, btn) {
@@ -1544,12 +1611,11 @@ function checkTenantAlreadyListed() {
 async function deleteTenantListing() {
   if (!confirm('Delete your current search area? It will be removed from the map.')) return;
 
-  // 1. Tell Supabase to delete it from the cloud
   if (myListings.length > 0 && myListings[0].id) {
     const { error } = await _supabase
       .from('listings')
       .delete()
-      .eq('id', myListings[0].id); // Delete the tenant's only listing
+      .eq('id', myListings[0].id); 
 
     if (error) {
       console.error("Error deleting:", error);
@@ -1558,7 +1624,6 @@ async function deleteTenantListing() {
     }
   }
 
-  // 2. Remove it locally and reset the UI
   myListings = [];
   saveProfile();
   checkTenantAlreadyListed();
@@ -1571,7 +1636,6 @@ async function deleteTenantListing() {
     drawControl = null; 
   }
 
-  // 3. Refresh the Explore map so the ghost circle disappears!
   if (exploreMap) refreshExplore();
 }
 
@@ -1624,7 +1688,6 @@ async function handleSearch(query, resultsId, targetMapName, isCreate) {
   clearTimeout(searchTimeout);
   searchTimeout = setTimeout(async () => {
     try {
-      // Append "Pune" implicitly to bias results correctly toward your operating area
       const fullQuery = query.toLowerCase().includes('pune') ? query : query + ' Pune';
       const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullQuery)}&limit=5`;
       const res = await fetch(url);
@@ -1653,25 +1716,19 @@ function selectLocation(item, resultsId, targetMapName, isCreate) {
   const lat = parseFloat(item.lat);
   const lon = parseFloat(item.lon);
 
-  // Check if it's outside Hinjewadi operating area
-  const dist = haversineKm(OPERATING_CENTER[0], OPERATING_CENTER[1], lat, lon);
-  if (dist > OPERATING_RADIUS_KM) {
+  if (haversineKm(OPERATING_CENTER[0], OPERATING_CENTER[1], lat, lon) > OPERATING_RADIUS_KM) {
     alert(`We are currently only operating within ${OPERATING_RADIUS_KM}km of Hinjewadi. Please select a closer location.`);
     return;
   }
 
-  // 1. Jump the map to the searched area
   const targetMap = targetMapName === 'explore' ? exploreMap : pickerMap;
   if (targetMap) targetMap.setView([lat, lon], 15);
 
   const shortName = item.display_name.split(',')[0];
 
-  // 2. Just update the text box (do NOT drop a pin automatically)
   if (isCreate) {
-    // This runs for BOTH Owners and Tenants when they are creating a listing
     document.getElementById('map-search-input').value = shortName;
   } else {
-    // This runs for anyone using the search bar on the Explore Map
     document.getElementById('explore-search-input').value = shortName;
   }
 }
@@ -1724,14 +1781,12 @@ function initPickerMap() {
 async function submitListing() {
   if (!profile) return;
 
-  // Change button text so user knows it's loading
   const btn = document.querySelector('.submit-btn');
   btn.disabled = true;
   btn.textContent = "Publishing to map...";
 
   let listing = { role: profile.role, name: profile.name, phone: profile.phone, ismine: true };
 
-  // 1. GATHER DATA (Exactly as your UI expects it)
   if (profile.role === 'owner') {
     if (!selectedPropType) { alert('Please select what you are offering.'); resetBtn(btn); return; }
     if (!pinLat) { alert('Please drop a pin on the map.'); resetBtn(btn); return; }
@@ -1766,16 +1821,14 @@ async function submitListing() {
     }
   }
 
-  // 2. TRANSLATE DATA FOR SUPABASE
-  // This maps your UI fields to the exact columns in your database
   const dbListingData = {
-    user_id: profile.id, // Links listing to the current user
+    user_id: profile.id, 
     role: listing.role,
     prop_type: listing.propType,
     lat: listing.lat,
     lng: listing.lng,
     radius_km: listing.radiusKm || null,
-    price: listing.rent || listing.budget || 0, // Combines rent and budget into price
+    price: listing.rent || listing.budget || 0,
     deposit: listing.deposit || 0,
     movein_date: listing.movein || null,
     gender_pref: listing.gender || null,
@@ -1788,10 +1841,9 @@ async function submitListing() {
     people_in_flat: listing.peopleInFlat || null,
     people_in_room: listing.peopleInRoom || null,
     tenant_people_count: listing.people || null,
-    created_at: new Date().toISOString() // Forces the exact timestamp!
+    created_at: new Date().toISOString() 
   };
 
-  // 3. SEND TO SUPABASE
   const { data, error } = await _supabase
     .from('listings')
     .insert([dbListingData])
@@ -1804,8 +1856,6 @@ async function submitListing() {
     return;
   }
 
-  // 4. UPDATE UI ON SUCCESS
-  // Give our local listing the real ID generated by Supabase
   listing.id = data[0].id;
 
   if (profile.role === 'owner') {
@@ -1817,13 +1867,12 @@ async function submitListing() {
   }
   
   lastPostedListing = listing;
-  saveProfile(); // Caches it locally so the profile page updates instantly
+  saveProfile(); 
   
   document.getElementById('success-overlay').classList.add('show');
   resetBtn(btn);
 }
 
-// Helper to reset the button
 function resetBtn(btn) {
   btn.disabled = false;
   btn.textContent = "Publish Listing →";
@@ -1854,7 +1903,6 @@ function closeSuccess() {
 function renderProfilePage() {
   if (!profile) return;
   
-  // Render Photo
   const avatarDiv = document.getElementById('profile-avatar');
   if (profile.photo) {
     avatarDiv.innerHTML = `<img src="${profile.photo}" style="width:100%;height:100%;object-fit:cover;">`;
@@ -1922,12 +1970,11 @@ async function deleteMyListing(idx) {
   
   const listingToDelete = myListings[idx];
 
-  // 1. Tell Supabase to delete it from the cloud
   if (listingToDelete.id) {
     const { error } = await _supabase
       .from('listings')
       .delete()
-      .eq('id', listingToDelete.id); // Finds the exact row to delete
+      .eq('id', listingToDelete.id); 
 
     if (error) {
       console.error("Error deleting:", error);
@@ -1936,12 +1983,10 @@ async function deleteMyListing(idx) {
     }
   }
 
-  // 2. Remove it from local memory and update the UI
   myListings.splice(idx, 1);
   saveProfile();
   renderProfilePage();
   
-  // 3. Refresh the map so the pin disappears instantly!
   if (exploreMap) refreshExplore(); 
 }
 
