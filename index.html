@@ -1407,15 +1407,19 @@ function closeDetail() {
 function renderCards(owners, tenants) {
   const wrap = document.getElementById('listing-cards');
   if (!wrap) return;
-  wrap.innerHTML = '';
+  
+  wrap.innerHTML = ''; // This safely clears the list
+  
   const all = [
     ...owners.map(l => ({ ...l, _role:'owner' })),
     ...tenants.map(l => ({ ...l, _role:'tenant' }))
   ];
+  
+  // If there are no matches, simply do nothing and leave it blank!
   if (!all.length) {
-    wrap.innerHTML = '<div style="padding:16px;text-align:center;font-size:12px;color:var(--gray-400)">No listings match filters</div>';
     return;
   }
+  
   all.forEach(l => {
     const isOwner = l._role === 'owner';
     const badgeClass = l.ismine ? 'mine' : l._role;
