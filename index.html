@@ -53,7 +53,7 @@ nav{
 .page.active{display:block}
 #page-explore.active{display:flex}
 #page-profile.active{display:block}
-#page-matches.active{display:block} /* NEW MATCHES PAGE */
+#page-matches.active{display:block}
 
 /* ════════ PROFILE SETUP ════════ */
 #page-setup{
@@ -155,7 +155,7 @@ input[type=date]:focus{border-color:var(--blue)}
 .listing-card{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:8px;padding:10px;cursor:pointer;transition:all .15s}
 .listing-card:hover,.listing-card.active{border-color:var(--blue);background:var(--blue-light)}
 .lc-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px}
-.lc-name{font-size:12px;font-weight:600;color:var(--blue)}
+.lc-name{font-size:12px;font-weight:600;color:var(--blue); display:flex; align-items:center;}
 .lc-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:100px}
 .lc-badge.owner{background:var(--green-light);color:var(--green)}
 .lc-badge.tenant{background:var(--blue-light);color:var(--blue-mid)}
@@ -188,6 +188,12 @@ input[type=date]:focus{border-color:var(--blue)}
 .ldot.g{background:var(--green-pin)}.ldot.b{background:var(--blue-pin)}
 .ldot.o{background:var(--orange-pin)}.ldot.p{background:var(--purple-pin)}
 
+/* NEW: Rating Styles */
+.rating-badge { display:inline-flex; align-items:center; gap:3px; background:#fffbeb; color:#d97706; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:700; margin-left:6px; letter-spacing: 0.5px;}
+.rating-box { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:12px; margin-bottom:14px; text-align:center; }
+.star-btn { cursor:pointer; font-size:24px; color:var(--gray-300); transition:transform .1s, color .15s; background:none; border:none; padding:0 2px; }
+.star-btn:hover { transform:scale(1.2); color:#fbbf24; }
+
 /* Detail panel */
 .detail-panel{position:absolute;top:0;right:0;bottom:0;width:340px;background:white;border-left:1px solid var(--gray-200);z-index:600;transform:translateX(100%);transition:transform .22s ease;overflow-y:auto;display:flex;flex-direction:column}
 .detail-panel.open{transform:translateX(0)}
@@ -198,7 +204,7 @@ input[type=date]:focus{border-color:var(--blue)}
 .dp-role.owner{background:var(--green-light);color:var(--green)}
 .dp-role.tenant{background:var(--blue-light);color:var(--blue-mid)}
 .dp-role.mine{background:#fff3e0;color:#ea6c00}
-.dp-name{font-size:16px;font-weight:600;color:var(--blue);margin-bottom:2px}
+.dp-name{font-size:16px;font-weight:600;color:var(--blue);margin-bottom:2px; display:flex; align-items:center;}
 .dp-rent{font-family:'Instrument Serif',serif;font-size:24px;color:var(--text);margin-bottom:12px;line-height:1}
 .dp-rent small{font-family:'DM Sans',sans-serif;font-size:13px;color:var(--gray-600)}
 .dp-match-banner{padding:9px 12px;border-radius:8px;margin-bottom:12px;font-size:12px;font-weight:600}
@@ -235,19 +241,9 @@ input[type=date]:focus{border-color:var(--blue)}
 .fg{margin-bottom:16px}
 .fg:last-child{margin-bottom:0}
 .fg label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
-/* Strict Uniform Box Styling for Inputs */
-.fg input:not([type="file"]), .fg select {
-  width:100%; padding:0 12px; height:44px; border:1.5px solid var(--gray-200); 
-  border-radius:7px; font-size:14px; color:var(--text); background:white; 
-  font-family:inherit; outline:none; transition:border-color .15s; box-sizing:border-box;
-}
-.fg textarea {
-  width:100%; padding:12px; border:1.5px solid var(--gray-200); border-radius:7px;
-  font-size:14px; color:var(--text); background:white; font-family:inherit; outline:none;
-  transition:border-color .15s; box-sizing:border-box; resize:vertical; min-height:80px; line-height:1.5;
-}
+.fg input:not([type="file"]), .fg select { width:100%; padding:0 12px; height:44px; border:1.5px solid var(--gray-200); border-radius:7px; font-size:14px; color:var(--text); background:white; font-family:inherit; outline:none; transition:border-color .15s; box-sizing:border-box;}
+.fg textarea { width:100%; padding:12px; border:1.5px solid var(--gray-200); border-radius:7px; font-size:14px; color:var(--text); background:white; font-family:inherit; outline:none; transition:border-color .15s; box-sizing:border-box; resize:vertical; min-height:80px; line-height:1.5;}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue)}
-
 .prop-type-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:4px}
 @media(max-width:460px){.prop-type-cards{grid-template-columns:1fr}}
 .prop-card{border:2px solid var(--gray-200);border-radius:8px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .15s}
@@ -259,15 +255,11 @@ input[type=date]:focus{border-color:var(--blue)}
 .dynamic-fields.show{display:block}
 .map-picker-card{background:white;border:1.5px solid var(--gray-200);border-radius:11px;overflow:hidden;margin-bottom:16px}
 .map-picker-title{padding:14px 16px 10px;font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase; border-bottom:1px solid var(--gray-100)}
-
-/* Custom Map Search Bar */
 .map-search-bar{padding:12px 16px; border-bottom:1px solid var(--gray-100); gap:8px; background:var(--gray-50);}
 .map-search-bar input{flex:1; width: 100%; padding:0 12px; height:38px; border:1.5px solid var(--gray-200); border-radius:6px; font-size:14px; outline:none; font-family:inherit;}
 .map-search-bar input:focus{border-color:var(--blue);}
-
 #map-picker{height:240px}
 .map-picker-info{padding:10px 16px;background:var(--blue-light);font-size:13px;color:var(--blue-mid);display:flex;gap:5px;align-items:center;font-weight:500;}
-
 .submit-btn{width:100%;padding:14px;font-size:15px;font-weight:600;background:var(--blue);color:white;border:none;border-radius:9px;cursor:pointer;font-family:inherit;transition:all .15s;margin-top:8px}
 .submit-btn:hover{background:#243d61}
 .already-listed-card{background:white;border:1.5px solid var(--gray-200);border-radius:11px;padding:32px 24px;text-align:center}
@@ -391,7 +383,8 @@ input[type=date]:focus{border-color:var(--blue)}
   <div class="nav-logo" onclick="showPage('landing')">Room<span>Pin</span></div>
   <div class="nav-links">
     <a onclick="showPage('explore')">Explore</a>
-    <a onclick="showPage('matches')">Matches ✨</a> <a onclick="showPage('create')" class="btn btn-primary">Post a Listing</a>
+    <a onclick="showPage('matches')">Matches ✨</a>
+    <a onclick="showPage('create')" class="btn btn-primary">Post a Listing</a>
     <button class="profile-icon" id="nav-profile-btn" onclick="showPage('profile')" title="Profile">?</button>
   </div>
 </nav>
@@ -814,47 +807,37 @@ input[type=date]:focus{border-color:var(--blue)}
 
 <script>
 // ══════════════════════════════════════
-// SUPABASE SETUP (Step 3)
+// SUPABASE SETUP
 // ══════════════════════════════════════
 const { createClient } = supabase;
-
-// COPY AND PASTE YOUR KEYS HERE:
 const supabaseUrl = 'https://gtgahphxuzvotrheyyaw.supabase.co';
 const supabaseKey = 'sb_publishable_1L8tasN-T01VDqU8L2y6bQ_r1dDG_I5';
-
 const _supabase = createClient(supabaseUrl, supabaseKey);
 
 // ══════════════════════════════════════
 // DATA & STATE
 // ══════════════════════════════════════
-const OPERATING_CENTER = [18.5924, 73.7360]; // Hinjewadi
-const OPERATING_RADIUS_KM = 25; // Strict operating boundary
+const OPERATING_CENTER = [18.5924, 73.7360]; 
+const OPERATING_RADIUS_KM = 25; 
 
-
-// App state
 let profile = null;
 let myListings = []; 
 let lastPostedListing = null;
-let liveListings = []; // NEW: This will hold the live data from the cloud
+let liveListings = []; 
+let liveReviews = []; // NEW: Array to hold all owner reviews
   
-// Map instances
 let exploreMap = null, pickerMap = null, previewMap = null;
 let markerLayer = null, circleLayer = null;
 let pickerMarker = null, pickerCircle = null;
 let drawControl = null, drawnItems = null;
 
-// Filter state
 let typeFilter = 'all', proptypeFilter = 'Any', genderFilter = 'Any', brokerageFilter = 'Any';
-
-// Create form state
-let selectedPropType = null;
-let selectedTenantLooking = null;
-let pinLat = null, pinLng = null;
-let circleCenter = null, circleRadiusKm = null;
+let selectedPropType = null, selectedTenantLooking = null;
+let pinLat = null, pinLng = null, circleCenter = null, circleRadiusKm = null;
 let searchTimeout = null;
 
 // ══════════════════════════════════════
-// PROFILE SETUP (WITH OTP)
+// PROFILE SETUP 
 // ══════════════════════════════════════
 function checkStep1() {
   const name  = document.getElementById('setup-name').value.trim();
@@ -863,23 +846,14 @@ function checkStep1() {
   const otp = document.getElementById('setup-otp').value.trim();
   
   let isValid = name.length > 0 && phone.length >= 6;
-  
-  if (otpVisible) {
-    // TODO: PLACEHOLDER LOGIC. Currently accepts any 4+ digit number.
-    isValid = isValid && otp.length >= 4; 
-  } else {
-    isValid = false; 
-  }
+  if (otpVisible) { isValid = isValid && otp.length >= 4; } else { isValid = false; }
   document.getElementById('step1-btn').disabled = !isValid;
 }
 
 function showOTP(e) {
   e.preventDefault();
   const phone = document.getElementById('setup-phone').value.trim();
-  if(phone.length < 6) {
-    alert("Please enter a valid phone number first.");
-    return;
-  }
+  if(phone.length < 6) { alert("Please enter a valid phone number first."); return; }
   document.getElementById('otp-section').style.display = 'block';
   document.getElementById('verify-now-link').style.display = 'none';
   checkStep1();
@@ -898,14 +872,10 @@ function selectRole(role) {
   document.getElementById('step2-btn').disabled = false;
 }
 
-// Supabase Updated finishSetup (Step 4 & Cleanup)
 async function finishSetup() {
   if (!selectedRole) return;
-  
-  // Disable the button and change text so the user knows it's loading
   const btn = document.getElementById('step2-btn');
-  btn.disabled = true;
-  btn.textContent = "Saving...";
+  btn.disabled = true; btn.textContent = "Saving...";
 
   const newProfileData = {
     name: document.getElementById('setup-name').value.trim(),
@@ -913,17 +883,10 @@ async function finishSetup() {
     role: selectedRole
   };
 
-  const { data, error } = await _supabase
-    .from('profiles')
-    .insert([newProfileData])
-    .select();
-
+  const { data, error } = await _supabase.from('profiles').insert([newProfileData]).select();
   if (error) {
-    console.error("Error saving to database:", error);
     alert("Something went wrong saving your profile.");
-    btn.disabled = false;
-    btn.textContent = "Complete Setup →";
-    return;
+    btn.disabled = false; btn.textContent = "Complete Setup →"; return;
   }
 
   profile = data[0];
@@ -950,45 +913,23 @@ function loadProfile() {
 function updateMapLegend() {
   const legendDiv = document.getElementById('dynamic-map-legend');
   if (!legendDiv) return;
-
-  // Everyone sees these two by default
-  let html = `
-    <div class="legend-row"><div class="ldot g"></div> Owner listing</div>
-    <div class="legend-row"><div class="ldot b"></div> Tenant search area</div>
-  `;
-
-  // Add the personalized 3rd row depending on who is logged in
-  if (profile && profile.role === 'owner') {
-    html += `<div class="legend-row"><div class="ldot o"></div> Your listing</div>`;
-  } else if (profile && profile.role === 'tenant') {
-    html += `<div class="legend-row"><div class="ldot p"></div> Your search area</div>`;
-  }
-
+  let html = `<div class="legend-row"><div class="ldot g"></div> Owner listing</div><div class="legend-row"><div class="ldot b"></div> Tenant search area</div>`;
+  if (profile && profile.role === 'owner') { html += `<div class="legend-row"><div class="ldot o"></div> Your listing</div>`; } 
+  else if (profile && profile.role === 'tenant') { html += `<div class="legend-row"><div class="ldot p"></div> Your search area</div>`; }
   legendDiv.innerHTML = html;
 }
   
 function applyProfileToUI() {
   if (!profile) return;
-  const btn = document.getElementById('nav-profile-btn');
-  btn.textContent = profile.name.charAt(0).toUpperCase();
-
+  document.getElementById('nav-profile-btn').textContent = profile.name.charAt(0).toUpperCase();
   if (profile.role) {
     document.getElementById('create-title').textContent = profile.role === 'owner' ? 'Post a Room' : 'Post Your Search';
-    document.getElementById('create-sub').textContent = profile.role === 'owner'
-      ? 'List your property. Free. No broker.'
-      : 'Tell people what you\'re looking for.';
-
+    document.getElementById('create-sub').textContent = profile.role === 'owner' ? 'List your property. Free. No broker.' : 'Tell people what you\'re looking for.';
     document.getElementById('prop-type-card').style.display      = profile.role === 'owner' ? 'block' : 'none';
     document.getElementById('tenant-looking-card').style.display = profile.role === 'tenant' ? 'block' : 'none';
-
-    document.getElementById('map-picker-title').textContent = profile.role === 'owner'
-      ? '📍 Pin Your Property Location'
-      : '🔵 Draw Your Search Area';
+    document.getElementById('map-picker-title').textContent = profile.role === 'owner' ? '📍 Pin Your Property Location' : '🔵 Draw Your Search Area';
     document.getElementById('map-search-bar').style.display = 'flex';
-
-    document.getElementById('pin-location').textContent = profile.role === 'owner'
-      ? 'Click on the map to pin your exact property location'
-      : 'Draw a circle on the map to mark your preferred area';
+    document.getElementById('pin-location').textContent = profile.role === 'owner' ? 'Click on the map to pin your exact property location' : 'Draw a circle on the map to mark your preferred area';
   }
 }
 
@@ -1001,43 +942,20 @@ async function uploadProfilePhoto(e) {
 
   if (profile.photo) {
     const oldFileName = profile.photo.split('/avatars/').pop();
-    if (oldFileName) {
-      await _supabase.storage.from('avatars').remove([oldFileName]);
-    }
+    if (oldFileName) await _supabase.storage.from('avatars').remove([oldFileName]);
   }
 
   const fileExtension = file.name.split('.').pop();
   const fileName = `${profile.id}-${Date.now()}.${fileExtension}`; 
+  const { data: uploadData, error: uploadError } = await _supabase.storage.from('avatars').upload(fileName, file);
 
-  const { data: uploadData, error: uploadError } = await _supabase
-    .storage
-    .from('avatars')
-    .upload(fileName, file);
+  if (uploadError) { alert("Something went wrong uploading your photo."); renderProfilePage(); return; }
 
-  if (uploadError) {
-    console.error("Upload error:", uploadError);
-    alert("Something went wrong uploading your photo.");
-    renderProfilePage(); 
-    return;
-  }
-
-  const { data: publicUrlData } = _supabase
-    .storage
-    .from('avatars')
-    .getPublicUrl(fileName);
-
+  const { data: publicUrlData } = _supabase.storage.from('avatars').getPublicUrl(fileName);
   const photoUrl = publicUrlData.publicUrl;
 
-  const { data: updateData, error: dbError } = await _supabase
-    .from('profiles')
-    .update({ photo_url: photoUrl })
-    .eq('id', profile.id)
-    .select(); 
-
-  if (dbError || !updateData || updateData.length === 0) {
-     alert("Wait! Supabase didn't find your profile ID to update.");
-     return;
-  }
+  const { data: updateData, error: dbError } = await _supabase.from('profiles').update({ photo_url: photoUrl }).eq('id', profile.id).select(); 
+  if (dbError || !updateData || updateData.length === 0) { alert("Wait! Supabase didn't find your profile ID to update."); return; }
 
   profile.photo = photoUrl;
   saveProfile();
@@ -1046,121 +964,99 @@ async function uploadProfilePhoto(e) {
 
 function resetProfile() {
   if (!confirm('This will clear your profile and all listings. Continue?')) return;
-  localStorage.clear();
-  profile = null; myListings = [];
-  location.reload();
+  localStorage.clear(); profile = null; myListings = []; location.reload();
 }
 
 // ══════════════════════════════════════
 // PAGE ROUTING
 // ══════════════════════════════════════
 function showPage(page) {
-  // Require login for Profile, Create, and the new Matches page
   if ((page === 'profile' || page === 'create' || page === 'matches') && !profile) {
-    document.getElementById('page-setup').classList.add('active');
-    return; 
+    document.getElementById('page-setup').classList.add('active'); return; 
   }
-
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   
   const footer = document.getElementById('global-footer');
   if (footer) footer.style.display = (page === 'explore') ? 'none' : 'block';
 
-  if (page === 'explore') { 
-    if (!exploreMap) setTimeout(initExploreMap, 60); 
-    else refreshExplore(); 
-  }
-  if (page === 'create') { 
-    document.getElementById('listing-form').style.display = 'block';
-    checkTenantAlreadyListed(); 
-    if (!pickerMap) setTimeout(initPickerMap, 60);
-  }
+  if (page === 'explore') { if (!exploreMap) setTimeout(initExploreMap, 60); else refreshExplore(); }
+  if (page === 'create') { document.getElementById('listing-form').style.display = 'block'; checkTenantAlreadyListed(); if (!pickerMap) setTimeout(initPickerMap, 60); }
   if (page === 'profile') renderProfilePage();
-  if (page === 'matches') renderMatchesPage(); // Run the Match Engine!
+  if (page === 'matches') renderMatchesContent(); 
 }
 
 // ══════════════════════════════════════
-// MAP ICONS & TILES
+// MAP ICONS
 // ══════════════════════════════════════
 function makeIcon(color, size=26) {
-  const s = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${Math.round(size*1.3)}" viewBox="0 0 26 34">
-    <path d="M13 0C5.82 0 0 5.82 0 13c0 8.667 13 21 13 21S26 21.667 26 13C26 5.82 20.18 0 13 0z"
-      fill="${color}" stroke="white" stroke-width="1.8"/>
-    <circle cx="13" cy="13" r="4.5" fill="white"/></svg>`;
+  const s = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${Math.round(size*1.3)}" viewBox="0 0 26 34"><path d="M13 0C5.82 0 0 5.82 0 13c0 8.667 13 21 13 21S26 21.667 26 13C26 5.82 20.18 0 13 0z" fill="${color}" stroke="white" stroke-width="1.8"/><circle cx="13" cy="13" r="4.5" fill="white"/></svg>`;
   return L.divIcon({ html:s, className:'', iconSize:[size,Math.round(size*1.3)], iconAnchor:[size/2,Math.round(size*1.3)], popupAnchor:[0,-Math.round(size*1.3)] });
 }
-const ownerIcon  = makeIcon('#22c55e');
-const tenantIcon = makeIcon('#3b82f6');
-const myOwnerIcon  = makeIcon('#f97316', 30);
-const myTenantIcon = makeIcon('#a855f7', 30);
-const pickerIconFn = () => makeIcon('#1a2e4a');
+const ownerIcon = makeIcon('#22c55e'), tenantIcon = makeIcon('#3b82f6'), myOwnerIcon = makeIcon('#f97316', 30), myTenantIcon = makeIcon('#a855f7', 30), pickerIconFn = () => makeIcon('#1a2e4a');
+function osmTiles() { return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap contributors', maxZoom:19 }); }
 
-function osmTiles() {
-  return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    maxZoom:19
-  });
-}
-
-// ══════════════════════════════════════
-// PREVIEW MAP (Landing Page Hero)
-// ══════════════════════════════════════
 function initPreviewMap() {
   const mapElement = document.getElementById('preview-map');
   if (!mapElement) return;
-
-  previewMap = L.map('preview-map', { 
-    center: OPERATING_CENTER,
-    zoom: 13.5,
-    zoomControl: false, 
-    dragging: false, 
-    scrollWheelZoom: false,
-    doubleClickZoom: false
-  });
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(previewMap);
-
-  L.marker([18.5924, 73.7360], { icon: ownerIcon }).addTo(previewMap); 
-  L.marker([18.5820, 73.7420], { icon: ownerIcon }).addTo(previewMap); 
-  L.marker([18.5980, 73.7210], { icon: ownerIcon }).addTo(previewMap); 
-  L.marker([18.5880, 73.7300], { icon: ownerIcon }).addTo(previewMap); 
-  L.marker([18.5950, 73.7450], { icon: ownerIcon }).addTo(previewMap); 
-  
-  L.circle([18.6010, 73.7250], {
-    color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 800
-  }).addTo(previewMap);
-  L.circle([18.5850, 73.7400], {
-    color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 1200
-  }).addTo(previewMap);
-  L.circle([18.5910, 73.7280], {
-    color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 600
-  }).addTo(previewMap);
+  previewMap = L.map('preview-map', { center: OPERATING_CENTER, zoom: 13.5, zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(previewMap);
+  L.marker([18.5924, 73.7360], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5820, 73.7420], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5980, 73.7210], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5880, 73.7300], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5950, 73.7450], { icon: ownerIcon }).addTo(previewMap); 
+  L.circle([18.6010, 73.7250], { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 800 }).addTo(previewMap);
+  L.circle([18.5850, 73.7400], { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 1200 }).addTo(previewMap);
+  L.circle([18.5910, 73.7280], { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 600 }).addTo(previewMap);
 }
 
 // ══════════════════════════════════════
 // CLOUD DATA FETCHING & EXPLORE MAP
 // ══════════════════════════════════════
 
-// I re-added your critical Supabase fetching function so pins appear again!
-async function fetchLiveListings() {
-  const { data, error } = await _supabase
-    .from('listings')
-    .select(`*, profiles(name, phone)`);
+// NEW: Helper function to calculate owner's average rating
+function getOwnerRating(ownerId) {
+  const ownerReviews = liveReviews.filter(r => r.owner_id === ownerId);
+  if (ownerReviews.length === 0) return 'New';
+  const sum = ownerReviews.reduce((total, r) => total + r.rating, 0);
+  return (sum / ownerReviews.length).toFixed(1);
+}
 
-  if (error) { 
-    console.error("Error fetching map data:", error); 
-    return; 
+// NEW: Function to submit a new star rating
+async function submitRating(ownerId, rating) {
+  if (!profile || profile.role !== 'tenant') return;
+  if (!confirm(`Submit a ${rating}-star rating for this owner?`)) return;
+
+  const { error } = await _supabase.from('reviews').insert([{
+    reviewer_id: profile.id,
+    owner_id: ownerId,
+    rating: rating
+  }]);
+
+  if (error) {
+    console.error("Rating error:", error);
+    alert("Something went wrong saving your rating. (You can only rate an owner once!)");
+    return;
   }
+
+  // Refresh everything to show the new stars!
+  fetchLiveListings(); 
+}
+
+async function fetchLiveListings() {
+  // 1. Fetch the reviews first
+  const { data: revData } = await _supabase.from('reviews').select('*');
+  if (revData) liveReviews = revData;
+
+  // 2. Fetch the listings
+  const { data, error } = await _supabase.from('listings').select(`*, profiles(name, phone)`);
+  if (error) { console.error("Error fetching map data:", error); return; }
 
   liveListings = data.map(row => {
     const isOwner = row.role === 'owner';
     const isMine = profile && profile.id === row.user_id;
 
     let uiListing = {
-      id: row.id, role: row.role, name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
+      id: row.id, role: row.role, 
+      user_id: row.user_id, // NEW: Needed to link ratings!
+      name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
       lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type, ismine: isMine, movein: row.movein_date,
       gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
       radiusKm: row.radius_km ? parseFloat(row.radius_km) : null, bedType: row.bed_type, capacity: row.capacity_allowed,
@@ -1173,14 +1069,19 @@ async function fetchLiveListings() {
     return uiListing;
   });
 
-  // Decide which screen to update based on what they are looking at
   if (document.getElementById('page-explore').classList.contains('active')) applyFilters();
   if (document.getElementById('page-matches') && document.getElementById('page-matches').classList.contains('active')) renderMatchesContent();
+  
+  // Re-open detail panel with new stars if it was already open
+  const openCard = document.querySelector('.listing-card.active');
+  if (openCard) {
+    const id = openCard.getAttribute('data-id');
+    const listing = liveListings.find(l => l.id === id);
+    if (listing) showDetail(id, listing.role);
+  }
 }
 
-function refreshExplore() {
-  fetchLiveListings();
-}
+function refreshExplore() { fetchLiveListings(); }
 
 function initExploreMap() {
   exploreMap = L.map('map', { center:OPERATING_CENTER, zoom:14 });
@@ -1188,8 +1089,6 @@ function initExploreMap() {
   markerLayer = L.layerGroup().addTo(exploreMap);
   circleLayer = L.layerGroup().addTo(exploreMap);
   refreshExplore();
-
-  // Fetch new pins every time the user stops dragging the map!
   exploreMap.on('moveend', refreshExplore);
 }
 
@@ -1247,8 +1146,7 @@ function getMySearchArea() {
 
 function renderMarkers(owners, tenants) {
   if (!markerLayer) return;
-  markerLayer.clearLayers();
-  circleLayer.clearLayers();
+  markerLayer.clearLayers(); circleLayer.clearLayers();
   const myArea = getMySearchArea();
 
   owners.forEach(l => {
@@ -1258,10 +1156,7 @@ function renderMarkers(owners, tenants) {
     let matchHTML = '';
     if (myArea && !l.ismine) {
       const dist = haversineKm(myArea.lat, myArea.lng, l.lat, l.lng);
-      const isMatch = dist <= myArea.radiusKm;
-      matchHTML = isMatch
-        ? `<div class="popup-match yes">✅ Match — within your search area</div>`
-        : `<div class="popup-match no">📍 ${dist.toFixed(1)} km from your search center</div>`;
+      matchHTML = (dist <= myArea.radiusKm) ? `<div class="popup-match yes">✅ Match — within your search area</div>` : `<div class="popup-match no">📍 ${dist.toFixed(1)} km from your search center</div>`;
     }
 
     const badgeClass = l.ismine ? 'mine' : 'owner';
@@ -1282,10 +1177,7 @@ function renderMarkers(owners, tenants) {
   tenants.forEach(l => {
     const color  = l.ismine ? '#a855f7' : '#3b82f6';
     const fillC  = l.ismine ? '#f3e8ff' : '#e8f0fa';
-    const circle = L.circle([l.lat, l.lng], {
-      radius: (l.radiusKm || 0.8) * 1000,
-      color, fillColor: fillC, fillOpacity: .25, weight: 2
-    });
+    const circle = L.circle([l.lat, l.lng], { radius: (l.radiusKm || 0.8) * 1000, color, fillColor: fillC, fillOpacity: .25, weight: 2 });
     const badgeClass = l.ismine ? 'mine' : 'tenant';
     const badgeText  = l.ismine ? '🟣 YOUR SEARCH AREA' : '🔍 TENANT';
     circle.bindPopup(`<div class="popup-inner">
@@ -1308,9 +1200,7 @@ function propTypeLabel(pt) {
 // ══════════════════════════════════════
 function showDetail(id, role) {
   const { ownerListings, tenantListings } = getAllListings();
-  const l = role === 'owner'
-    ? ownerListings.find(x => x.id === id)
-    : tenantListings.find(x => x.id === id);
+  const l = role === 'owner' ? ownerListings.find(x => x.id === id) : tenantListings.find(x => x.id === id);
   if (!l) return;
 
   const isOwner = l.role === 'owner';
@@ -1320,67 +1210,58 @@ function showDetail(id, role) {
   const myArea = getMySearchArea();
   if (myArea && isOwner && !l.ismine) {
     const dist = haversineKm(myArea.lat, myArea.lng, l.lat, l.lng);
-    const isMatch = dist <= myArea.radiusKm;
-    matchBanner = isMatch
-      ? `<div class="dp-match-banner yes">✅ Match — this property is within your search area</div>`
-      : `<div class="dp-match-banner no">📍 ${dist.toFixed(2)} km from your search center — outside your area</div>`;
+    matchBanner = (dist <= myArea.radiusKm) ? `<div class="dp-match-banner yes">✅ Match — this property is within your search area</div>` : `<div class="dp-match-banner no">📍 ${dist.toFixed(2)} km from your search center — outside your area</div>`;
   }
 
   const ownBanner = l.ismine ? `<div class="own-listing-banner">This is your listing</div>` : '';
 
   let fields = '';
   if (isOwner) {
-    if (l.propType === 'entire') {
-      fields = `
-        <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Apartment</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${l.bhk||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${l.capacity||'Any'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-        <div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
-    } else if (l.propType === 'room') {
-      fields = `
-        <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${l.bhk||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${l.capacity||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">People in flat</div><div class="dp-field-val">${l.peopleInFlat||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`;
-    } else {
-      fields = `
-        <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">${l.bedType||'Shared Bed'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">People in room</div><div class="dp-field-val">${l.peopleInRoom||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-        <div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
-    }
+    if (l.propType === 'entire') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Apartment</div></div><div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${l.capacity||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; } 
+    else if (l.propType === 'room') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div><div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${l.capacity||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">People in flat</div><div class="dp-field-val">${l.peopleInFlat||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`; } 
+    else { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">${l.bedType||'Shared Bed'}</div></div><div class="dp-field"><div class="dp-field-lbl">People in room</div><div class="dp-field-val">${l.peopleInRoom||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; }
   } else {
-    fields = `
-      <div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${l.people||'—'}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'Any'}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>`;
+    fields = `<div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div><div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${l.people||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>`;
   }
 
   const contactSection = l.ismine
     ? `<div class="own-listing-banner">This is your listing — <a href="#" onclick="showPage('profile');return false" style="color:inherit;font-weight:700">Manage in Profile →</a></div>`
     : `<button class="contact-btn" id="cbtn-${l.id}" onclick="revealContact('${l.id}','${role}')">Show Contact Number</button>`;
 
+  // NEW: Include Average Rating in the Name
+  const ratingBadge = isOwner ? `<span class="rating-badge" style="font-size:12px; padding:3px 8px;">⭐ ${getOwnerRating(l.user_id)}</span>` : '';
+
+  // NEW: Star Rating Interaction UI (Only show to Tenants looking at Owners)
+  let rateUI = '';
+  if (isOwner && !l.ismine && profile && profile.role === 'tenant') {
+    // Check if they already reviewed this owner
+    const pastReview = liveReviews.find(r => r.reviewer_id === profile.id && r.owner_id === l.user_id);
+    
+    if (pastReview) {
+      rateUI = `<div class="rating-box" style="margin-top:16px;">You rated this owner: ⭐ <strong>${pastReview.rating}/5</strong></div>`;
+    } else {
+      let stars = '';
+      for(let i=1; i<=5; i++) {
+        stars += `<button class="star-btn" onclick="submitRating('${l.user_id}', ${i})">★</button>`;
+      }
+      rateUI = `
+        <div class="rating-box" style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Rate this Owner</div>
+          <div>${stars}</div>
+        </div>`;
+    }
+  }
+
   document.getElementById('dp-body').innerHTML = `
     <div class="dp-role ${l.ismine?'mine':l.role}">${l.ismine?(isOwner?'🟠 YOUR LISTING':'🟣 YOUR SEARCH AREA'):(isOwner?'🏠 OWNER':'🔍 TENANT')}</div>
-    <div class="dp-name">${l.name}</div>
+    <div class="dp-name">${l.name} ${ratingBadge}</div>
     <div class="dp-rent">₹${(isOwner?l.rent:l.budget).toLocaleString()}<small>${isOwner?'/month':'/mo budget'}</small></div>
     ${matchBanner}
     ${ownBanner}
     <div class="dp-grid">${fields}</div>
     <div class="dp-desc">${l.desc||'—'}</div>
-    ${contactSection}`;
+    ${contactSection}
+    ${rateUI}`;
 
   document.getElementById('detail-panel').classList.add('open');
   highlightCard(id);
@@ -1389,9 +1270,7 @@ function showDetail(id, role) {
 
 function revealContact(id, role) {
   const { ownerListings, tenantListings } = getAllListings();
-  const l = role === 'owner'
-    ? ownerListings.find(x => x.id === id)
-    : tenantListings.find(x => x.id === id);
+  const l = role === 'owner' ? ownerListings.find(x => x.id === id) : tenantListings.find(x => x.id === id);
   const btn = document.getElementById('cbtn-' + id);
   if (btn && l) btn.outerHTML = `<div class="contact-revealed">📞 ${l.phone}</div>`;
 }
@@ -1407,29 +1286,29 @@ function closeDetail() {
 function renderCards(owners, tenants) {
   const wrap = document.getElementById('listing-cards');
   if (!wrap) return;
-  
-  wrap.innerHTML = ''; // This safely clears the list
+  wrap.innerHTML = ''; 
   
   const all = [
     ...owners.map(l => ({ ...l, _role:'owner' })),
     ...tenants.map(l => ({ ...l, _role:'tenant' }))
   ];
   
-  // If there are no matches, simply do nothing and leave it blank!
-  if (!all.length) {
-    return;
-  }
+  if (!all.length) { return; } // Removed the "No listings" message!
   
   all.forEach(l => {
     const isOwner = l._role === 'owner';
     const badgeClass = l.ismine ? 'mine' : l._role;
     const badgeText  = l.ismine ? (isOwner?'Yours':'Yours') : (isOwner?'Owner':'Tenant');
+    
+    // NEW: Inject the Star Rating next to the name on the cards!
+    const ratingBadge = isOwner ? `<span class="rating-badge">⭐ ${getOwnerRating(l.user_id)}</span>` : '';
+
     const div = document.createElement('div');
     div.className = 'listing-card';
     div.setAttribute('data-id', l.id);
     div.innerHTML = `
       <div class="lc-head">
-        <span class="lc-name">${l.name}</span>
+        <span class="lc-name">${l.name} ${ratingBadge}</span>
         <span class="lc-badge ${badgeClass}">${badgeText}</span>
       </div>
       <div class="lc-rent">${isOwner ? `₹${l.rent.toLocaleString()}/mo` : `Budget ₹${l.budget.toLocaleString()}`}</div>
@@ -1458,7 +1337,7 @@ function fmtDate(d) {
 // ══════════════════════════════════════
 // NEW: DEDICATED MATCHES PAGE LOGIC
 // ══════════════════════════════════════
-function renderMatchesPage() {
+function renderMatchesContent() {
   const container = document.getElementById('matches-container');
 
   // If they don't have an active listing yet, they can't see matches
@@ -1474,23 +1353,12 @@ function renderMatchesPage() {
     return;
   }
 
-  container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--gray-500); font-size:14px;">⏳ Scanning Hinjewadi for your matches...</div>`;
-  
-  // Make sure we have the latest data from the cloud, then render
-  fetchLiveListings(); 
-}
-
-function renderMatchesContent() {
-  const container = document.getElementById('matches-container');
-  if (!profile || myListings.length === 0) return;
-
   const myListing = myListings[0];
   const isOwner = profile.role === 'owner';
   let matches = [];
 
   // SMART MATCH ALGORITHM
   if (isOwner) {
-    // 1. We are an Owner. Find Tenants whose search circle covers our pin, and who can afford our rent.
     const tenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
     matches = tenants.filter(t => {
       const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
@@ -1499,7 +1367,6 @@ function renderMatchesContent() {
       return withinArea && withinBudget;
     });
   } else {
-    // 2. We are a Tenant. Find Owners whose pin is inside our search circle, and whose rent is under our budget.
     const owners = liveListings.filter(l => l.role === 'owner' && !l.ismine);
     matches = owners.filter(o => {
       const dist = haversineKm(myListing.lat, myListing.lng, o.lat, o.lng);
@@ -1509,7 +1376,6 @@ function renderMatchesContent() {
     });
   }
 
-  // EMPTY STATE: No Matches
   if (matches.length === 0) {
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
@@ -1522,11 +1388,11 @@ function renderMatchesContent() {
     return;
   }
 
-  // SUCCESS STATE: Render Beautiful Feed
   let html = '';
   matches.forEach(m => {
     const mIsOwner = m.role === 'owner';
     const dist = haversineKm(myListing.lat, myListing.lng, m.lat, m.lng).toFixed(1);
+    const ratingBadge = mIsOwner ? `<span class="rating-badge" style="font-size:12px;">⭐ ${getOwnerRating(m.user_id)}</span>` : '';
     
     html += `
       <div class="profile-card" style="margin-bottom:16px; padding:24px;">
@@ -1535,7 +1401,7 @@ function renderMatchesContent() {
             <div class="dp-role ${mIsOwner ? 'owner' : 'tenant'}" style="margin-bottom:8px;">
               ${mIsOwner ? '🏠 MATCHED OWNER' : '🔍 MATCHED TENANT'}
             </div>
-            <div class="profile-name" style="font-size:18px;">${m.name}</div>
+            <div class="profile-name" style="font-size:18px;">${m.name} ${ratingBadge}</div>
           </div>
           <div style="text-align:right;">
             <div class="dp-rent" style="margin-bottom:2px; font-size:22px;">₹${(mIsOwner ? m.rent : m.budget).toLocaleString()}</div>
