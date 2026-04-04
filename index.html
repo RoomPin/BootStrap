@@ -856,11 +856,16 @@ function selectRole(role) {
   document.getElementById('rc-tenant').classList.toggle('selected', role === 'tenant');
   document.getElementById('step2-btn').disabled = false;
 }
-
 async function finishSetup() {
   if (!selectedRole) return;
   const btn = document.getElementById('step2-btn');
-  btn.disabled = true; btn.textContent = "Saving...";
+  btn.disabled = true; 
+  btn.textContent = "Saving...";
+
+  // FIX: If it takes more than 4 seconds, the database is likely waking up from sleep
+  const slowWarning = setTimeout(() => {
+    btn.textContent = "Waking up server... this takes a sec 😴";
+  }, 4000);
 
   const newProfileData = {
     name: document.getElementById('setup-name').value.trim(),
@@ -869,9 +874,16 @@ async function finishSetup() {
   };
 
   const { data, error } = await _supabase.from('profiles').insert([newProfileData]).select();
+  
+  // Clear the slow warning timer once the database responds
+  clearTimeout(slowWarning);
+
   if (error) {
-    alert("Something went wrong saving your profile.");
-    btn.disabled = false; btn.textContent = "Complete Setup →"; return;
+    console.error("Database Error:", error);
+    alert("Something went wrong saving your profile. Please try again!");
+    btn.disabled = false; 
+    btn.textContent = "Complete Setup →"; 
+    return;
   }
 
   profile = data[0];
@@ -962,8 +974,14 @@ function showPage(page) {
   const footer = document.getElementById('global-footer');
   if (footer) footer.style.display = (page === 'explore') ? 'none' : 'block';
 
-  if (page === 'explore') { if (!exploreMap) setTimeout(initExploreMap, 60); else refreshExplore(); }
-  if (page === 'create') { document.getElementById('listing-form').style.display = 'block'; checkTenantAlreadyListed(); if (!pickerMap) setTimeout(initPickerMap, 60); }
+  if (page === 'explore') { 
+    if (!exploreMap) setTimeout(initExploreMap, 60); else refreshExplore(); 
+  }
+  if (page === 'create') { 
+    document.getElementById('listing-form').style.display = 'block'; 
+    checkTenantAlreadyListed(); 
+    // FIX: We removed the premature map initialization from here!
+  }
   if (page === 'profile') renderProfilePage();
   if (page === 'matches') renderMatchesContent(); 
 }
