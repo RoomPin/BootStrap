@@ -722,6 +722,19 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="fg"><label>About You</label><textarea id="t-bed-desc" placeholder="e.g. MBA student at Symbiosis, non-smoker, looking for male flatmates..."></textarea></div>
         </div>
 
+        <div class="form-card dynamic-fields" id="photo-upload-card" style="display:none;">
+          <div class="form-card-title">Property Photo</div>
+          <div style="text-align:center;">
+            <div id="prop-photo-preview" style="width:100%; height:180px; background:var(--gray-50); border:2px dashed var(--gray-200); border-radius:8px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; overflow:hidden;">
+               <span style="font-size:32px; color:var(--gray-300);">📷</span>
+            </div>
+            <label class="btn btn-secondary" style="cursor:pointer; width:100%; justify-content:center;">
+              Select Image
+              <input type="file" id="prop-photo-input" style="display:none;" accept="image/*" onchange="previewPropertyPhoto(event)">
+            </label>
+          </div>
+        </div>
+
         <div class="map-picker-card">
           <div class="map-picker-title" id="map-picker-title">📍 Drop Your Pin on the Map</div>
           
@@ -1544,6 +1557,7 @@ function selectPropType(type) {
     document.getElementById('fields-'+t+'-tenant') && document.getElementById('fields-'+t+'-tenant').classList.remove('show');
   });
   revealCreateMap();
+  document.getElementById('photo-upload-card').style.display = 'block';
 }
 
 function selectTenantLooking(type) {
@@ -1704,6 +1718,27 @@ async function submitListing() {
     }
   }
 
+// --- NEW UPLOAD LOGIC STARTS HERE ---
+  let finalPhotoUrl = null;
+  if (selectedPropertyPhoto && profile.role === 'owner') {
+    btn.textContent = "Uploading photo...";
+    const fileExt = selectedPropertyPhoto.name.split('.').pop();
+    const fileName = `${profile.id}-${Date.now()}.${fileExt}`;
+    
+    const { data: uploadData, error: uploadError } = await _supabase.storage
+      .from('property_photos')
+      .upload(fileName, selectedPropertyPhoto);
+      
+    if (!uploadError) {
+      const { data: publicUrlData } = _supabase.storage.from('property_photos').getPublicUrl(fileName);
+      finalPhotoUrl = publicUrlData.publicUrl;
+    } else {
+      console.error("Image upload failed:", uploadError);
+    }
+  }
+  btn.textContent = "Saving listing...";
+  // --- NEW UPLOAD LOGIC ENDS HERE ---
+
   const dbListingData = {
     user_id: profile.id, 
     role: listing.role,
@@ -1724,6 +1759,7 @@ async function submitListing() {
     people_in_flat: listing.peopleInFlat || null,
     people_in_room: listing.peopleInRoom || null,
     tenant_people_count: listing.people || null,
+    photo_url: finalPhotoUrl, // WE ADDED THIS LINE!
     created_at: new Date().toISOString() 
   };
 
@@ -1740,6 +1776,7 @@ async function submitListing() {
   }
 
   listing.id = data[0].id;
+  listing.photo_url = finalPhotoUrl; // Save it locally too
 
   if (profile.role === 'owner') {
     myListings.push(listing);
@@ -1751,6 +1788,10 @@ async function submitListing() {
   
   lastPostedListing = listing;
   saveProfile(); 
+  
+  // Clear the selected photo for the next time
+  selectedPropertyPhoto = null;
+  document.getElementById('prop-photo-preview').innerHTML = `<span style="font-size:32px; color:var(--gray-300);">📷</span>`;
   
   document.getElementById('success-overlay').classList.add('show');
   resetBtn(btn);
@@ -1881,6 +1922,20 @@ window.addEventListener('load', () => {
   }
   initPreviewMap(); 
 });
+
+let selectedPropertyPhoto = null;
+function previewPropertyPhoto(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  selectedPropertyPhoto = file;
+
+  // Show a preview in the UI
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    document.getElementById('prop-photo-preview').innerHTML = `<img src="${event.target.result}" style="width:100%;height:100%;object-fit:cover;">`;
+  };
+  reader.readAsDataURL(file);
+}
 </script>
 </body>
 </html>
