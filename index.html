@@ -835,10 +835,28 @@ function checkStep1() {
   document.getElementById('step1-btn').disabled = !isValid;
 }
 
-function showOTP(e) {
+async function showOTP(e) {
   e.preventDefault();
-  const phone = document.getElementById('setup-phone').value.trim();
-  if(phone.length < 6) { alert("Please enter a valid phone number first."); return; }
+  const phoneInput = document.getElementById('setup-phone').value.trim();
+  
+  if(phoneInput.length < 10) { 
+    alert("Please enter a valid 10-digit phone number."); 
+    return; 
+  }
+
+  // Formatting to match the +91 we set in the Supabase Dashboard
+  const formattedPhone = '+91' + phoneInput;
+
+  // Ask Supabase to initiate the login
+  const { data, error } = await _supabase.auth.signInWithOtp({
+    phone: formattedPhone,
+  });
+
+  if (error) {
+    alert("Error with OTP: " + error.message);
+    return;
+  }
+
   document.getElementById('otp-section').style.display = 'block';
   document.getElementById('verify-now-link').style.display = 'none';
   checkStep1();
@@ -860,34 +878,48 @@ async function finishSetup() {
   if (!selectedRole) return;
   const btn = document.getElementById('step2-btn');
   btn.disabled = true; 
-  btn.textContent = "Saving...";
+  btn.textContent = "Verifying...";
 
-  // FIX: If it takes more than 4 seconds, the database is likely waking up from sleep
-  const slowWarning = setTimeout(() => {
-    btn.textContent = "Waking up server... this takes a sec 😴";
-  }, 4000);
+  const phoneInput = document.getElementById('setup-phone').value.trim();
+  const formattedPhone = '+91' + phoneInput;
+  const otpCode = document.getElementById('setup-otp').value.trim();
 
-  const newProfileData = {
-    name: document.getElementById('setup-name').value.trim(),
-    phone: document.getElementById('setup-phone').value.trim(),
-    role: selectedRole
-  };
+  // 1. Verify the fixed Test OTP with Supabase
+  const { data: authData, error: authError } = await _supabase.auth.verifyOtp({
+    phone: formattedPhone,
+    token: otpCode,
+    type: 'sms',
+  });
 
-  const { data, error } = await _supabase.from('profiles').insert([newProfileData]).select();
-  
-  // Clear the slow warning timer once the database responds
-  clearTimeout(slowWarning);
-
-  if (error) {
-    console.error("Database Error:", error);
-    alert("Something went wrong saving your profile. Please try again!");
+  if (authError) {
+    alert("Invalid OTP code. Please try again.");
     btn.disabled = false; 
     btn.textContent = "Complete Setup →"; 
     return;
   }
 
-  profile = data[0];
-  saveProfile(); 
+  // 2. Save the profile to the database using their secure Auth ID
+  const user = authData.user;
+  const newProfileData = {
+    id: user.id, 
+    name: document.getElementById('setup-name').value.trim(),
+    phone: phoneInput,
+    role: selectedRole
+  };
+
+  // Upsert ensures we don't get errors if a test user logs in twice
+  const { data: profileData, error: dbError } = await _supabase
+    .from('profiles')
+    .upsert([newProfileData]) 
+    .select();
+
+  if (dbError) {
+    console.error("Database Error:", dbError);
+    alert("Profile save failed, but you are logged in.");
+  } else {
+    profile = profileData[0];
+    saveProfile(); 
+  }
 
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
