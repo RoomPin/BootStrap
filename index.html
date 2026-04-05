@@ -1092,7 +1092,7 @@ async function fetchLiveListings() {
       lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type, ismine: isMine, movein: row.movein_date,
       gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
       radiusKm: row.radius_km ? parseFloat(row.radius_km) : null, bedType: row.bed_type, capacity: row.capacity_allowed,
-      peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count
+      peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count, photo_url: row.photo_url
     };
 
     if (isOwner) { uiListing.rent = parseFloat(row.price); uiListing.deposit = parseFloat(row.deposit); } 
@@ -1282,7 +1282,12 @@ function renderSingleDetail(l, showBackBtn = false) {
   const isOwner = l.role === 'owner';
   
   document.getElementById('dp-photo').style.display = 'flex';
-  document.getElementById('dp-photo').textContent = isOwner ? '🏠' : '🔍';
+  
+  if (l.photo_url) {
+    document.getElementById('dp-photo').innerHTML = `<img src="${l.photo_url}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    document.getElementById('dp-photo').innerHTML = isOwner ? '🏠' : '🔍';
+  }
 
   let matchBanner = '';
   const myArea = getMySearchArea();
