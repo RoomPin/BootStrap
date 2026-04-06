@@ -164,7 +164,7 @@ input[type=date]:focus{border-color:var(--blue)}
 .ldot.o{background:var(--orange-pin)}.ldot.p{background:var(--purple-pin)}
 
 /* Price bubble markers */
-.price-marker{background:var(--blue);color:white;font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2);border:1.5px solid white;cursor:pointer;font-family:'DM Sans',sans-serif;line-height:1.2;text-align:center;position:relative}
+.price-marker{background:var(--blue);color:white;font-size:12px;font-weight:700;padding:4px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.2);border:1.5px solid white;cursor:pointer;font-family:'DM Sans',sans-serif;line-height:1.2;text-align:center;position:relative}
 .price-marker::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid var(--blue)}
 .price-marker.mine{background:var(--orange-pin)}
 .price-marker.mine::after{border-top-color:var(--orange-pin)}
@@ -1177,7 +1177,7 @@ function makeIcon(color, size=26) {
 function makePriceIcon(rent, isMine) {
   const label = rent >= 1000 ? '₹' + (rent/1000).toFixed(rent%1000===0?0:1) + 'K' : '₹' + rent;
   const cls = isMine ? 'price-marker mine' : 'price-marker';
-  return L.divIcon({ html: `<div class="${cls}">${label}</div>`, className:'', iconSize:[0,0], iconAnchor:[0,12] });
+  return L.divIcon({ html: `<div class="${cls}">${label}</div>`, className:'', iconSize:[60,28], iconAnchor:[30,28] });
 }
 
 const ownerIcon = makeIcon('#22c55e'), tenantIcon = makeIcon('#3b82f6'), myOwnerIcon = makeIcon('#f97316', 30), myTenantIcon = makeIcon('#a855f7', 30), pickerIconFn = () => makeIcon('#1a2e4a');
