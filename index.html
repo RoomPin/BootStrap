@@ -391,7 +391,7 @@ input[type=date]:focus{border-color:var(--blue)}
 
   .map-legend { bottom: 10px; right: 10px; padding: 6px 8px; }
   .legend-row { font-size: 10px; }
-  
+  .price-marker { font-size:13px; padding:5px 9px; min-width:48px; min-height:32px; }
   #page-landing { padding-top: 60px; }
   .hero { padding: 40px 16px 32px; }
   .hero h1 { font-size: 30px; }
@@ -1177,7 +1177,7 @@ function makeIcon(color, size=26) {
 function makePriceIcon(rent, isMine) {
   const label = rent >= 1000 ? '₹' + (rent/1000).toFixed(rent%1000===0?0:1) + 'K' : '₹' + rent;
   const cls = isMine ? 'price-marker mine' : 'price-marker';
-  return L.divIcon({ html: `<div class="${cls}">${label}</div>`, className:'', iconSize:[60,28], iconAnchor:[30,28] });
+  return L.divIcon({ html: `<div class="${cls}">${label}</div>`, className:'', iconSize:[70,32], iconAnchor:[35,32] });
 }
 
 const ownerIcon = makeIcon('#22c55e'), tenantIcon = makeIcon('#3b82f6'), myOwnerIcon = makeIcon('#f97316', 30), myTenantIcon = makeIcon('#a855f7', 30), pickerIconFn = () => makeIcon('#1a2e4a');
