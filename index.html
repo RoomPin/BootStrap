@@ -529,17 +529,27 @@ input[type=date]:focus{border-color:var(--blue)}
         </div>
       </div>
       <div class="filter-section">
-        <div class="filter-label">Brokerage Applicable</div>
-        <div class="filter-chips">
-          <button class="chip active" onclick="toggleChip(this,'brokerage')">Any</button>
-          <button class="chip" onclick="toggleChip(this,'brokerage')">No</button>
-          <button class="chip" onclick="toggleChip(this,'brokerage')">Yes</button>
+        <div class="filter-label">BHK / Size</div>
+        <div class="filter-chips" id="bhk-chips">
+          <button class="chip active" onclick="toggleChip(this,'bhk')">Any</button>
+          <button class="chip" onclick="toggleChip(this,'bhk')">1 BHK</button>
+          <button class="chip" onclick="toggleChip(this,'bhk')">2 BHK</button>
+          <button class="chip" onclick="toggleChip(this,'bhk')">3 BHK+</button>
         </div>
       </div>
       <div class="filter-section">
         <div class="filter-label">Budget / Rent</div>
-        <div class="range-display">Up to ₹<span id="rent-max-val">50,000</span></div>
-        <input type="range" id="rent-max" min="3000" max="50000" step="500" value="50000" oninput="updateRentFilter(this.value)">
+        <div class="range-display">Up to ₹<span id="rent-max-val">1,00,000</span></div>
+        <input type="range" id="rent-max" min="3000" max="100000" step="500" value="100000" oninput="updateRentFilter(this.value)">
+      </div>
+      <div class="filter-section">
+        <div class="filter-label">Furnishing</div>
+        <div class="filter-chips" id="furnishing-chips">
+          <button class="chip active" onclick="toggleChip(this,'furnishing')">Any</button>
+          <button class="chip" onclick="toggleChip(this,'furnishing')">Fully furnished</button>
+          <button class="chip" onclick="toggleChip(this,'furnishing')">Semi-furnished</button>
+          <button class="chip" onclick="toggleChip(this,'furnishing')">Unfurnished</button>
+        </div>
       </div>
       <div class="filter-section">
         <div class="filter-label">Gender Preference</div>
@@ -547,6 +557,14 @@ input[type=date]:focus{border-color:var(--blue)}
           <button class="chip active" onclick="toggleChip(this,'gender')">Any</button>
           <button class="chip" onclick="toggleChip(this,'gender')">Male</button>
           <button class="chip" onclick="toggleChip(this,'gender')">Female</button>
+        </div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-label">Brokerage</div>
+        <div class="filter-chips">
+          <button class="chip active" onclick="toggleChip(this,'brokerage')">Any</button>
+          <button class="chip" onclick="toggleChip(this,'brokerage')">No</button>
+          <button class="chip" onclick="toggleChip(this,'brokerage')">Yes</button>
         </div>
       </div>
       <div class="filter-section">
@@ -755,8 +773,13 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-entire-budget" placeholder="25000"></div>
             <div class="fg"><label>Move-in Date</label><input type="date" id="t-entire-movein"></div>
           </div>
-          <div class="fg"><label>Furnishing Preference</label>
-            <select id="t-entire-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+          <div class="form-row">
+            <div class="fg"><label>People Living</label>
+              <select id="t-entire-gender"><option>Men</option><option>Women</option><option>Both</option></select>
+            </div>
+            <div class="fg"><label>Furnishing Preference</label>
+              <select id="t-entire-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+            </div>
           </div>
           <div class="fg"><label>About You</label><textarea id="t-entire-desc" placeholder="e.g. Working at Wipro, couple, need parking, prefer furnished..."></textarea></div>
         </div>
@@ -776,8 +799,8 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Move-in Date</label><input type="date" id="t-room-movein"></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Gender Preference</label>
-              <select id="t-room-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
+            <div class="fg"><label>Your Gender</label>
+              <select id="t-room-gender"><option>Male</option><option>Female</option></select>
             </div>
             <div class="fg"><label>Furnishing Preference</label>
               <select id="t-room-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
@@ -796,8 +819,8 @@ input[type=date]:focus{border-color:var(--blue)}
           </div>
           <div class="form-row">
             <div class="fg"><label>Move-in Date</label><input type="date" id="t-bed-movein"></div>
-            <div class="fg"><label>Gender Preference</label>
-              <select id="t-bed-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
+            <div class="fg"><label>Your Gender</label>
+              <select id="t-bed-gender"><option>Male</option><option>Female</option></select>
             </div>
           </div>
           <div class="fg"><label>Furnishing Preference</label>
@@ -933,7 +956,7 @@ let markerLayer = null, circleLayer = null;
 let pickerMarker = null, pickerCircle = null;
 let drawControl = null, drawnItems = null;
 
-let proptypeFilter = 'Any', genderFilter = 'Any', brokerageFilter = 'Any';
+let proptypeFilter = 'Any', genderFilter = 'Any', brokerageFilter = 'Any', bhkFilter = 'Any', furnishingFilter = 'Any';
 let selectedPropType = null, selectedTenantLooking = null;
 let pinLat = null, pinLng = null, circleCenter = null, circleRadiusKm = null;
 let searchTimeout = null;
@@ -1351,8 +1374,19 @@ function applyFilters() {
       const map = { 'Entire Apartment':'entire', 'Private Room':'room', 'Shared Bed':'bed' };
       if (l.propType !== map[proptypeFilter]) return false;
     }
+    if (bhkFilter !== 'Any') {
+      // Shared Bed listings don't have BHK — hide them when a specific BHK is selected
+      if (!l.bhk) return false;
+      if (l.bhk !== bhkFilter) return false;
+    }
     if (l.rent > rentMax) return false;
-    if (genderFilter !== 'Any' && l.gender !== 'Any' && l.gender !== genderFilter) return false;
+    if (furnishingFilter !== 'Any' && l.furnishing !== furnishingFilter) return false;
+    // Gender fix: filter chips say "Male"/"Female" but stored values are "Male only"/"Female only"
+    if (genderFilter !== 'Any') {
+      const genderMap = { 'Male': 'Male only', 'Female': 'Female only' };
+      const mappedGender = genderMap[genderFilter];
+      if (l.gender !== 'Any' && l.gender !== mappedGender) return false;
+    }
     if (brokerageFilter !== 'Any' && l.brokerage !== brokerageFilter) return false;
     if (movein && l.movein > movein) return false;
     return true;
@@ -1592,8 +1626,10 @@ function renderMatchesContent() {
 
   if (tabsEl) {
     tabsEl.style.display = 'flex';
-    // Owners don't need buddy up, tenants see both tabs
-    if (profile.role === 'owner') {
+    // Owners don't need buddy up
+    // Tenants looking for entire apartment don't need buddy up either
+    const myListing = myListings[0];
+    if (profile.role === 'owner' || (myListing && myListing.propType === 'entire')) {
       tabsEl.style.display = 'none';
       activeMatchTab = 'properties';
     }
@@ -1699,36 +1735,74 @@ function renderBuddyUp(container) {
     return;
   }
 
-  // Find other tenants whose search areas overlap with mine
+  // Entire Apartment tenants don't need buddies — they get the whole place
+  if (myListing.propType === 'entire') {
+    container.innerHTML = `
+      <div class="already-listed-card" style="margin-top:4px;">
+        <div style="font-size:36px;margin-bottom:10px">🏠</div>
+        <h3>Buddy Up isn't available for apartments</h3>
+        <p>Since you're looking for an entire apartment, you won't need a roommate. Check your Property Matches to find available apartments instead!</p>
+        <button class="btn btn-secondary" onclick="switchMatchTab('properties', document.querySelector('.match-tab'))" style="margin-top:12px;">View Property Matches →</button>
+      </div>
+    `;
+    return;
+  }
+
+  // Find other tenants — strict same type only (room↔room, bed↔bed)
   const otherTenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
   
   let buddies = otherTenants.map(t => {
     const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
     const myRadius = myListing.radiusKm || 1;
     const theirRadius = t.radiusKm || 1;
-    // Check if search areas overlap (distance between centers < sum of radii)
+    // 1. Search areas must overlap
     const overlap = dist < (myRadius + theirRadius);
-    // Also check if looking for similar property type
-    const sameType = myListing.propType === t.propType || t.propType === 'room' || myListing.propType === 'room';
-    return { ...t, dist, overlap, sameType };
-  }).filter(t => t.overlap);
+    // 2. Strict same type — room matches room, bed matches bed
+    const sameType = myListing.propType === t.propType;
+    // 3. Same gender — Male↔Male, Female↔Female
+    const myGender = myListing.gender || '';
+    const theirGender = t.gender || '';
+    const sameGender = myGender && theirGender && myGender === theirGender;
+    // 4. Budget within ±25% of each other
+    const myBudget = myListing.budget || 0;
+    const theirBudget = t.budget || 0;
+    const higherBudget = Math.max(myBudget, theirBudget);
+    const budgetDiff = Math.abs(myBudget - theirBudget);
+    const budgetMatch = higherBudget > 0 && (budgetDiff / higherBudget) <= 0.25;
+    // 5. Move-in dates within ±5 days of each other
+    let moveinMatch = false;
+    if (myListing.movein && t.movein) {
+      const myDate = new Date(myListing.movein);
+      const theirDate = new Date(t.movein);
+      const daysDiff = Math.abs(myDate - theirDate) / (1000 * 60 * 60 * 24);
+      moveinMatch = daysDiff <= 5;
+    }
+    
+    const isMatch = overlap && sameType && sameGender && budgetMatch && moveinMatch;
+    return { ...t, dist, isMatch };
+  }).filter(t => t.isMatch);
 
   // Sort by distance
   buddies.sort((a, b) => a.dist - b.dist);
 
   if (buddies.length === 0) {
+    const typeLabel = myListing.propType === 'room' ? 'private room' : 'shared bed';
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
         <div style="font-size:36px;margin-bottom:10px">👋</div>
         <h3>No roommate buddies yet</h3>
-        <p>We'll show other tenants searching in your area here so you can team up and share a room. Check back as more people join!</p>
+        <p>We're looking for other tenants searching for a ${typeLabel} in your area, with a similar budget and move-in date. Check back as more people join!</p>
       </div>
     `;
     return;
   }
 
+  const typeExplainer = myListing.propType === 'room' 
+    ? 'These tenants are also looking for a private room near your area. Team up to rent an apartment together — one room each!'
+    : 'These tenants are also looking for a shared bed near your area. Team up to rent a room together and split the cost!';
+
   let html = `<div style="font-size:13px; color:var(--gray-600); margin-bottom:16px; line-height:1.5;">
-    These tenants are also searching near your area. Team up to share a flat and split the rent!
+    ${typeExplainer}
   </div>`;
 
   buddies.forEach(b => {
@@ -1739,7 +1813,7 @@ function renderBuddyUp(container) {
         <div class="buddy-header">
           <div>
             <div class="buddy-name">${escHTML(b.name)}</div>
-            <div class="buddy-meta">${propTypeLabel(b.propType)} · ${b.gender || 'Any'} · Move-in ${fmtDate(b.movein)}</div>
+            <div class="buddy-meta">${propTypeLabel(b.propType)} · ${b.gender || '—'} · Move-in ${fmtDate(b.movein)}</div>
           </div>
           <div style="text-align:right;">
             <div class="buddy-budget">₹${b.budget.toLocaleString()}</div>
@@ -1748,7 +1822,6 @@ function renderBuddyUp(container) {
         </div>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
           <span class="buddy-overlap">📍 ${distLabel}</span>
-          ${b.sameType ? '<span class="buddy-overlap" style="background:#dcfce7;color:#15803d;">Same type</span>' : ''}
         </div>
         ${b.desc ? `<div class="dp-desc" style="margin-bottom:12px;">${escHTML(b.desc)}</div>` : ''}
         <button class="contact-btn" id="match-cbtn-${b.id}" onclick="revealMatchContact('${b.id}','${escHTML(b.phone)}')" style="font-size:12px;padding:9px;">Connect with ${escHTML(b.name).split(' ')[0]}</button>
@@ -1766,6 +1839,8 @@ function toggleChip(btn, group) {
   btn.closest('.filter-chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
   if (group === 'proptype') proptypeFilter = btn.textContent;
+  if (group === 'bhk')      bhkFilter = btn.textContent;
+  if (group === 'furnishing') furnishingFilter = btn.textContent;
   if (group === 'gender')   genderFilter   = btn.textContent;
   if (group === 'brokerage') brokerageFilter = btn.textContent;
   applyFilters();
@@ -1777,10 +1852,10 @@ function updateRentFilter(val) {
 }
 
 function resetFilters() {
-  document.getElementById('rent-max').value = 50000;
-  document.getElementById('rent-max-val').textContent = '50,000';
+  document.getElementById('rent-max').value = 100000;
+  document.getElementById('rent-max-val').textContent = '1,00,000';
   document.getElementById('movein-filter').value = '';
-  proptypeFilter = 'Any'; genderFilter = 'Any'; brokerageFilter = 'Any';
+  proptypeFilter = 'Any'; bhkFilter = 'Any'; furnishingFilter = 'Any'; genderFilter = 'Any'; brokerageFilter = 'Any';
   document.querySelectorAll('.filter-chips').forEach(g => g.querySelectorAll('.chip').forEach((c,i) => c.classList.toggle('active', i===0)));
   applyFilters();
 }
@@ -2071,7 +2146,7 @@ async function submitListing() {
     listing.propType = selectedTenantLooking;
     
     if (selectedTenantLooking === 'entire') {
-      listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, people: document.getElementById('t-entire-people').value, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: document.getElementById('t-entire-movein').value, furnishing: document.getElementById('t-entire-furnishing').value, desc: document.getElementById('t-entire-desc').value };
+      listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, people: document.getElementById('t-entire-people').value, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: document.getElementById('t-entire-movein').value, gender: document.getElementById('t-entire-gender').value, furnishing: document.getElementById('t-entire-furnishing').value, desc: document.getElementById('t-entire-desc').value };
     } else if (selectedTenantLooking === 'room') {
       listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, people: document.getElementById('t-room-people').value, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: document.getElementById('t-room-movein').value, gender: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, desc: document.getElementById('t-room-desc').value };
     } else {
@@ -2172,7 +2247,7 @@ function resetCreateForm() {
     'o-entire-bhk','o-entire-rent','o-entire-deposit','o-entire-movein','o-entire-furnishing','o-entire-people','o-entire-brokerage','o-entire-gender','o-entire-desc',
     'o-room-bhk','o-room-people','o-room-rent','o-room-deposit','o-room-movein','o-room-gender','o-room-furnishing','o-room-capacity','o-room-brokerage','o-room-desc',
     'o-bed-type','o-bed-people','o-bed-rent','o-bed-deposit','o-bed-movein','o-bed-gender','o-bed-furnishing','o-bed-brokerage','o-bed-desc',
-    't-entire-bhk','t-entire-people','t-entire-budget','t-entire-movein','t-entire-furnishing','t-entire-desc',
+    't-entire-bhk','t-entire-people','t-entire-budget','t-entire-movein','t-entire-gender','t-entire-furnishing','t-entire-desc',
     't-room-bhk','t-room-people','t-room-budget','t-room-movein','t-room-gender','t-room-furnishing','t-room-desc',
     't-bed-type','t-bed-budget','t-bed-movein','t-bed-gender','t-bed-furnishing','t-bed-desc'
   ];
