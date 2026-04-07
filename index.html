@@ -1142,7 +1142,35 @@ async function logoutUser() {
 }
 
 async function resetProfile() {
-  if (!confirm('This will clear your profile and all listings. Continue?')) return;
+  if (!confirm('This will permanently delete your account, all listings, and reviews. This cannot be undone. Continue?')) return;
+  
+  try {
+    if (profile && profile.id) {
+      // Delete all user's listings from Supabase
+      const { error: listErr } = await _supabase
+        .from('listings')
+        .delete()
+        .eq('user_id', profile.id);
+      if (listErr) console.error("Error deleting listings:", listErr);
+
+      // Delete all user's reviews (ones they wrote)
+      const { error: revErr } = await _supabase
+        .from('reviews')
+        .delete()
+        .eq('reviewer_id', profile.id);
+      if (revErr) console.error("Error deleting reviews:", revErr);
+
+      // Delete the user's profile row
+      const { error: profErr } = await _supabase
+        .from('profiles')
+        .delete()
+        .eq('id', profile.id);
+      if (profErr) console.error("Error deleting profile:", profErr);
+    }
+  } catch(e) {
+    console.error("Account deletion error:", e);
+  }
+
   await _supabase.auth.signOut();
   localStorage.clear(); profile = null; myListings = []; location.reload();
 }
@@ -1723,7 +1751,7 @@ function renderBuddyUp(container) {
           ${b.sameType ? '<span class="buddy-overlap" style="background:#dcfce7;color:#15803d;">Same type</span>' : ''}
         </div>
         ${b.desc ? `<div class="dp-desc" style="margin-bottom:12px;">${escHTML(b.desc)}</div>` : ''}
-        <button class="contact-btn" id="buddy-cbtn-${b.id}" onclick="revealMatchContact('buddy-cbtn-${b.id}','${escHTML(b.phone)}')" style="font-size:12px;padding:9px;">Connect with ${escHTML(b.name).split(' ')[0]}</button>
+        <button class="contact-btn" id="match-cbtn-${b.id}" onclick="revealMatchContact('${b.id}','${escHTML(b.phone)}')" style="font-size:12px;padding:9px;">Connect with ${escHTML(b.name).split(' ')[0]}</button>
       </div>
     `;
   });
@@ -1960,10 +1988,59 @@ async function initPickerMap() {
   }
 }
 
+function validateListingFields() {
+  const role = profile.role;
+  const type = role === 'owner' ? selectedPropType : selectedTenantLooking;
+  if (!type) return 'Please select a property type.';
+
+  const missing = [];
+
+  if (role === 'owner') {
+    if (type === 'entire') {
+      if (!document.getElementById('o-entire-bhk').value) missing.push('Apartment Size');
+      const rent = parseInt(document.getElementById('o-entire-rent').value);
+      if (!rent || rent <= 0) missing.push('Monthly Rent');
+      if (!document.getElementById('o-entire-movein').value) missing.push('Available From date');
+    } else if (type === 'room') {
+      if (!document.getElementById('o-room-bhk').value) missing.push('Apartment Size');
+      const rent = parseInt(document.getElementById('o-room-rent').value);
+      if (!rent || rent <= 0) missing.push('Rent per Room');
+      if (!document.getElementById('o-room-movein').value) missing.push('Available From date');
+    } else {
+      if (!document.getElementById('o-bed-type').value) missing.push('Room Type');
+      const rent = parseInt(document.getElementById('o-bed-rent').value);
+      if (!rent || rent <= 0) missing.push('Rent per Bed');
+      if (!document.getElementById('o-bed-movein').value) missing.push('Available From date');
+    }
+  } else {
+    if (type === 'entire') {
+      const budget = parseInt(document.getElementById('t-entire-budget').value);
+      if (!budget || budget <= 0) missing.push('Max Budget');
+      if (!document.getElementById('t-entire-movein').value) missing.push('Move-in Date');
+    } else if (type === 'room') {
+      const budget = parseInt(document.getElementById('t-room-budget').value);
+      if (!budget || budget <= 0) missing.push('Max Budget');
+      if (!document.getElementById('t-room-movein').value) missing.push('Move-in Date');
+    } else {
+      const budget = parseInt(document.getElementById('t-bed-budget').value);
+      if (!budget || budget <= 0) missing.push('Max Budget');
+      if (!document.getElementById('t-bed-movein').value) missing.push('Move-in Date');
+    }
+  }
+
+  if (missing.length > 0) return 'Please fill in: ' + missing.join(', ');
+  return null;
+}
+
 async function submitListing() {
   if (!profile) return;
 
   const btn = document.querySelector('.submit-btn');
+
+  // Validate required fields before doing anything
+  const validationError = validateListingFields();
+  if (validationError) { alert(validationError); return; }
+
   btn.disabled = true;
   btn.textContent = "Publishing to map...";
 
