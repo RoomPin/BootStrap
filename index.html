@@ -418,13 +418,9 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="setup-sub">Find rooms &amp; flatmates in Hinjewadi — on a map.</div>
 
     <div class="setup-step active" id="setup-step-1">
-      <div style="display:flex; gap:10px; margin-bottom: 20px;">
-        <button id="tab-new" class="btn btn-primary" style="flex:1; justify-content:center;" onclick="setLoginMode('new')">Sign Up</button>
-        <button id="tab-existing" class="btn btn-secondary" style="flex:1; justify-content:center;" onclick="setLoginMode('existing')">Log In</button>
-      </div>
-
-      <div class="setup-label" id="setup-details-label">Create Account</div>
-      <input class="setup-input" id="setup-name" type="text" placeholder="Full Name" oninput="checkStep1()">
+      <div class="setup-label">Sign In / Sign Up</div>
+      <p style="font-size:13px; color:var(--gray-600); margin-bottom:16px;">Enter your phone number to get started.</p>
+      
       <input class="setup-input" id="setup-phone" type="tel" placeholder="Phone Number (e.g. 98765 43210)" oninput="checkStep1()">
       
       <div style="text-align: right; margin-bottom: 8px;">
@@ -439,6 +435,10 @@ input[type=date]:focus{border-color:var(--blue)}
     </div>
 
     <div class="setup-step" id="setup-step-2">
+      <div class="setup-label">Complete Your Profile</div>
+      <input class="setup-input" id="setup-name" type="text" placeholder="Your Full Name" oninput="checkStep2()" style="margin-bottom: 24px;">
+
+      <div class="setup-label">What brings you here?</div>
       <div class="role-cards">
         <div class="role-card" id="rc-owner" onclick="selectRole('owner')">
           <div class="icon">🏠</div>
@@ -971,38 +971,23 @@ function escHTML(str) {
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-let loginMode = 'new'; // Keeps track of which tab is active
-
-function setLoginMode(mode) {
-  loginMode = mode;
-  
-  // Change button colors so the active one is blue
-  document.getElementById('tab-new').className = mode === 'new' ? 'btn btn-primary' : 'btn btn-secondary';
-  document.getElementById('tab-existing').className = mode === 'existing' ? 'btn btn-primary' : 'btn btn-secondary';
-  
-  // Hide or show the Name input
-  document.getElementById('setup-name').style.display = mode === 'new' ? 'block' : 'none';
-  
-  // Update the label text
-  document.getElementById('setup-details-label').textContent = mode === 'new' ? 'Create Account' : 'Welcome Back';
-  
-  // Re-check if the form is valid
-  checkStep1();
-}
-  
 function checkStep1() {
-  const name  = document.getElementById('setup-name').value.trim();
   const phone = document.getElementById('setup-phone').value.trim();
   const otpVisible = document.getElementById('otp-section').style.display === 'block';
   const otp = document.getElementById('setup-otp').value.trim();
   
-  // If they are new, they need a name. If existing, ignore the name.
-  let hasValidDetails = loginMode === 'new' ? (name.length > 0 && phone.length >= 6) : (phone.length >= 6);
-  
-  let isValid = hasValidDetails;
+  // Now it only checks if the phone number is entered
+  let isValid = phone.length >= 6;
   if (otpVisible) { isValid = isValid && otp.length >= 4; } else { isValid = false; }
   
   document.getElementById('step1-btn').disabled = !isValid;
+}
+
+// NEW FUNCTION: This checks if they typed a Name AND picked a Role in Step 2
+function checkStep2() {
+  const name = document.getElementById('setup-name').value.trim();
+  const btn = document.getElementById('step2-btn');
+  btn.disabled = !(name.length > 0 && selectedRole !== null);
 }
 
 async function showOTP(e) {
@@ -1077,17 +1062,9 @@ async function goStep2() {
     btn.disabled = false;
     showPage('profile');
     
-  } else {
-    // THEY ARE A NEW USER
-    if (loginMode === 'existing') {
-      // They clicked Existing, but aren't in the database!
-      alert("We couldn't find an account for this number. Let's create one!");
-      setLoginMode('new');
-      btn.textContent = "Continue →";
-      btn.disabled = false;
-      return;
-    }
-    // Move to Role Selection
+} else {
+    // THEY ARE A BRAND NEW USER
+    // Move them straight to Step 2 to enter their Name and pick a Role
     btn.textContent = "Continue →";
     btn.disabled = false;
     document.getElementById('setup-step-1').classList.remove('active');
@@ -1100,7 +1077,7 @@ function selectRole(role) {
   selectedRole = role;
   document.getElementById('rc-owner').classList.toggle('selected', role === 'owner');
   document.getElementById('rc-tenant').classList.toggle('selected', role === 'tenant');
-  document.getElementById('step2-btn').disabled = false;
+  checkStep2(); // Re-validate when they click a role
 }
 async function finishSetup() {
   if (!selectedRole) return;
