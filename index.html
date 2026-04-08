@@ -1259,20 +1259,17 @@ async function resetProfile() {
 }
 
 function showPage(page) {
-  if ((page === 'profile' || page === 'create' || page === 'matches') && !profile) {
-    // Hide all other pages so the navbar and footer look normal
+  // WE CHANGED THIS LINE: Now it ONLY forces login if they click "Profile"
+  if (page === 'profile' && !profile) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-setup').classList.add('active'); 
     
-    // Ensure the footer is visible for the setup page
     const footer = document.getElementById('global-footer');
     if (footer) footer.style.display = 'block';
     return; 
   }
   
-  // If we are showing a normal page, make sure the setup page is hidden
   document.getElementById('page-setup').classList.remove('active');
-  
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   
@@ -1682,14 +1679,29 @@ function renderMatchesContent() {
   const container = document.getElementById('matches-container');
   const tabsEl = document.getElementById('match-tabs');
 
-  if (!profile || myListings.length === 0) {
+  // --- NEW LOGGED OUT STATE ---
+  if (!profile) {
+    if (tabsEl) tabsEl.style.display = 'none'; // Hide the tabs!
+    container.innerHTML = `
+      <div class="already-listed-card" style="margin-top:20px;">
+        <div style="font-size:36px;margin-bottom:10px">✨</div>
+        <h3>Log in to unlock your Matches</h3>
+        <p>Owners see potential tenants. Tenants see matching rooms and can find potential roommates to buddy up with.</p>
+        <button class="btn btn-primary" onclick="showPage('profile')" style="margin-top:12px; justify-content:center;">Log In or Sign Up →</button>
+      </div>
+    `;
+    return;
+  }
+
+  // --- EXISTING LOGGED IN BUT NO LISTING STATE ---
+  if (profile && myListings.length === 0) {
     if (tabsEl) tabsEl.style.display = 'none';
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
         <div style="font-size:36px;margin-bottom:10px">✨</div>
         <h3>No Active Listing</h3>
         <p>Post a listing first to see your matches — both property matches and potential roommates.</p>
-        <button class="btn btn-primary" onclick="showPage('create')" style="margin-top:12px;">Post a Listing →</button>
+        <button class="btn btn-primary" onclick="showPage('create')" style="margin-top:12px; justify-content:center;">Post a Listing →</button>
       </div>
     `;
     return;
@@ -1935,9 +1947,37 @@ function resetFilters() {
 // CREATE LISTING & MAP SEARCH
 // ══════════════════════════════════════
 function checkTenantAlreadyListed() {
-  if (!profile) return;
   const alreadyDiv = document.getElementById('already-listed');
   const formDiv    = document.getElementById('listing-form');
+
+  // --- NEW LOGGED OUT STATE ---
+  if (!profile) {
+    alreadyDiv.innerHTML = `
+      <div class="already-listed-card">
+        <div style="font-size:36px;margin-bottom:10px">👋</div>
+        <h3>Log in to post a listing</h3>
+        <p>You need an account to drop a pin on the map and let others contact you.</p>
+        <button class="btn btn-primary" onclick="showPage('profile')" style="margin-top:12px; justify-content:center;">Log In or Sign Up →</button>
+      </div>
+    `;
+    alreadyDiv.style.display = 'block';
+    formDiv.style.display = 'none';
+    return;
+  }
+
+  // --- RESTORE ORIGINAL HTML IF THEY ARE LOGGED IN ---
+  alreadyDiv.innerHTML = `
+    <div class="already-listed-card">
+      <div style="font-size:36px;margin-bottom:10px">📋</div>
+      <h3>You already have an active listing</h3>
+      <p>Tenants can only have one active listing at a time. Delete your current listing to post a new one.</p>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="showPage('explore')">View on Map</button>
+        <button class="btn btn-danger" onclick="deleteTenantListing()">Delete &amp; Repost</button>
+      </div>
+    </div>
+  `;
+
   if (profile.role === 'tenant' && myListings.length > 0) {
     alreadyDiv.style.display = 'block';
     formDiv.style.display    = 'none';
