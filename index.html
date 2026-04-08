@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RoomPin — Hinjewadi, Pune</title>
 
-<!-- Preconnect to speed up external resource loading -->
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -15,13 +14,10 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 
-<!-- Leaflet.draw loaded dynamically for tenants only -->
-
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
 <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-<!-- Load fonts with display=swap so text renders immediately with fallback -->
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -112,7 +108,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .footer-links a:hover{color:var(--blue)}
 
 /* ════════ EXPLORE ════════ */
-/* Fix the container layout so the map sits perfectly below the Nav */
 #page-explore.active { display: flex; flex-direction: column; height: 100vh; padding-top: 72px; overflow: hidden; }
 .map-area { flex: 1; position: relative; width: 100%; height: 100%; z-index: 1; }
 #map { width: 100%; height: 100%; }
@@ -169,7 +164,6 @@ input[type=date]:focus{border-color:var(--blue)}
 .price-marker.mine{background:var(--orange-pin)}
 .price-marker.mine::after{border-top-color:var(--orange-pin)}
 
-/* Tenant's own search boundary on explore */
 .my-search-boundary{opacity:.6}
 
 /* Match section tabs */
@@ -190,37 +184,16 @@ input[type=date]:focus{border-color:var(--blue)}
 
 /* Detail panel */
 .detail-panel {
-  position: absolute;
-  top: 16px;          /* Floating top margin */
-  right: 16px;        /* Floating right margin */
-  bottom: 16px;       /* Floating bottom margin */
-  width: 340px;
-  background: white;
-  border: 1px solid var(--gray-200); /* Border all the way around */
-  border-radius: 12px;               /* Matches left panel corners */
-  box-shadow: none;      
-  z-index: 600;
-  transform: translateX(120%);       /* Pushes it further off-screen when closed */
-  transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother slide animation */
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  position: absolute; top: 16px; right: 16px; bottom: 16px; width: 340px;
+  background: white; border: 1px solid var(--gray-200); border-radius: 12px;
+  box-shadow: none; z-index: 600; transform: translateX(120%);
+  transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1); overflow-y: auto; display: flex; flex-direction: column;
 }
-.detail-panel.open {
-  transform: translateX(0);
-}
+.detail-panel.open { transform: translateX(0); }
 .dp-close{position:absolute;top:12px;right:12px;width:28px;height:28px;border-radius:50%;border:1px solid var(--gray-200);background:white;cursor:pointer;font-size:15px;color:var(--gray-600);display:flex;align-items:center;justify-content:center;z-index:1}
-/* Added border-radius to the photo so it doesn't poke out of the rounded card */
 .dp-photo {
-  height: 170px;
-  background: var(--gray-100);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 50px;
-  color: rgba(0,0,0,.12);
-  border-radius: 11px 11px 0 0; 
-  flex-shrink: 0;
+  height: 170px; background: var(--gray-100); display: flex; align-items: center; justify-content: center;
+  font-size: 50px; color: rgba(0,0,0,.12); border-radius: 11px 11px 0 0; flex-shrink: 0;
 }
 .dp-body{padding:16px;flex:1}
 .dp-role{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;margin-bottom:8px;letter-spacing:.5px}
@@ -334,6 +307,10 @@ input[type=date]:focus{border-color:var(--blue)}
 .autocomplete-item:last-child { border-bottom: none; }
 .autocomplete-item:hover { background: var(--blue-light); color: var(--blue); }
 
+/* --- NEW MOBILE HELPER CLASSES --- */
+.two-col-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.match-card-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:12px; }
+
 @media(min-width: 900px) {
   .hero { max-width: 800px; padding-top: 80px; padding-bottom: 40px; }
   .hero h1 { font-size: 56px; line-height: 1.15; }
@@ -407,6 +384,19 @@ input[type=date]:focus{border-color:var(--blue)}
   .profile-inner { padding: 20px 16px 80px; }
   
   #page-matches { padding-top: 60px; }
+  
+  /* NEW: Match tab size adjustment */
+  .match-tab { font-size: 12px; padding: 8px 4px; }
+}
+
+@media(max-width: 480px) {
+  /* NEW: Fallbacks for narrow screens */
+  .two-col-grid { grid-template-columns: 1fr; }
+  .role-cards { grid-template-columns: 1fr; }
+  .match-card-head { flex-direction: column; gap: 8px; }
+  .match-card-head .match-card-right { text-align: left !important; }
+  .buddy-header { flex-direction: column; gap: 8px; }
+  .buddy-header > div:last-child { text-align: left !important; }
 }
 </style>
 </head>
@@ -886,7 +876,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <p>Manage your account, listings, and preferences</p>
     </div>
 
-    <!-- Avatar + Name Section -->
     <div class="profile-card" style="text-align:center; padding:32px 24px;">
       <div style="display:flex; flex-direction:column; align-items:center;">
         <div class="profile-avatar" id="profile-avatar" style="width:88px; height:88px; font-size:34px; margin-bottom:12px; overflow:hidden; border:3px solid var(--gray-200); background:var(--blue-light); color:var(--blue);">?</div>
@@ -900,10 +889,9 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
     </div>
 
-    <!-- Account Details Section -->
     <div class="profile-card">
       <div class="profile-card-title">Account Details</div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+      <div class="two-col-grid">
         <div class="dp-field"><div class="dp-field-lbl">Name</div><div class="dp-field-val" id="profile-detail-name">—</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Phone</div><div class="dp-field-val" id="profile-detail-phone">—</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Role</div><div class="dp-field-val" id="profile-detail-role">—</div></div>
@@ -911,13 +899,11 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
     </div>
 
-    <!-- My Listings Section -->
     <div class="profile-card" id="profile-listings-card">
       <div class="profile-card-title" id="profile-listings-title">My Listings</div>
       <div id="profile-listings-body"></div>
     </div>
 
-    <!-- Actions -->
     <div style="display:flex; flex-direction:column; gap:8px;">
       <button class="btn btn-secondary" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="logoutUser()">Log Out</button>
       <button class="btn btn-danger" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="resetProfile()">Delete Account &amp; Start Over</button>
@@ -1271,7 +1257,6 @@ function showPage(page) {
   if (page === 'create') { 
     document.getElementById('listing-form').style.display = 'block'; 
     checkTenantAlreadyListed(); 
-    // FIX: We removed the premature map initialization from here!
   }
   if (page === 'profile') renderProfilePage();
   if (page === 'matches') renderMatchesContent(); 
@@ -1305,7 +1290,6 @@ function initPreviewMap() {
   L.marker([18.5950, 73.7450], { icon: ownerIcon }).addTo(previewMap); 
 
   // Add EXACTLY ONE Tenant Circle to represent "Your Search Area"
-  // Styled in purple just like the actual app logic for the logged-in user
   L.circle([18.5910, 73.7280], { 
     color: '#a855f7', 
     fillColor: '#f3e8ff', 
@@ -1431,7 +1415,6 @@ function initExploreMap() {
   }
   
   refreshExplore();
-  // No moveend listener — data is fetched once, filters applied locally
 }
 
 function applyFilters() {
@@ -1446,13 +1429,11 @@ function applyFilters() {
       if (l.propType !== map[proptypeFilter]) return false;
     }
     if (bhkFilter !== 'Any') {
-      // Shared Bed listings don't have BHK — hide them when a specific BHK is selected
       if (!l.bhk) return false;
       if (l.bhk !== bhkFilter) return false;
     }
     if (l.rent > rentMax) return false;
     if (furnishingFilter !== 'Any' && l.furnishing !== furnishingFilter) return false;
-    // Gender fix: filter chips say "Male"/"Female" but stored values are "Male only"/"Female only"
     if (genderFilter !== 'Any') {
       const genderMap = { 'Male': 'Male only', 'Female': 'Female only' };
       const mappedGender = genderMap[genderFilter];
@@ -1686,7 +1667,7 @@ function renderMatchesContent() {
 
   // --- NEW LOGGED OUT STATE ---
   if (!profile) {
-    if (tabsEl) tabsEl.style.display = 'none'; // Hide the tabs!
+    if (tabsEl) tabsEl.style.display = 'none'; 
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
         <div style="font-size:36px;margin-bottom:10px">✨</div>
@@ -1715,7 +1696,6 @@ function renderMatchesContent() {
   if (tabsEl) {
     tabsEl.style.display = 'flex';
     // Owners don't need buddy up
-    // Tenants looking for entire apartment don't need buddy up either
     const myListing = myListings[0];
     if (profile.role === 'owner' || (myListing && myListing.propType === 'entire')) {
       tabsEl.style.display = 'none';
@@ -1773,14 +1753,14 @@ function renderPropertyMatches(container) {
     
     html += `
       <div class="profile-card" style="margin-bottom:16px; padding:24px;">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+        <div class="match-card-head">
           <div>
             <div class="dp-role ${mIsOwner ? 'owner' : 'tenant'}" style="margin-bottom:8px;">
               ${mIsOwner ? '🏠 MATCHED OWNER' : '🔍 MATCHED TENANT'}
             </div>
             <div class="profile-name" style="font-size:18px;">${escHTML(m.name)} ${ratingBadge}</div>
           </div>
-          <div style="text-align:right;">
+          <div class="match-card-right" style="text-align:right;">
             <div class="dp-rent" style="margin-bottom:2px; font-size:22px;">₹${(mIsOwner ? m.rent : m.budget).toLocaleString()}</div>
             <div style="font-size:12px; color:var(--gray-500); font-weight:600;">${dist} km away</div>
           </div>
@@ -1823,7 +1803,6 @@ function renderBuddyUp(container) {
     return;
   }
 
-  // Entire Apartment tenants don't need buddies — they get the whole place
   if (myListing.propType === 'entire') {
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
@@ -1836,28 +1815,22 @@ function renderBuddyUp(container) {
     return;
   }
 
-  // Find other tenants — strict same type only (room↔room, bed↔bed)
   const otherTenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
   
   let buddies = otherTenants.map(t => {
     const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
     const myRadius = myListing.radiusKm || 1;
     const theirRadius = t.radiusKm || 1;
-    // 1. Search areas must overlap
     const overlap = dist < (myRadius + theirRadius);
-    // 2. Strict same type — room matches room, bed matches bed
     const sameType = myListing.propType === t.propType;
-    // 3. Same gender — Male↔Male, Female↔Female
     const myGender = myListing.gender || '';
     const theirGender = t.gender || '';
     const sameGender = myGender && theirGender && myGender === theirGender;
-    // 4. Budget within ±25% of each other
     const myBudget = myListing.budget || 0;
     const theirBudget = t.budget || 0;
     const higherBudget = Math.max(myBudget, theirBudget);
     const budgetDiff = Math.abs(myBudget - theirBudget);
     const budgetMatch = higherBudget > 0 && (budgetDiff / higherBudget) <= 0.25;
-    // 5. Move-in dates within ±5 days of each other
     let moveinMatch = false;
     if (myListing.movein && t.movein) {
       const myDate = new Date(myListing.movein);
@@ -1870,7 +1843,6 @@ function renderBuddyUp(container) {
     return { ...t, dist, isMatch };
   }).filter(t => t.isMatch);
 
-  // Sort by distance
   buddies.sort((a, b) => a.dist - b.dist);
 
   if (buddies.length === 0) {
@@ -1955,7 +1927,6 @@ function checkTenantAlreadyListed() {
   const alreadyDiv = document.getElementById('already-listed');
   const formDiv    = document.getElementById('listing-form');
 
-  // --- NEW LOGGED OUT STATE ---
   if (!profile) {
     alreadyDiv.innerHTML = `
       <div class="already-listed-card">
@@ -1970,7 +1941,6 @@ function checkTenantAlreadyListed() {
     return;
   }
 
-  // --- RESTORE ORIGINAL HTML IF THEY ARE LOGGED IN ---
   alreadyDiv.innerHTML = `
     <div class="already-listed-card">
       <div style="font-size:36px;margin-bottom:10px">📋</div>
@@ -2228,7 +2198,6 @@ async function submitListing() {
 
   const btn = document.querySelector('.submit-btn');
 
-  // Validate required fields before doing anything
   const validationError = validateListingFields();
   if (validationError) { alert(validationError); return; }
 
@@ -2270,7 +2239,6 @@ async function submitListing() {
     }
   }
 
-// --- NEW MULTI-UPLOAD LOGIC STARTS HERE ---
   let finalPhotoUrls = [];
   if (selectedPropertyPhotos.length > 0 && profile.role === 'owner') {
     btn.textContent = "Uploading photos...";
@@ -2293,7 +2261,6 @@ async function submitListing() {
     }
   }
   btn.textContent = "Saving listing...";
-  // --- NEW MULTI-UPLOAD LOGIC ENDS HERE ---
 
   const dbListingData = {
     user_id: profile.id, 
@@ -2315,7 +2282,7 @@ async function submitListing() {
     people_in_flat: listing.peopleInFlat || null,
     people_in_room: listing.peopleInRoom || null,
     tenant_people_count: listing.people || null,
-    photo_urls: finalPhotoUrls.length > 0 ? finalPhotoUrls : null, // WE ADDED THIS LINE!
+    photo_urls: finalPhotoUrls.length > 0 ? finalPhotoUrls : null,
     created_at: new Date().toISOString() 
   };
 
@@ -2332,7 +2299,7 @@ async function submitListing() {
   }
 
   listing.id = data[0].id;
-  listing.photo_urls = finalPhotoUrls; // Save it locally too
+  listing.photo_urls = finalPhotoUrls; 
 
   if (profile.role === 'owner') {
     myListings.push(listing);
@@ -2345,11 +2312,9 @@ async function submitListing() {
   lastPostedListing = listing;
   saveProfile(); 
   
-  // Clear the selected photo for the next time
   selectedPropertyPhotos = [];
   document.getElementById('prop-photo-preview').innerHTML = `<span style="font-size:32px; color:var(--gray-300);" id="photo-placeholder-icon">📷</span>`;
   
-  // Reset all form fields for next use
   resetCreateForm();
   
   document.getElementById('success-overlay').classList.add('show');
@@ -2362,7 +2327,6 @@ function resetBtn(btn) {
 }
 
 function resetCreateForm() {
-  // Reset all form inputs
   const formIds = [
     'o-entire-bhk','o-entire-rent','o-entire-deposit','o-entire-movein','o-entire-furnishing','o-entire-people','o-entire-brokerage','o-entire-gender','o-entire-desc',
     'o-room-bhk','o-room-people','o-room-rent','o-room-deposit','o-room-movein','o-room-gender','o-room-furnishing','o-room-capacity','o-room-brokerage','o-room-desc',
@@ -2380,7 +2344,6 @@ function resetCreateForm() {
     }
   });
 
-  // Reset property type selection
   selectedPropType = null;
   selectedTenantLooking = null;
   ['entire','room','bed'].forEach(t => {
@@ -2394,7 +2357,6 @@ function resetCreateForm() {
     if (tenantFields) tenantFields.classList.remove('show');
   });
 
-  // Reset map pin/circle
   pinLat = null; pinLng = null;
   circleCenter = null; circleRadiusKm = null;
   if (pickerMarker && pickerMap) { pickerMap.removeLayer(pickerMarker); pickerMarker = null; }
@@ -2407,11 +2369,9 @@ function resetCreateForm() {
       : 'Draw a circle on the map to mark your preferred area';
   }
 
-  // Hide map section and photo upload
   document.getElementById('create-map-section').style.display = 'none';
   document.getElementById('photo-upload-card').style.display = 'none';
   
-  // Reset search input
   const searchInput = document.getElementById('map-search-input');
   if (searchInput) searchInput.value = '';
 }
@@ -2451,7 +2411,6 @@ function renderProfilePage() {
     avatarDiv.style.border = '3px solid var(--gray-200)';
   }
 
-  // Header section
   document.getElementById('profile-name-display').textContent = profile.name;
   document.getElementById('profile-phone-display').textContent = '+91 ' + profile.phone;
   
@@ -2463,13 +2422,11 @@ function renderProfilePage() {
       `<span class="profile-role-badge" style="background:var(--gray-200);color:var(--gray-600)">No role selected yet</span>`;
   }
 
-  // Account details grid
   document.getElementById('profile-detail-name').textContent = profile.name;
   document.getElementById('profile-detail-phone').textContent = '+91 ' + profile.phone;
   document.getElementById('profile-detail-role').textContent = profile.role === 'owner' ? 'Property Owner' : 'Looking for Room';
   document.getElementById('profile-detail-joined').textContent = profile.created_at ? fmtDate(profile.created_at) : 'Recently';
 
-  // Listings section
   const title = document.getElementById('profile-listings-title');
   const body  = document.getElementById('profile-listings-body');
   title.textContent = profile.role === 'owner' ? 'My Listings' : 'My Search Listing';
@@ -2538,7 +2495,6 @@ async function deleteMyListing(idx) {
 }
 
 window.addEventListener('load', async () => {
-  // STEP 1: Render immediately from localStorage cache (instant UI)
   loadProfile();
   updateMapLegend();
   if (profile) {
@@ -2546,7 +2502,6 @@ window.addEventListener('load', async () => {
   }
   initPreviewMap();
 
-  // STEP 2: Background sync with Supabase (non-blocking)
   if (profile) {
     try {
       const { data: { session } } = await _supabase.auth.getSession();
@@ -2560,7 +2515,6 @@ window.addEventListener('load', async () => {
         return;
       }
 
-      // Run profile + listings fetch IN PARALLEL instead of sequential
       const [profileResult, listingsResult] = await Promise.all([
         _supabase.from('profiles').select('*').eq('id', session.user.id).single(),
         _supabase.from('listings').select('*').eq('user_id', session.user.id)
@@ -2600,7 +2554,7 @@ window.addEventListener('load', async () => {
       }
 
       saveProfile();
-      applyProfileToUI(); // Re-apply if Supabase data was different
+      applyProfileToUI(); 
     } catch(e) {
       console.error("Session check failed:", e);
     }
@@ -2617,13 +2571,11 @@ function previewPropertyPhotos(e) {
     alert("You can only upload a maximum of 5 photos. We have selected the first 5.");
   }
   
-  // Slice keeps only the first 5 files
   selectedPropertyPhotos = files.slice(0, 5); 
 
   const previewDiv = document.getElementById('prop-photo-preview');
   previewDiv.innerHTML = ''; 
   
-  // Create a mini-thumbnail for each selected image
   selectedPropertyPhotos.forEach(file => {
     const reader = new FileReader();
     reader.onload = function(event) {
