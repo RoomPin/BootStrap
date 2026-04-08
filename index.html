@@ -511,7 +511,7 @@ input[type=date]:focus{border-color:var(--blue)}
       <div class="section-title">Flat searching is broken.</div>
       <p class="why-p">WhatsApp groups. Telegram channels. Random posts on housing forums. Broker calls at odd hours. Finding a room near your Hinjewadi office is chaos. RoomPin brings everything into one structured, map-based experience.</p>
       <div class="why-stats">
-        <div class="why-stat"><div class="num">1-Click</div><div class="lbl">Filter out brokers entirely</div></div>
+        <div class="why-stat"><div class="num">Direct</div><div class="lbl">Owner/tenant contact</div></div>
         <div class="why-stat"><div class="num">Buddy Up</div><div class="lbl">Match with future flatmates</div></div>
         <div class="why-stat"><div class="num">1 pin</div><div class="lbl">Per listing, on the map</div></div>
       </div>
@@ -1296,10 +1296,24 @@ function initPreviewMap() {
   if (!mapElement) return;
   previewMap = L.map('preview-map', { center: OPERATING_CENTER, zoom: 13.5, zoomControl: false, dragging: false, scrollWheelZoom: false, doubleClickZoom: false });
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(previewMap);
-  L.marker([18.5924, 73.7360], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5820, 73.7420], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5980, 73.7210], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5880, 73.7300], { icon: ownerIcon }).addTo(previewMap); L.marker([18.5950, 73.7450], { icon: ownerIcon }).addTo(previewMap); 
-  L.circle([18.6010, 73.7250], { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 800 }).addTo(previewMap);
-  L.circle([18.5850, 73.7400], { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 1200 }).addTo(previewMap);
-  L.circle([18.5910, 73.7280], { color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.2, radius: 600 }).addTo(previewMap);
+  
+  // Add Owner Pins
+  L.marker([18.5924, 73.7360], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5820, 73.7420], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5980, 73.7210], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5880, 73.7300], { icon: ownerIcon }).addTo(previewMap); 
+  L.marker([18.5950, 73.7450], { icon: ownerIcon }).addTo(previewMap); 
+
+  // Add EXACTLY ONE Tenant Circle to represent "Your Search Area"
+  // Styled in purple just like the actual app logic for the logged-in user
+  L.circle([18.5910, 73.7280], { 
+    color: '#a855f7', 
+    fillColor: '#f3e8ff', 
+    fillOpacity: 0.2, 
+    weight: 2,
+    dashArray: '6 4',
+    radius: 1200 
+  }).addTo(previewMap);
 }
 
 function getOwnerRating(ownerId) {
