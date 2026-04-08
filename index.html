@@ -47,7 +47,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .page{display:none; flex:1;}
 .page.active{display:block}
 #page-explore.active{display:block}
-#page-setup{position:fixed;inset:0;z-index:2000;background:var(--white);display:none;align-items:center;justify-content:center;}
+#page-setup{background:var(--gray-50);display:none;flex-direction:column;align-items:center;justify-content:center;padding:92px 20px 40px;flex:1;}
 #page-setup.active{display:flex}
 .setup-card{max-width:440px;width:100%;margin:20px;padding:40px 36px;background:white;border-radius:16px;border:1px solid var(--gray-200);box-shadow:var(--shadow-md)}
 .setup-logo{font-family:'Instrument Serif',serif;font-size:28px;color:var(--blue);margin-bottom:6px}
@@ -1260,8 +1260,19 @@ async function resetProfile() {
 
 function showPage(page) {
   if ((page === 'profile' || page === 'create' || page === 'matches') && !profile) {
-    document.getElementById('page-setup').classList.add('active'); return; 
+    // Hide all other pages so the navbar and footer look normal
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById('page-setup').classList.add('active'); 
+    
+    // Ensure the footer is visible for the setup page
+    const footer = document.getElementById('global-footer');
+    if (footer) footer.style.display = 'block';
+    return; 
   }
+  
+  // If we are showing a normal page, make sure the setup page is hidden
+  document.getElementById('page-setup').classList.remove('active');
+  
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + page).classList.add('active');
   
