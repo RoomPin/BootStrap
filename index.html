@@ -177,8 +177,6 @@ input[type=date]:focus{border-color:var(--blue)}
 .buddy-card .buddy-meta{font-size:12px;color:var(--gray-600);margin-bottom:8px}
 .buddy-overlap{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:100px;background:#dbeafe;color:#1d4ed8}
 
-.rating-badge { display:inline-flex; align-items:center; gap:3px; background:#fffbeb; color:#d97706; padding:2px 6px; border-radius:6px; font-size:10px; font-weight:700; margin-left:6px; letter-spacing: 0.5px;}
-.rating-box { background:var(--gray-50); border:1px solid var(--gray-200); border-radius:8px; padding:12px; margin-bottom:14px; text-align:center; }
 .star-btn { cursor:pointer; font-size:24px; color:var(--gray-300); transition:transform .1s, color .15s; background:none; border:none; padding:0 2px; }
 .star-btn:hover { transform:scale(1.2); color:#fbbf24; }
 
@@ -950,7 +948,6 @@ let myListings = [];
 let lastPostedListing = null;
 
 let liveListings = []; 
-let liveReviews = []; 
 let currentFilteredListings = []; 
   
 let exploreMap = null, pickerMap = null, previewMap = null;
@@ -1211,13 +1208,6 @@ async function resetProfile() {
         .eq('user_id', profile.id);
       if (listErr) console.error("Error deleting listings:", listErr);
 
-      // Delete all user's reviews (ones they wrote)
-      const { error: revErr } = await _supabase
-        .from('reviews')
-        .delete()
-        .eq('reviewer_id', profile.id);
-      if (revErr) console.error("Error deleting reviews:", revErr);
-
       // Delete the user's profile row
       const { error: profErr } = await _supabase
         .from('profiles')
@@ -1300,82 +1290,50 @@ function initPreviewMap() {
   }).addTo(previewMap);
 }
 
-function getOwnerRating(ownerId) {
-  const ownerReviews = liveReviews.filter(r => r.owner_id === ownerId);
-  if (ownerReviews.length === 0) return 'New';
-  const sum = ownerReviews.reduce((total, r) => total + r.rating, 0);
-  return (sum / ownerReviews.length).toFixed(1);
-}
-
-async function submitRating(ownerId, rating) {
-  if (!profile || profile.role !== 'tenant') return;
-  if (!confirm(`Submit a ${rating}-star rating for this owner?`)) return;
-
-  const { error } = await _supabase.from('reviews').insert([{
-    reviewer_id: profile.id,
-    owner_id: ownerId,
-    rating: rating
-  }]);
-
-  if (error) {
-    console.error("Rating error:", error);
-    alert("Something went wrong saving your rating. (You can only rate an owner once!)");
-    return;
-  }
-  fetchLiveListings(); 
-}
-
 async function fetchLiveListings() {
-  // Show loading state
   const countEl = document.getElementById('listing-count');
   if (countEl) countEl.textContent = 'Loading...';
 
   try {
-    // Fetch reviews AND listings in parallel instead of sequential
-    const [revResult, listResult] = await Promise.all([
-      _supabase.from('reviews').select('*'),
-      _supabase.from('listings').select(`*, profiles(name, phone)`)
-    ]);
+    const { data, error } = await _supabase
+      .from('listings')
+      .select(`*, profiles(name, phone)`);
 
-    if (revResult.data) liveReviews = revResult.data;
-
-    if (listResult.error) { 
-      console.error("Error fetching map data:", listResult.error); 
+    if (error) { 
+      console.error("Error fetching map data:", error); 
       if (countEl) countEl.textContent = 'Error loading';
       return; 
     }
 
-    const data = listResult.data;
+    liveListings = data.map(row => {
+      const isOwner = row.role === 'owner';
+      const isMine = profile && profile.id === row.user_id;
 
-  liveListings = data.map(row => {
-    const isOwner = row.role === 'owner';
-    const isMine = profile && profile.id === row.user_id;
+      let uiListing = {
+        id: row.id, role: row.role, 
+        user_id: row.user_id,
+        name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
+        lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type, ismine: isMine, movein: row.movein_date,
+        gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
+        radiusKm: row.radius_km ? parseFloat(row.radius_km) : null, bedType: row.bed_type, capacity: row.capacity_allowed,
+        peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count, photo_urls: row.photo_urls || []
+      };
 
-    let uiListing = {
-      id: row.id, role: row.role, 
-      user_id: row.user_id,
-      name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
-      lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type, ismine: isMine, movein: row.movein_date,
-      gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
-      radiusKm: row.radius_km ? parseFloat(row.radius_km) : null, bedType: row.bed_type, capacity: row.capacity_allowed,
-      peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count, photo_urls: row.photo_urls || []
-    };
+      if (isOwner) { uiListing.rent = parseFloat(row.price); uiListing.deposit = parseFloat(row.deposit); } 
+      else { uiListing.budget = parseFloat(row.price); }
+      
+      return uiListing;
+    });
 
-    if (isOwner) { uiListing.rent = parseFloat(row.price); uiListing.deposit = parseFloat(row.deposit); } 
-    else { uiListing.budget = parseFloat(row.price); }
+    if (document.getElementById('page-explore').classList.contains('active')) applyFilters();
+    if (document.getElementById('page-matches') && document.getElementById('page-matches').classList.contains('active')) renderMatchesContent();
     
-    return uiListing;
-  });
-
-  if (document.getElementById('page-explore').classList.contains('active')) applyFilters();
-  if (document.getElementById('page-matches') && document.getElementById('page-matches').classList.contains('active')) renderMatchesContent();
-  
-  const openCard = document.querySelector('.listing-card.active');
-  if (openCard) {
-    const id = openCard.getAttribute('data-id');
-    const listing = liveListings.find(l => l.id === id);
-    if (listing) renderSingleDetailById(id);
-  }
+    const openCard = document.querySelector('.listing-card.active');
+    if (openCard) {
+      const id = openCard.getAttribute('data-id');
+      const listing = liveListings.find(l => l.id === id);
+      if (listing) renderSingleDetailById(id);
+    }
   } catch(e) {
     console.error("Failed to fetch listings:", e);
     const countEl = document.getElementById('listing-count');
@@ -1526,21 +1484,20 @@ function renderMultiDetail(matches, lat, lng) {
   `;
 
   matches.forEach(l => {
-      const isOwner = l.role === 'owner';
-      const badgeClass = l.ismine ? 'mine' : l.role;
-      const badgeText = l.ismine ? (isOwner?'🟠 YOURS':'🟣 YOURS') : (isOwner?'🏠 OWNER':'🔍 TENANT');
-      const ratingBadge = isOwner ? `<span class="rating-badge">⭐ ${getOwnerRating(l.user_id)}</span>` : '';
+    const isOwner = l.role === 'owner';
+    const badgeClass = l.ismine ? 'mine' : l.role;
+    const badgeText = l.ismine ? (isOwner?'🟠 YOURS':'🟣 YOURS') : (isOwner?'🏠 OWNER':'🔍 TENANT');
 
-      html += `
-      <div class="listing-card" style="box-shadow:var(--shadow); border-color:var(--gray-200); background:white;" onclick="renderSingleDetailById('${l.id}', true)">
-          <div class="lc-head">
-              <span class="lc-name" style="font-size:14px;">${escHTML(l.name)} ${ratingBadge}</span>
-              <span class="lc-badge ${badgeClass}">${badgeText}</span>
-          </div>
-          <div class="lc-rent" style="font-size:16px; margin-top:4px;">${isOwner ? `₹${l.rent.toLocaleString()}/mo` : `Budget ₹${l.budget.toLocaleString()}`}</div>
-          <div class="lc-meta" style="margin-top:4px;">${isOwner ? propTypeLabel(l.propType) : `Looking: ${propTypeLabel(l.propType)}`}</div>
-      </div>`;
-  });
+    html += `
+    <div class="listing-card" style="box-shadow:var(--shadow); border-color:var(--gray-200); background:white;" onclick="renderSingleDetailById('${l.id}', true)">
+        <div class="lc-head">
+            <span class="lc-name" style="font-size:14px;">${escHTML(l.name)}</span>
+            <span class="lc-badge ${badgeClass}">${badgeText}</span>
+        </div>
+        <div class="lc-rent" style="font-size:16px; margin-top:4px;">${isOwner ? `₹${l.rent.toLocaleString()}/mo` : `Budget ₹${l.budget.toLocaleString()}`}</div>
+        <div class="lc-meta" style="margin-top:4px;">${isOwner ? propTypeLabel(l.propType) : `Looking: ${propTypeLabel(l.propType)}`}</div>
+    </div>`;
+});
 
   html += `</div>`;
   document.getElementById('dp-body').innerHTML = html;
@@ -1589,20 +1546,6 @@ function renderSingleDetail(l, showBackBtn = false) {
     ? `<div class="own-listing-banner">This is your listing — <a href="#" onclick="showPage('profile');return false" style="color:inherit;font-weight:700">Manage in Profile →</a></div>`
     : `<button class="contact-btn" id="cbtn-${l.id}" onclick="revealContact('${l.id}','${l.role}')">Show Contact Number</button>`;
 
-  const ratingBadge = isOwner ? `<span class="rating-badge" style="font-size:12px; padding:3px 8px;">⭐ ${getOwnerRating(l.user_id)}</span>` : '';
-
-  let rateUI = '';
-  if (isOwner && !l.ismine && profile && profile.role === 'tenant') {
-    const pastReview = liveReviews.find(r => r.reviewer_id === profile.id && r.owner_id === l.user_id);
-    if (pastReview) {
-      rateUI = `<div class="rating-box" style="margin-top:16px;">You rated this owner: ⭐ <strong>${pastReview.rating}/5</strong></div>`;
-    } else {
-      let stars = '';
-      for(let i=1; i<=5; i++) { stars += `<button class="star-btn" onclick="submitRating('${l.user_id}', ${i})">★</button>`; }
-      rateUI = `<div class="rating-box" style="margin-top:16px;"><div style="font-size:11px;font-weight:700;color:var(--gray-500);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Rate this Owner</div><div>${stars}</div></div>`;
-    }
-  }
-
   let backHtml = showBackBtn ? `
     <button onclick="showLocationDetails(${l.lat}, ${l.lng})" style="margin-bottom:16px; background:none; border:none; color:var(--blue); font-weight:700; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:4px;">
       ← Back to all listings at this location
@@ -1612,14 +1555,13 @@ function renderSingleDetail(l, showBackBtn = false) {
   document.getElementById('dp-body').innerHTML = `
     ${backHtml}
     <div class="dp-role ${l.ismine?'mine':l.role}">${l.ismine?(isOwner?'🟠 YOUR LISTING':'🟣 YOUR SEARCH AREA'):(isOwner?'🏠 OWNER':'🔍 TENANT')}</div>
-    <div class="dp-name">${escHTML(l.name)} ${ratingBadge}</div>
+    <div class="dp-name">${escHTML(l.name)}</div>
     <div class="dp-rent">₹${(isOwner?l.rent:l.budget).toLocaleString()}<small>${isOwner?'/month':'/mo budget'}</small></div>
     ${matchBanner}
     ${ownBanner}
     <div class="dp-grid">${fields}</div>
     <div class="dp-desc">${escHTML(l.desc)||'—'}</div>
-    ${contactSection}
-    ${rateUI}`;
+    ${contactSection}`;
 
   document.getElementById('detail-panel').classList.add('open');
 }
@@ -1749,7 +1691,7 @@ function renderPropertyMatches(container) {
   matches.forEach(m => {
     const mIsOwner = m.role === 'owner';
     const dist = haversineKm(myListing.lat, myListing.lng, m.lat, m.lng).toFixed(1);
-    const ratingBadge = mIsOwner ? `<span class="rating-badge" style="font-size:12px;">⭐ ${getOwnerRating(m.user_id)}</span>` : '';
+    
     
     html += `
       <div class="profile-card" style="margin-bottom:16px; padding:24px;">
@@ -1758,7 +1700,7 @@ function renderPropertyMatches(container) {
             <div class="dp-role ${mIsOwner ? 'owner' : 'tenant'}" style="margin-bottom:8px;">
               ${mIsOwner ? '🏠 MATCHED OWNER' : '🔍 MATCHED TENANT'}
             </div>
-            <div class="profile-name" style="font-size:18px;">${escHTML(m.name)} ${ratingBadge}</div>
+            <div class="profile-name" style="font-size:18px;">${escHTML(m.name)}</div>
           </div>
           <div class="match-card-right" style="text-align:right;">
             <div class="dp-rent" style="margin-bottom:2px; font-size:22px;">₹${(mIsOwner ? m.rent : m.budget).toLocaleString()}</div>
