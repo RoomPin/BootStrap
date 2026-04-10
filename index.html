@@ -1004,7 +1004,7 @@ input[type=date]:focus{border-color:var(--blue)}
   .role-card h3 { font-size: 12px; }
   .role-card p { font-size: 10px; }
   
-  #page-explore.active { padding-top: 56px; padding-bottom: 64px; }
+  #page-explore.active { padding-top: 56px; padding-bottom: 64px; height: calc(100vh); box-sizing: border-box; }
   
   /* Hide the old sliding filter panel on mobile */
   .filters-panel {
@@ -2337,7 +2337,7 @@ function showPage(page) {
   updateBottomNav(page);
 
   if (page === 'explore') { 
-    if (!exploreMap) setTimeout(initExploreMap, 60); else refreshExplore(); 
+    if (if (!exploreMap) setTimeout(initExploreMap, 150); else { exploreMap.invalidateSize(); refreshExplore(); }
   }
   if (page === 'create') { 
     document.getElementById('listing-form').style.display = 'block'; 
@@ -2531,6 +2531,11 @@ function initExploreMap() {
   });
   exploreMap.addLayer(markerLayer);
   circleLayer = L.layerGroup().addTo(exploreMap);
+
+  // Fix map sizing issue - tell Leaflet to recalculate
+  setTimeout(() => {
+    exploreMap.invalidateSize();
+  }, 100);
 
   // Initialize mobile filter buttons state
   if (window.innerWidth <= 768) {
