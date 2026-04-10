@@ -118,6 +118,9 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
   background: white; border: 1px solid var(--gray-200); border-radius: 12px;
   box-shadow: var(--shadow-md); z-index: 500; display: flex; flex-direction: column;
 }
+/* Hide mobile filter bar on desktop */
+.mobile-filter-bar, .mobile-filter-dropdown, .mobile-filter-backdrop { display: none; }
+
 #page-explore .leaflet-control-zoom { margin-left: 312px !important; margin-top: 16px !important; }
 .explore-search { position: absolute; top: 16px; left: 360px; z-index: 500; display: flex; gap: 8px; width: 320px; }
 .explore-search input { width: 100%; padding: 0 16px; height: 44px; border: 1.5px solid var(--gray-200); border-radius: 8px; font-size: 14px; box-shadow: var(--shadow); outline: none; }
@@ -309,6 +312,650 @@ input[type=date]:focus{border-color:var(--blue)}
 .two-col-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .match-card-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:12px; }
 
+/* ════════ BOTTOM NAVIGATION BAR ════════ */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: auto;
+  height: 64px;
+  background: white;
+  border-top: 1px solid var(--gray-200);
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+  z-index: 1000;
+  padding: 6px 8px 10px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gray-400);
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 4px 2px;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.bottom-nav-item .nav-icon {
+  width: 22px;
+  height: 22px;
+  stroke-width: 1.8;
+  transition: all 0.15s ease;
+}
+
+.bottom-nav-item span {
+  line-height: 1;
+}
+
+.bottom-nav-item:hover {
+  color: var(--gray-600);
+}
+
+.bottom-nav-item.active {
+  color: var(--blue);
+}
+
+.bottom-nav-item.active .nav-icon {
+  stroke-width: 2.2;
+}
+
+/* Special styling for Matches tab */
+.bottom-nav-item.special {
+  position: relative;
+}
+
+.bottom-nav-item.special .nav-icon-wrapper {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--blue-light) 0%, #dbeafe 100%);
+  border-radius: 12px;
+  margin-top: -12px;
+  margin-bottom: -2px;
+  transition: all 0.15s ease;
+}
+
+.bottom-nav-item.special .nav-icon {
+  width: 20px;
+  height: 20px;
+  color: var(--blue);
+}
+
+.bottom-nav-item.special.active .nav-icon-wrapper {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 100%);
+  box-shadow: 0 4px 12px rgba(37, 99, 168, 0.3);
+}
+
+.bottom-nav-item.special.active .nav-icon {
+  color: white;
+  fill: white;
+  stroke: white;
+}
+
+.bottom-nav-item.special span:last-child {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+/* Badge for nav items */
+.nav-badge {
+  display: none;
+  position: absolute;
+  top: -2px;
+  right: 50%;
+  transform: translateX(12px);
+  min-width: 16px;
+  height: 16px;
+  background: #ef4444;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0 4px;
+  line-height: 16px;
+  text-align: center;
+}
+
+.nav-badge.show {
+  display: block;
+}
+
+/* Messages nav item needs relative positioning for badge */
+#bnav-messages {
+  position: relative;
+}
+
+/* ════════ MESSAGES PAGE ════════ */
+#page-messages {
+  background: var(--gray-50);
+  padding-top: 72px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.messages-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+}
+
+.messages-hd {
+  margin-bottom: 20px;
+}
+
+.messages-hd h1 {
+  font-family: 'Instrument Serif', serif;
+  font-size: 28px;
+  font-weight: 400;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+
+.messages-hd p {
+  font-size: 13px;
+  color: var(--gray-600);
+}
+
+.message-tabs {
+  display: flex;
+  background: var(--gray-100);
+  border-radius: 10px;
+  padding: 3px;
+  margin-bottom: 16px;
+}
+
+.message-tab {
+  flex: 1;
+  padding: 10px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 8px;
+  color: var(--gray-600);
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  font-family: inherit;
+  position: relative;
+}
+
+.message-tab .tab-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 9px;
+  margin-left: 6px;
+  padding: 0 5px;
+}
+
+.message-tab.active {
+  background: white;
+  color: var(--blue);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* Connection Request Card */
+.connection-card {
+  background: white;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.15s;
+}
+
+.connection-card:hover {
+  border-color: var(--blue-light);
+}
+
+.connection-card.pending {
+  border-left: 3px solid #f59e0b;
+}
+
+.connection-card.accepted {
+  border-left: 3px solid var(--green);
+}
+
+.connection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.connection-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--blue-light);
+  color: var(--blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-right: 12px;
+}
+
+.connection-info {
+  flex: 1;
+}
+
+.connection-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 2px;
+}
+
+.connection-meta {
+  font-size: 12px;
+  color: var(--gray-500);
+}
+
+.connection-status {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+
+.connection-status.pending {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.connection-status.accepted {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+.connection-status.declined {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.connection-listing {
+  background: var(--gray-50);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+.connection-listing strong {
+  color: var(--text);
+}
+
+.connection-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.connection-actions .btn {
+  flex: 1;
+  justify-content: center;
+  font-size: 12px;
+  padding: 10px 12px;
+}
+
+/* Chat Thread */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 140px);
+  background: white;
+  border-radius: 12px;
+  border: 1px solid var(--gray-200);
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--gray-200);
+  background: white;
+}
+
+.chat-back {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--gray-600);
+  cursor: pointer;
+  margin-right: 12px;
+  padding: 4px;
+}
+
+.chat-user-info {
+  flex: 1;
+}
+
+.chat-user-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.chat-user-meta {
+  font-size: 11px;
+  color: var(--gray-500);
+}
+
+.chat-phone-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--green-light);
+  color: var(--green);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: all 0.15s;
+}
+
+.chat-phone-btn:hover {
+  background: var(--green);
+  color: white;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-message {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.chat-message.sent {
+  align-self: flex-end;
+  background: var(--blue);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+.chat-message.received {
+  align-self: flex-start;
+  background: var(--gray-100);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+
+.chat-message .time {
+  font-size: 10px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+.chat-input-area {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--gray-200);
+  background: var(--gray-50);
+}
+
+.chat-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 24px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.chat-input:focus {
+  border-color: var(--blue);
+}
+
+.chat-send-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--blue);
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+
+.chat-send-btn:hover {
+  background: #243d61;
+}
+
+.chat-send-btn:disabled {
+  background: var(--gray-300);
+  cursor: not-allowed;
+}
+
+/* Interested Button Styles */
+.interested-btn {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.15s;
+  background: linear-gradient(135deg, var(--blue) 0%, var(--blue-mid) 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.interested-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(37, 99, 168, 0.3);
+}
+
+.interested-btn.sent {
+  background: var(--gray-100);
+  color: var(--gray-600);
+  cursor: default;
+}
+
+.interested-btn.sent:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.interested-btn.accepted {
+  background: var(--green-light);
+  color: var(--green);
+}
+
+/* Phone Reveal in Chat */
+.phone-reveal-card {
+  background: var(--green-light);
+  border: 1px solid #bbf7d0;
+  border-radius: 10px;
+  padding: 14px 16px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.phone-reveal-card .phone-number {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.phone-reveal-card .phone-hint {
+  font-size: 12px;
+  color: #15803d;
+}
+
+/* Empty State for Messages */
+.messages-empty {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.messages-empty .icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.messages-empty h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+
+.messages-empty p {
+  font-size: 14px;
+  color: var(--gray-600);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+/* Direct Contact Card (for Matches/Buddy) */
+.direct-contact-card {
+  background: var(--blue-light);
+  border-radius: 10px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.direct-contact-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.direct-contact-info .phone-icon {
+  width: 36px;
+  height: 36px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+
+.direct-contact-info .phone-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--blue);
+}
+
+.message-btn {
+  background: var(--blue);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s;
+}
+
+.message-btn:hover {
+  background: #243d61;
+}
+
+@media(max-width: 768px) {
+  #page-messages { padding-top: 56px; padding-bottom: 74px; }
+  .messages-inner { padding: 16px 12px 90px; }
+  .messages-hd h1 { font-size: 24px; }
+  .chat-container { height: calc(100vh - 130px); border-radius: 0; border: none; }
+}
+
+/* More prominent match tabs toggle */
+.match-tabs {
+  display: flex;
+  background: var(--gray-100);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 20px;
+}
+
+.match-tab {
+  flex: 1;
+  padding: 12px 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+  color: var(--gray-600);
+  transition: all 0.2s ease;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+.match-tab:hover {
+  color: var(--blue);
+}
+
+.match-tab.active {
+  background: white;
+  color: var(--blue);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
 @media(min-width: 900px) {
   .hero { max-width: 800px; padding-top: 80px; padding-bottom: 40px; }
   .hero h1 { font-size: 56px; line-height: 1.15; }
@@ -328,14 +975,26 @@ input[type=date]:focus{border-color:var(--blue)}
 
 /* ════════ MOBILE BREAKPOINTS ════════ */
 @media(max-width: 768px) {
-  nav { padding: 0 12px; height: 60px; }
+  /* Top nav - logo only */
+  nav:not(.bottom-nav) { padding: 0 16px; height: 56px; }
   .nav-logo { font-size: 20px; }
-  .nav-links { gap: 2px; }
-  .nav-links a { font-size: 11px; padding: 6px 8px; }
-  .nav-links a.btn.btn-primary { display: none; }
-  .nav-links .profile-icon { width: 32px; height: 32px; font-size: 13px; }
+  .nav-links { display: none; }
   
-  #page-setup { padding: 70px 16px 40px; }
+  /* Show bottom nav */
+  .bottom-nav { 
+    display: flex !important; 
+    top: auto !important; 
+    bottom: 0 !important; 
+  }
+  
+  /* Add padding for bottom nav on all pages */
+  #page-landing { padding-bottom: 74px; }
+  #page-create { padding-bottom: 74px; }
+  #page-profile { padding-bottom: 74px; }
+  #page-matches { padding-bottom: 74px; }
+  #global-footer { margin-bottom: 64px; }
+  
+  #page-setup { padding: 66px 16px 40px; }
   .setup-card { padding: 28px 20px; margin: 16px; }
   .setup-logo { font-size: 24px; }
   .setup-sub { font-size: 13px; margin-bottom: 24px; }
@@ -345,33 +1004,155 @@ input[type=date]:focus{border-color:var(--blue)}
   .role-card h3 { font-size: 12px; }
   .role-card p { font-size: 10px; }
   
-  #page-explore.active { padding-top: 60px; }
+  #page-explore.active { padding-top: 56px; padding-bottom: 64px; }
   
+  /* Hide the old sliding filter panel on mobile */
   .filters-panel {
-    position: fixed; top: 60px; left: 0; right: 0; bottom: 0;
-    width: 100%; max-height: 100vh; border-radius: 0;
-    transform: translateX(-100%); transition: transform .25s ease;
-    z-index: 700;
+    display: none !important;
   }
-  .filters-panel.mobile-open { transform: translateX(0); }
-
-  .explore-search { left: 56px; right: 12px; top: 10px; width: auto; }
-  .explore-search input { height: 38px; font-size: 13px; padding: 0 12px; }
-
-  .mobile-filter-btn {
-    position: absolute; top: 10px; left: 10px; z-index: 500;
-    width: 38px; height: 38px; border-radius: 8px;
-    background: white; border: 1.5px solid var(--gray-200);
-    box-shadow: var(--shadow); cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 18px; color: var(--gray-600);
+  
+  /* Mobile horizontal filter bar */
+  .mobile-filter-bar {
+    display: flex;
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    z-index: 500;
+    gap: 6px;
+    overflow-x: auto;
+    padding: 4px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(8px);
+    border-radius: 10px;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow);
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .mobile-filter-bar::-webkit-scrollbar { display: none; }
+  
+  .mobile-filter-item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: white;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gray-600);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .mobile-filter-item:active { transform: scale(0.96); }
+  .mobile-filter-item.has-value {
+    border-color: var(--blue);
+    background: var(--blue-light);
+    color: var(--blue);
+  }
+  .mobile-filter-item svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+  
+  /* Mobile filter dropdown overlay */
+  .mobile-filter-dropdown {
+    display: none;
+    position: fixed;
+    bottom: 64px;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 16px 16px 0 0;
+    box-shadow: 0 -4px 20px rgba(0,0,0,0.15);
+    z-index: 800;
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 16px;
+    animation: slideUp 0.2s ease;
+  }
+  .mobile-filter-dropdown.open { display: block; }
+  @keyframes slideUp {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .mobile-filter-dropdown-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .mobile-filter-dropdown-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--blue);
+  }
+  .mobile-filter-dropdown-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: var(--gray-100);
+    color: var(--gray-600);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .mobile-filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .mobile-filter-option {
+    padding: 10px 16px;
+    border: 1.5px solid var(--gray-200);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-600);
+    background: white;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .mobile-filter-option:active { transform: scale(0.96); }
+  .mobile-filter-option.active {
+    border-color: var(--blue);
+    background: var(--blue);
+    color: white;
+  }
+  
+  /* Filter backdrop */
+  .mobile-filter-backdrop {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 799;
+  }
+  .mobile-filter-backdrop.open { display: block; }
+  
+  /* Adjust explore search for mobile filter bar */
+  .explore-search { display: none; }
+
+  /* Hide the old mobile filter button */
+  .mobile-filter-btn { display: none !important; }
 
   #page-explore .leaflet-control-zoom { margin-left: 10px !important; margin-top: 58px !important; }
 
   .detail-panel {
-    top: auto; right: 0; bottom: 0; left: 0;
-    width: 100%; max-height: 75vh;
+    top: auto; right: 0; bottom: 64px; left: 0;
+    width: 100%; max-height: calc(75vh - 64px);
     border-radius: 16px 16px 0 0;
     transform: translateY(110%);
   }
@@ -385,11 +1166,11 @@ input[type=date]:focus{border-color:var(--blue)}
   .dp-grid { gap: 6px; }
   .dp-field { padding: 6px 8px; }
 
-  .map-legend { bottom: 10px; right: 10px; padding: 6px 8px; }
+  .map-legend { bottom: 74px; right: 10px; padding: 6px 8px; }
   .legend-row { font-size: 10px; }
   .price-marker { font-size: 12px; padding: 4px 8px; min-width: 44px; }
   
-  #page-landing { padding-top: 60px; }
+  #page-landing { padding-top: 56px; }
   .hero { padding: 32px 16px 28px; }
   .hero-badge { font-size: 11px; padding: 4px 12px; margin-bottom: 16px; }
   .hero h1 { font-size: 28px; margin-bottom: 12px; }
@@ -416,7 +1197,7 @@ input[type=date]:focus{border-color:var(--blue)}
   .footer-inner { flex-direction: column; text-align: center; gap: 16px; }
   .footer-links { justify-content: center; gap: 16px; }
   
-  #page-create { padding-top: 60px; }
+  #page-create { padding-top: 56px; }
   .create-inner { padding: 20px 16px 100px; }
   .create-hd { margin-bottom: 20px; }
   .create-hd h1 { font-size: 24px; }
@@ -431,7 +1212,7 @@ input[type=date]:focus{border-color:var(--blue)}
   .map-picker-info { font-size: 12px; padding: 8px 12px; }
   .submit-btn { padding: 14px; font-size: 14px; }
   
-  #page-profile { padding-top: 60px; }
+  #page-profile { padding-top: 56px; }
   .profile-inner { padding: 20px 16px 100px; }
   .profile-hd h1 { font-size: 26px; }
   .profile-card { padding: 20px 16px; }
@@ -441,8 +1222,8 @@ input[type=date]:focus{border-color:var(--blue)}
   .listing-item-actions { flex-wrap: wrap; }
   .listing-item-actions .btn { flex: 1; min-width: 100px; justify-content: center; font-size: 11px !important; padding: 8px 10px !important; }
   
-  #page-matches { padding-top: 60px; }
-  .match-tab { font-size: 12px; padding: 8px 6px; }
+  #page-matches { padding-top: 56px; }
+  .match-tab { font-size: 13px; padding: 10px 8px; }
   .buddy-card { padding: 16px; }
   .buddy-name { font-size: 15px; }
   .buddy-budget { font-size: 18px; }
@@ -646,6 +1427,44 @@ input[type=date]:focus{border-color:var(--blue)}
 <div id="page-explore" class="page">
   
   <div class="map-area">
+    <!-- Mobile horizontal filter bar -->
+    <div class="mobile-filter-bar" id="mobile-filter-bar">
+      <button class="mobile-filter-item" onclick="openMobileFilter('proptype')" id="mf-proptype">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+        <span>Type</span>
+      </button>
+      <button class="mobile-filter-item" onclick="openMobileFilter('bhk')" id="mf-bhk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+        <span>BHK</span>
+      </button>
+      <button class="mobile-filter-item" onclick="openMobileFilter('budget')" id="mf-budget">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+        <span>Budget</span>
+      </button>
+      <button class="mobile-filter-item" onclick="openMobileFilter('furnishing')" id="mf-furnishing">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+        <span>Furnishing</span>
+      </button>
+      <button class="mobile-filter-item" onclick="openMobileFilter('gender')" id="mf-gender">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <span>Gender</span>
+      </button>
+      <button class="mobile-filter-item" onclick="resetFilters()" id="mf-reset">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+        <span>Reset</span>
+      </button>
+    </div>
+    
+    <!-- Mobile filter dropdown -->
+    <div class="mobile-filter-backdrop" id="mobile-filter-backdrop" onclick="closeMobileFilter()"></div>
+    <div class="mobile-filter-dropdown" id="mobile-filter-dropdown">
+      <div class="mobile-filter-dropdown-header">
+        <span class="mobile-filter-dropdown-title" id="mobile-filter-title">Filter</span>
+        <button class="mobile-filter-dropdown-close" onclick="closeMobileFilter()">×</button>
+      </div>
+      <div class="mobile-filter-options" id="mobile-filter-options"></div>
+    </div>
+    
     <div class="explore-search">
       <div class="autocomplete-wrapper">
         <input type="text" id="explore-search-input" placeholder="Search area in Pune (e.g. Wakad)..." oninput="handleSearch(this.value, 'explore-results', 'explore', false)">
@@ -725,6 +1544,27 @@ input[type=date]:focus{border-color:var(--blue)}
       <div class="dp-body" id="dp-body"></div>
     </div>
     
+  </div>
+</div>
+
+<!-- ════════ MESSAGES PAGE ════════ -->
+<div id="page-messages" class="page">
+  <div class="messages-inner">
+    <div class="messages-hd">
+      <h1>Messages</h1>
+      <p>Your connections and conversations</p>
+    </div>
+    
+    <div class="message-tabs" id="message-tabs">
+      <button class="message-tab active" onclick="switchMessageTab('connections', this)">
+        Connections <span class="tab-badge" id="pending-badge" style="display:none">0</span>
+      </button>
+      <button class="message-tab" onclick="switchMessageTab('chats', this)">
+        Chats <span class="tab-badge" id="unread-badge" style="display:none">0</span>
+      </button>
+    </div>
+    
+    <div id="messages-container"></div>
   </div>
 </div>
 
@@ -1055,6 +1895,45 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </footer>
 
+<!-- Bottom Navigation Bar (Mobile) -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bottom-nav-item" id="bnav-create" onclick="showPage('create')">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+    <span>Post</span>
+  </button>
+  <button class="bottom-nav-item" id="bnav-explore" onclick="showPage('explore')">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+    </svg>
+    <span>Explore</span>
+  </button>
+  <button class="bottom-nav-item special" id="bnav-matches" onclick="showPage('matches')">
+    <div class="nav-icon-wrapper">
+      <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+      </svg>
+    </div>
+    <span>Matches</span>
+  </button>
+  <button class="bottom-nav-item" id="bnav-messages" onclick="showPage('messages')">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+    <span class="nav-badge" id="messages-nav-badge"></span>
+    <span>Messages</span>
+  </button>
+  <button class="bottom-nav-item" id="bnav-profile" onclick="showPage('profile')">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+      <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+    <span>Profile</span>
+  </button>
+</nav>
+
 <div class="success-overlay" id="success-overlay">
   <div class="success-card">
     <div class="success-icon">✅</div>
@@ -1076,6 +1955,71 @@ const supabaseUrl = 'https://gtgahphxuzvotrheyyaw.supabase.co';
 const supabaseKey = 'sb_publishable_1L8tasN-T01VDqU8L2y6bQ_r1dDG_I5';
 const _supabase = createClient(supabaseUrl, supabaseKey);
 
+/*
+═══════════════════════════════════════════════════════════════════════════════
+SUPABASE TABLES REQUIRED FOR CONNECTIONS & MESSAGES:
+═══════════════════════════════════════════════════════════════════════════════
+
+-- Run this in Supabase SQL Editor:
+
+CREATE TABLE IF NOT EXISTS connections (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  requester_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  receiver_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  listing_id UUID REFERENCES listings(id) ON DELETE CASCADE,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined')),
+  message TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(requester_id, receiver_id, listing_id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  connection_id UUID REFERENCES connections(id) ON DELETE CASCADE,
+  sender_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  read_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enable RLS
+ALTER TABLE connections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
+
+-- Policies for connections
+CREATE POLICY "Users can view their own connections" ON connections
+  FOR SELECT USING (auth.uid() = requester_id OR auth.uid() = receiver_id);
+
+CREATE POLICY "Users can create connection requests" ON connections
+  FOR INSERT WITH CHECK (auth.uid() = requester_id);
+
+CREATE POLICY "Receivers can update connection status" ON connections
+  FOR UPDATE USING (auth.uid() = receiver_id);
+
+-- Policies for messages
+CREATE POLICY "Users can view messages in their connections" ON messages
+  FOR SELECT USING (
+    EXISTS (
+      SELECT 1 FROM connections 
+      WHERE connections.id = messages.connection_id 
+      AND (connections.requester_id = auth.uid() OR connections.receiver_id = auth.uid())
+    )
+  );
+
+CREATE POLICY "Users can send messages in accepted connections" ON messages
+  FOR INSERT WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM connections 
+      WHERE connections.id = connection_id 
+      AND connections.status = 'accepted'
+      AND (connections.requester_id = auth.uid() OR connections.receiver_id = auth.uid())
+    )
+  );
+
+═══════════════════════════════════════════════════════════════════════════════
+*/
+
 const OPERATING_CENTER = [18.5924, 73.7360]; 
 const OPERATING_RADIUS_KM = 25; 
 
@@ -1084,7 +2028,13 @@ let myListings = [];
 let lastPostedListing = null;
 
 let liveListings = []; 
-let currentFilteredListings = []; 
+let currentFilteredListings = [];
+
+// Connection & Messages State
+let connections = [];
+let currentChat = null;
+let chatMessages = [];
+let activeMessageTab = 'connections';
   
 let exploreMap = null, pickerMap = null, previewMap = null;
 let markerLayer = null, circleLayer = null;
@@ -1187,6 +2137,9 @@ async function goStep2() {
     applyProfileToUI();
     updateMapLegend();
     
+    // Fetch connections for existing user
+    await fetchConnections();
+    
     // Hide the setup screen entirely and go to profile
     document.getElementById('page-setup').classList.remove('active');
     btn.textContent = "Continue →";
@@ -1245,7 +2198,9 @@ async function finishSetup() {
     alert("Profile save failed, but you are logged in.");
   } else {
     profile = profileData[0];
-    saveProfile(); 
+    saveProfile();
+    // Fetch connections for the new user
+    await fetchConnections();
   }
 
   document.getElementById('page-setup').classList.remove('active');
@@ -1360,13 +2315,14 @@ async function resetProfile() {
 }
 
 function showPage(page) {
-  // WE CHANGED THIS LINE: Now it ONLY forces login if they click "Profile"
-  if (page === 'profile' && !profile) {
+  // Force login for profile and messages pages
+  if ((page === 'profile' || page === 'messages') && !profile) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-setup').classList.add('active'); 
     
     const footer = document.getElementById('global-footer');
     if (footer) footer.style.display = 'block';
+    updateBottomNav(page);
     return; 
   }
   
@@ -1375,7 +2331,10 @@ function showPage(page) {
   document.getElementById('page-' + page).classList.add('active');
   
   const footer = document.getElementById('global-footer');
-  if (footer) footer.style.display = (page === 'explore') ? 'none' : 'block';
+  if (footer) footer.style.display = (page === 'explore' || page === 'messages') ? 'none' : 'block';
+
+  // Update bottom nav active state
+  updateBottomNav(page);
 
   if (page === 'explore') { 
     if (!exploreMap) setTimeout(initExploreMap, 60); else refreshExplore(); 
@@ -1385,7 +2344,85 @@ function showPage(page) {
     checkTenantAlreadyListed(); 
   }
   if (page === 'profile') renderProfilePage();
-  if (page === 'matches') renderMatchesContent(); 
+  if (page === 'matches') renderMatchesContent();
+  if (page === 'messages') renderMessagesPage();
+}
+
+function updateBottomNav(page) {
+  // Remove active from all bottom nav items
+  document.querySelectorAll('.bottom-nav-item').forEach(item => {
+    item.classList.remove('active');
+  });
+  
+  // Add active to current page
+  const navItem = document.getElementById('bnav-' + page);
+  if (navItem) navItem.classList.add('active');
+  
+  // Update badges
+  updateMessagesBadge();
+}
+
+function updateMessagesBadge() {
+  const badge = document.getElementById('messages-nav-badge');
+  if (!badge) return;
+  
+  // Count pending incoming requests + unread messages
+  const pendingCount = connections.filter(c => 
+    c.receiver_id === profile?.id && c.status === 'pending'
+  ).length;
+  
+  if (pendingCount > 0) {
+    badge.textContent = pendingCount;
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
+}
+
+function updateMatchesBadge() {
+  const badge = document.getElementById('matches-badge');
+  if (!badge) return;
+  
+  // Only show badge for tenants looking for room or bed
+  if (!profile || profile.role !== 'tenant' || myListings.length === 0) {
+    badge.classList.remove('show');
+    return;
+  }
+  
+  const myListing = myListings[0];
+  if (myListing.propType === 'entire') {
+    badge.classList.remove('show');
+    return;
+  }
+  
+  // Count buddy matches
+  const otherTenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
+  let buddyCount = 0;
+  
+  otherTenants.forEach(t => {
+    const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
+    const myRadius = myListing.radiusKm || 1;
+    const theirRadius = t.radiusKm || 1;
+    const overlap = dist < (myRadius + theirRadius);
+    const sameType = myListing.propType === t.propType;
+    const myGender = myListing.gender || '';
+    const theirGender = t.gender || '';
+    const sameGender = myGender && theirGender && myGender === theirGender;
+    const myBudget = myListing.budget || 0;
+    const theirBudget = t.budget || 0;
+    const higherBudget = Math.max(myBudget, theirBudget);
+    const budgetDiff = Math.abs(myBudget - theirBudget);
+    const budgetMatch = higherBudget > 0 && (budgetDiff / higherBudget) <= 0.25;
+    
+    if (overlap && sameType && sameGender && budgetMatch) buddyCount++;
+  });
+  
+  if (buddyCount > 0) {
+    badge.textContent = buddyCount > 9 ? '9+' : buddyCount;
+    badge.classList.add('show');
+  } else {
+    badge.classList.remove('show');
+  }
 }
 
 function makeIcon(color, size=26) {
@@ -1464,6 +2501,9 @@ async function fetchLiveListings() {
     if (document.getElementById('page-explore').classList.contains('active')) applyFilters();
     if (document.getElementById('page-matches') && document.getElementById('page-matches').classList.contains('active')) renderMatchesContent();
     
+    // Update matches badge after fetching listings
+    updateMatchesBadge();
+    
     const openCard = document.querySelector('.listing-card.active');
     if (openCard) {
       const id = openCard.getAttribute('data-id');
@@ -1492,20 +2532,9 @@ function initExploreMap() {
   exploreMap.addLayer(markerLayer);
   circleLayer = L.layerGroup().addTo(exploreMap);
 
-  // Add mobile filter toggle button
+  // Initialize mobile filter buttons state
   if (window.innerWidth <= 768) {
-    const mapArea = document.querySelector('.map-area');
-    if (mapArea && !document.querySelector('.mobile-filter-btn')) {
-      const filterBtn = document.createElement('button');
-      filterBtn.className = 'mobile-filter-btn';
-      filterBtn.innerHTML = '☰';
-      filterBtn.onclick = () => {
-        const panel = document.querySelector('.filters-panel');
-        panel.classList.toggle('mobile-open');
-        filterBtn.innerHTML = panel.classList.contains('mobile-open') ? '✕' : '☰';
-      };
-      mapArea.appendChild(filterBtn);
-    }
+    updateMobileFilterButtons();
   }
   
   refreshExplore();
@@ -1651,8 +2680,14 @@ function renderSingleDetail(l, showBackBtn = false) {
   
   if (l.photo_urls && l.photo_urls.length > 0) {
     // Maps every URL into an image, placing them in a horizontally scrolling row
-    let imgsHtml = l.photo_urls.map(url => `<img src="${url}" style="width:100%;height:100%;object-fit:cover;flex-shrink:0;scroll-snap-align:start;">`).join('');
-    document.getElementById('dp-photo').innerHTML = `<div style="display:flex; overflow-x:auto; width:100%; height:100%; scroll-snap-type: x mandatory;">${imgsHtml}</div>`;
+    let imgsHtml = l.photo_urls.map((url, idx) => `
+      <img src="${url}" style="width:100%;height:100%;object-fit:cover;flex-shrink:0;scroll-snap-align:start;">
+    `).join('');
+    document.getElementById('dp-photo').innerHTML = `
+      <div style="display:flex; overflow-x:auto; width:100%; height:100%; scroll-snap-type: x mandatory; position:relative;">
+        ${imgsHtml}
+        ${l.photo_urls.length > 1 ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:white;padding:3px 8px;border-radius:10px;font-size:11px;">${l.photo_urls.length} photos</div>` : ''}
+      </div>`;
   } else {
     document.getElementById('dp-photo').innerHTML = isOwner ? '🏠' : '🔍';
   }
@@ -1678,9 +2713,13 @@ function renderSingleDetail(l, showBackBtn = false) {
     fields = `<div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div><div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${l.people||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>`;
   }
 
-  const contactSection = l.ismine
-    ? `<div class="own-listing-banner">This is your listing — <a href="#" onclick="showPage('profile');return false" style="color:inherit;font-weight:700">Manage in Profile →</a></div>`
-    : `<button class="contact-btn" id="cbtn-${l.id}" onclick="revealContact('${l.id}','${l.role}')">Show Contact Number</button>`;
+  // Build contact section based on connection status
+  let contactSection = '';
+  if (l.ismine) {
+    contactSection = `<div class="own-listing-banner">This is your listing — <a href="#" onclick="showPage('profile');return false" style="color:inherit;font-weight:700">Manage in Profile →</a></div>`;
+  } else {
+    contactSection = buildConnectionButton(l);
+  }
 
   let backHtml = showBackBtn ? `
     <button onclick="showLocationDetails(${l.lat}, ${l.lng})" style="margin-bottom:16px; background:none; border:none; color:var(--blue); font-weight:700; cursor:pointer; font-size:12px; display:flex; align-items:center; gap:4px;">
@@ -1702,15 +2741,158 @@ function renderSingleDetail(l, showBackBtn = false) {
   document.getElementById('detail-panel').classList.add('open');
 }
 
-function revealContact(id, role) {
-  const l = liveListings.find(x => x.id === id);
-  const btn = document.getElementById('cbtn-' + id);
-  if (btn && l) btn.outerHTML = `<div class="contact-revealed">📞 ${escHTML(l.phone)}</div>`;
+// Build the appropriate button based on connection status
+function buildConnectionButton(l) {
+  if (!profile) {
+    return `<button class="interested-btn" onclick="showPage('profile')">
+      <span>✨</span> Sign in to Connect
+    </button>`;
+  }
+
+  // Check if connection already exists
+  const existingConnection = connections.find(c => 
+    (c.requester_id === profile.id && c.listing_id === l.id) ||
+    (c.receiver_id === profile.id && c.listing_id === l.id)
+  );
+
+  if (existingConnection) {
+    if (existingConnection.status === 'accepted') {
+      return `
+        <div class="phone-reveal-card">
+          <div class="phone-number">📞 ${escHTML(l.phone)}</div>
+          <div class="phone-hint">Connection accepted! You can now contact them.</div>
+        </div>
+        <button class="message-btn" style="width:100%;" onclick="openChat('${existingConnection.id}')">
+          💬 Send Message
+        </button>`;
+    } else if (existingConnection.status === 'pending') {
+      if (existingConnection.requester_id === profile.id) {
+        return `<button class="interested-btn sent">
+          <span>⏳</span> Request Sent — Waiting for response
+        </button>`;
+      } else {
+        // They sent us a request - show accept/decline
+        return `
+          <div style="text-align:center; margin-bottom:12px; font-size:13px; color:var(--gray-600);">
+            ${escHTML(l.name)} wants to connect with you!
+          </div>
+          <div class="connection-actions">
+            <button class="btn btn-primary" onclick="acceptConnection('${existingConnection.id}', '${l.id}')">✓ Accept</button>
+            <button class="btn btn-secondary" onclick="declineConnection('${existingConnection.id}', '${l.id}')">✕ Decline</button>
+          </div>`;
+      }
+    } else {
+      return `<button class="interested-btn sent" style="background:#fee2e2;color:#dc2626;">
+        Request Declined
+      </button>`;
+    }
+  }
+
+  // No existing connection - show interest button
+  return `<button class="interested-btn" id="ibtn-${l.id}" onclick="sendConnectionRequest('${l.id}', '${l.user_id}')">
+    <span>✨</span> I'm Interested
+  </button>`;
 }
 
-function revealMatchContact(id, phone) {
-  const btn = document.getElementById('match-cbtn-' + id);
-  if (btn) btn.outerHTML = `<div class="contact-revealed">📞 ${escHTML(phone)}</div>`;
+// Send a connection request
+async function sendConnectionRequest(listingId, receiverId) {
+  if (!profile) {
+    showPage('profile');
+    return;
+  }
+
+  const btn = document.getElementById('ibtn-' + listingId);
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Sending...';
+  }
+
+  try {
+    const { data, error } = await _supabase
+      .from('connections')
+      .insert({
+        requester_id: profile.id,
+        receiver_id: receiverId,
+        listing_id: listingId,
+        status: 'pending'
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Add to local connections
+    connections.push(data);
+
+    if (btn) {
+      btn.classList.add('sent');
+      btn.innerHTML = '<span>✓</span> Request Sent!';
+    }
+
+    // Refresh the listing to show updated state
+    setTimeout(() => {
+      const l = liveListings.find(x => x.id === listingId);
+      if (l) renderSingleDetail(l);
+    }, 1000);
+
+  } catch (err) {
+    console.error('Failed to send connection request:', err);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>✨</span> I\'m Interested';
+    }
+    alert('Failed to send request. Please try again.');
+  }
+}
+
+// Accept a connection request
+async function acceptConnection(connectionId, listingId) {
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .update({ status: 'accepted', updated_at: new Date().toISOString() })
+      .eq('id', connectionId);
+
+    if (error) throw error;
+
+    // Update local state
+    const conn = connections.find(c => c.id === connectionId);
+    if (conn) conn.status = 'accepted';
+
+    // Re-render the detail panel
+    const l = liveListings.find(x => x.id === listingId);
+    if (l) renderSingleDetail(l);
+
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to accept connection:', err);
+    alert('Failed to accept. Please try again.');
+  }
+}
+
+// Decline a connection request
+async function declineConnection(connectionId, listingId) {
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .update({ status: 'declined', updated_at: new Date().toISOString() })
+      .eq('id', connectionId);
+
+    if (error) throw error;
+
+    // Update local state
+    const conn = connections.find(c => c.id === connectionId);
+    if (conn) conn.status = 'declined';
+
+    // Re-render
+    const l = liveListings.find(x => x.id === listingId);
+    if (l) renderSingleDetail(l);
+
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to decline connection:', err);
+    alert('Failed to decline. Please try again.');
+  }
 }
 
 function closeDetail() {
@@ -1823,11 +3005,13 @@ function renderPropertyMatches(container) {
     return;
   }
 
-  let html = '';
+  let html = `<div style="font-size:13px; color:var(--gray-600); margin-bottom:16px; line-height:1.5; background:var(--green-light); padding:12px; border-radius:8px; color:var(--green);">
+    ✅ <strong>Direct Contact:</strong> These matches fit your criteria — contact info is shown directly!
+  </div>`;
+  
   matches.forEach(m => {
     const mIsOwner = m.role === 'owner';
     const dist = haversineKm(myListing.lat, myListing.lng, m.lat, m.lng).toFixed(1);
-    
     
     html += `
       <div class="profile-card" style="margin-bottom:16px; padding:24px;">
@@ -1853,8 +3037,14 @@ function renderPropertyMatches(container) {
         
         ${m.desc ? `<div class="dp-desc" style="margin-bottom:16px;">${escHTML(m.desc)}</div>` : ''}
         
-        <div style="text-align:center;">
-          <button class="contact-btn" id="match-cbtn-${m.id}" onclick="revealMatchContact('${m.id}','${escHTML(m.phone)}')">Show Contact Number</button>
+        <div class="direct-contact-card">
+          <div class="direct-contact-info">
+            <div class="phone-icon">📞</div>
+            <div class="phone-text">${escHTML(m.phone)}</div>
+          </div>
+          <button class="message-btn" onclick="startDirectChat('${m.id}', '${m.user_id}', '${escHTML(m.name)}')">
+            💬 Message
+          </button>
         </div>
       </div>
     `;
@@ -1941,6 +3131,9 @@ function renderBuddyUp(container) {
 
   let html = `<div style="font-size:13px; color:var(--gray-600); margin-bottom:16px; line-height:1.5;">
     ${typeExplainer}
+  </div>
+  <div style="font-size:13px; margin-bottom:16px; line-height:1.5; background:var(--green-light); padding:12px; border-radius:8px; color:var(--green);">
+    ✅ <strong>Direct Contact:</strong> These buddies match your criteria — contact info is shown directly!
   </div>`;
 
   buddies.forEach(b => {
@@ -1962,12 +3155,500 @@ function renderBuddyUp(container) {
           <span class="buddy-overlap">📍 ${distLabel}</span>
         </div>
         ${b.desc ? `<div class="dp-desc" style="margin-bottom:12px;">${escHTML(b.desc)}</div>` : ''}
-        <button class="contact-btn" id="match-cbtn-${b.id}" onclick="revealMatchContact('${b.id}','${escHTML(b.phone)}')" style="font-size:12px;padding:9px;">Connect with ${escHTML(b.name).split(' ')[0]}</button>
+        
+        <div class="direct-contact-card" style="margin-top:0;">
+          <div class="direct-contact-info">
+            <div class="phone-icon">📞</div>
+            <div class="phone-text">${escHTML(b.phone)}</div>
+          </div>
+          <button class="message-btn" onclick="startDirectChat('${b.id}', '${b.user_id}', '${escHTML(b.name)}')">
+            💬 Message
+          </button>
+        </div>
       </div>
     `;
   });
 
   container.innerHTML = html;
+}
+
+// ══════════════════════════════════════
+// MESSAGES PAGE LOGIC
+// ══════════════════════════════════════
+
+function switchMessageTab(tab, btn) {
+  activeMessageTab = tab;
+  document.querySelectorAll('.message-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderMessagesPage();
+}
+
+function renderMessagesPage() {
+  const container = document.getElementById('messages-container');
+  const tabsEl = document.getElementById('message-tabs');
+  
+  if (!profile) {
+    if (tabsEl) tabsEl.style.display = 'none';
+    container.innerHTML = `
+      <div class="messages-empty">
+        <div class="icon">💬</div>
+        <h3>Sign in to see your messages</h3>
+        <p>Connect with property owners and potential roommates through RoomPin.</p>
+        <button class="btn btn-primary" onclick="showPage('profile')">Sign In / Sign Up →</button>
+      </div>
+    `;
+    return;
+  }
+
+  if (tabsEl) tabsEl.style.display = 'flex';
+  
+  // Update badges
+  const pendingCount = connections.filter(c => 
+    c.receiver_id === profile.id && c.status === 'pending'
+  ).length;
+  
+  const pendingBadge = document.getElementById('pending-badge');
+  if (pendingBadge) {
+    if (pendingCount > 0) {
+      pendingBadge.textContent = pendingCount;
+      pendingBadge.style.display = 'inline-flex';
+    } else {
+      pendingBadge.style.display = 'none';
+    }
+  }
+
+  if (activeMessageTab === 'connections') {
+    renderConnectionsList(container);
+  } else {
+    renderChatsList(container);
+  }
+}
+
+function renderConnectionsList(container) {
+  // Get all connections where user is involved
+  const myConnections = connections.filter(c => 
+    c.requester_id === profile.id || c.receiver_id === profile.id
+  );
+
+  // Separate into incoming pending and others
+  const incomingPending = myConnections.filter(c => 
+    c.receiver_id === profile.id && c.status === 'pending'
+  );
+  const outgoingPending = myConnections.filter(c => 
+    c.requester_id === profile.id && c.status === 'pending'
+  );
+  const accepted = myConnections.filter(c => c.status === 'accepted');
+
+  if (myConnections.length === 0) {
+    container.innerHTML = `
+      <div class="messages-empty">
+        <div class="icon">🤝</div>
+        <h3>No connections yet</h3>
+        <p>When you send or receive connection requests from the Explore page, they'll appear here.</p>
+        <button class="btn btn-primary" onclick="showPage('explore')">Explore Listings →</button>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+
+  // Incoming pending requests first
+  if (incomingPending.length > 0) {
+    html += `<div style="font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:12px;">
+      📥 Incoming Requests (${incomingPending.length})
+    </div>`;
+    
+    incomingPending.forEach(c => {
+      const listing = liveListings.find(l => l.id === c.listing_id);
+      const requester = getProfileInfo(c.requester_id);
+      
+      html += `
+        <div class="connection-card pending">
+          <div class="connection-header">
+            <div style="display:flex; align-items:center;">
+              <div class="connection-avatar">${(requester?.name || '?')[0].toUpperCase()}</div>
+              <div class="connection-info">
+                <div class="connection-name">${escHTML(requester?.name || 'Someone')}</div>
+                <div class="connection-meta">Interested in your listing</div>
+              </div>
+            </div>
+            <span class="connection-status pending">Pending</span>
+          </div>
+          ${listing ? `
+            <div class="connection-listing">
+              <strong>${propTypeLabel(listing.propType)}</strong> · ₹${(listing.rent || listing.budget || 0).toLocaleString()}/mo
+            </div>
+          ` : ''}
+          <div class="connection-actions">
+            <button class="btn btn-primary" onclick="acceptConnectionFromList('${c.id}')">✓ Accept</button>
+            <button class="btn btn-secondary" onclick="declineConnectionFromList('${c.id}')">✕ Decline</button>
+          </div>
+        </div>
+      `;
+    });
+  }
+
+  // Outgoing pending
+  if (outgoingPending.length > 0) {
+    html += `<div style="font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.5px; margin:20px 0 12px;">
+      📤 Sent Requests (${outgoingPending.length})
+    </div>`;
+    
+    outgoingPending.forEach(c => {
+      const listing = liveListings.find(l => l.id === c.listing_id);
+      const receiver = getProfileInfo(c.receiver_id);
+      
+      html += `
+        <div class="connection-card">
+          <div class="connection-header">
+            <div style="display:flex; align-items:center;">
+              <div class="connection-avatar">${(receiver?.name || '?')[0].toUpperCase()}</div>
+              <div class="connection-info">
+                <div class="connection-name">${escHTML(receiver?.name || 'Owner')}</div>
+                <div class="connection-meta">Waiting for response</div>
+              </div>
+            </div>
+            <span class="connection-status pending">Pending</span>
+          </div>
+          ${listing ? `
+            <div class="connection-listing">
+              <strong>${propTypeLabel(listing.propType)}</strong> · ₹${(listing.rent || listing.budget || 0).toLocaleString()}/mo
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+  }
+
+  // Accepted connections
+  if (accepted.length > 0) {
+    html += `<div style="font-size:12px; font-weight:700; color:var(--gray-500); text-transform:uppercase; letter-spacing:0.5px; margin:20px 0 12px;">
+      ✅ Connected (${accepted.length})
+    </div>`;
+    
+    accepted.forEach(c => {
+      const listing = liveListings.find(l => l.id === c.listing_id);
+      const otherId = c.requester_id === profile.id ? c.receiver_id : c.requester_id;
+      const other = getProfileInfo(otherId);
+      
+      html += `
+        <div class="connection-card accepted" onclick="openChat('${c.id}')" style="cursor:pointer;">
+          <div class="connection-header">
+            <div style="display:flex; align-items:center;">
+              <div class="connection-avatar" style="background:var(--green-light);color:var(--green);">${(other?.name || '?')[0].toUpperCase()}</div>
+              <div class="connection-info">
+                <div class="connection-name">${escHTML(other?.name || 'User')}</div>
+                <div class="connection-meta">Tap to chat · 📞 ${escHTML(other?.phone || '—')}</div>
+              </div>
+            </div>
+            <span class="connection-status accepted">Connected</span>
+          </div>
+          ${listing ? `
+            <div class="connection-listing">
+              <strong>${propTypeLabel(listing.propType)}</strong> · ₹${(listing.rent || listing.budget || 0).toLocaleString()}/mo
+            </div>
+          ` : ''}
+        </div>
+      `;
+    });
+  }
+
+  container.innerHTML = html;
+}
+
+function renderChatsList(container) {
+  const acceptedConnections = connections.filter(c => c.status === 'accepted');
+  
+  if (acceptedConnections.length === 0) {
+    container.innerHTML = `
+      <div class="messages-empty">
+        <div class="icon">💬</div>
+        <h3>No chats yet</h3>
+        <p>When someone accepts your connection request (or you accept theirs), you can start chatting here.</p>
+      </div>
+    `;
+    return;
+  }
+
+  let html = '';
+  acceptedConnections.forEach(c => {
+    const otherId = c.requester_id === profile.id ? c.receiver_id : c.requester_id;
+    const other = getProfileInfo(otherId);
+    const listing = liveListings.find(l => l.id === c.listing_id);
+    
+    html += `
+      <div class="connection-card" onclick="openChat('${c.id}')" style="cursor:pointer;">
+        <div class="connection-header">
+          <div style="display:flex; align-items:center;">
+            <div class="connection-avatar">${(other?.name || '?')[0].toUpperCase()}</div>
+            <div class="connection-info">
+              <div class="connection-name">${escHTML(other?.name || 'User')}</div>
+              <div class="connection-meta">${listing ? propTypeLabel(listing.propType) : 'Connection'}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  
+  container.innerHTML = html;
+}
+
+// Helper to get profile info from listing user_id
+function getProfileInfo(userId) {
+  const listing = liveListings.find(l => l.user_id === userId);
+  if (listing) {
+    return { name: listing.name, phone: listing.phone };
+  }
+  return null;
+}
+
+// Accept connection from the list
+async function acceptConnectionFromList(connectionId) {
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .update({ status: 'accepted', updated_at: new Date().toISOString() })
+      .eq('id', connectionId);
+
+    if (error) throw error;
+
+    const conn = connections.find(c => c.id === connectionId);
+    if (conn) conn.status = 'accepted';
+
+    renderMessagesPage();
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to accept:', err);
+    alert('Failed to accept. Please try again.');
+  }
+}
+
+// Decline connection from the list
+async function declineConnectionFromList(connectionId) {
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .update({ status: 'declined', updated_at: new Date().toISOString() })
+      .eq('id', connectionId);
+
+    if (error) throw error;
+
+    const conn = connections.find(c => c.id === connectionId);
+    if (conn) conn.status = 'declined';
+
+    renderMessagesPage();
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to decline:', err);
+    alert('Failed to decline. Please try again.');
+  }
+}
+
+// Open chat with a connection
+async function openChat(connectionId) {
+  currentChat = connections.find(c => c.id === connectionId);
+  if (!currentChat) return;
+
+  const container = document.getElementById('messages-container');
+  const otherId = currentChat.requester_id === profile.id ? currentChat.receiver_id : currentChat.requester_id;
+  const other = getProfileInfo(otherId);
+
+  // Fetch messages for this connection
+  try {
+    const { data, error } = await _supabase
+      .from('messages')
+      .select('*')
+      .eq('connection_id', connectionId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    chatMessages = data || [];
+  } catch (err) {
+    console.error('Failed to fetch messages:', err);
+    chatMessages = [];
+  }
+
+  // Hide tabs
+  const tabsEl = document.getElementById('message-tabs');
+  if (tabsEl) tabsEl.style.display = 'none';
+
+  // Render chat UI
+  let messagesHtml = chatMessages.map(m => `
+    <div class="chat-message ${m.sender_id === profile.id ? 'sent' : 'received'}">
+      ${escHTML(m.content)}
+      <div class="time">${formatChatTime(m.created_at)}</div>
+    </div>
+  `).join('');
+
+  if (chatMessages.length === 0) {
+    messagesHtml = `<div style="text-align:center; color:var(--gray-400); padding:40px 20px; font-size:14px;">
+      No messages yet. Say hello! 👋
+    </div>`;
+  }
+
+  container.innerHTML = `
+    <div class="chat-container">
+      <div class="chat-header">
+        <button class="chat-back" onclick="closeChat()">←</button>
+        <div class="chat-user-info">
+          <div class="chat-user-name">${escHTML(other?.name || 'User')}</div>
+          <div class="chat-user-meta">Connected</div>
+        </div>
+        <button class="chat-phone-btn" onclick="callPhone('${escHTML(other?.phone || '')}')">📞</button>
+      </div>
+      <div class="chat-messages" id="chat-messages-area">
+        ${messagesHtml}
+      </div>
+      <div class="chat-input-area">
+        <input type="text" class="chat-input" id="chat-input" placeholder="Type a message..." onkeypress="handleChatKeypress(event)">
+        <button class="chat-send-btn" onclick="sendChatMessage()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `;
+
+  // Scroll to bottom
+  setTimeout(() => {
+    const area = document.getElementById('chat-messages-area');
+    if (area) area.scrollTop = area.scrollHeight;
+  }, 100);
+}
+
+function closeChat() {
+  currentChat = null;
+  chatMessages = [];
+  const tabsEl = document.getElementById('message-tabs');
+  if (tabsEl) tabsEl.style.display = 'flex';
+  renderMessagesPage();
+}
+
+function handleChatKeypress(e) {
+  if (e.key === 'Enter') {
+    sendChatMessage();
+  }
+}
+
+async function sendChatMessage() {
+  const input = document.getElementById('chat-input');
+  const content = input.value.trim();
+  
+  if (!content || !currentChat) return;
+
+  input.value = '';
+
+  try {
+    const { data, error } = await _supabase
+      .from('messages')
+      .insert({
+        connection_id: currentChat.id,
+        sender_id: profile.id,
+        content: content
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    chatMessages.push(data);
+    
+    const area = document.getElementById('chat-messages-area');
+    if (area) {
+      area.innerHTML += `
+        <div class="chat-message sent">
+          ${escHTML(content)}
+          <div class="time">Just now</div>
+        </div>
+      `;
+      area.scrollTop = area.scrollHeight;
+    }
+  } catch (err) {
+    console.error('Failed to send message:', err);
+    alert('Failed to send message. Please try again.');
+  }
+}
+
+function callPhone(phone) {
+  if (phone) {
+    window.location.href = 'tel:' + phone;
+  }
+}
+
+function formatChatTime(timestamp) {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now - date;
+  
+  if (diff < 60000) return 'Just now';
+  if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+  if (diff < 86400000) return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+}
+
+// Start a direct chat (for matches/buddy) - creates connection if needed
+async function startDirectChat(listingId, userId, userName) {
+  if (!profile) {
+    showPage('profile');
+    return;
+  }
+
+  // Check if connection already exists
+  let conn = connections.find(c => 
+    ((c.requester_id === profile.id && c.receiver_id === userId) ||
+     (c.receiver_id === profile.id && c.requester_id === userId)) &&
+    c.listing_id === listingId
+  );
+
+  if (!conn) {
+    // Create auto-accepted connection for matches
+    try {
+      const { data, error } = await _supabase
+        .from('connections')
+        .insert({
+          requester_id: profile.id,
+          receiver_id: userId,
+          listing_id: listingId,
+          status: 'accepted'
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      conn = data;
+      connections.push(conn);
+    } catch (err) {
+      console.error('Failed to create connection:', err);
+      alert('Failed to start chat. Please try again.');
+      return;
+    }
+  }
+
+  showPage('messages');
+  setTimeout(() => openChat(conn.id), 100);
+}
+
+// Fetch connections from Supabase
+async function fetchConnections() {
+  if (!profile) return;
+
+  try {
+    const { data, error } = await _supabase
+      .from('connections')
+      .select('*')
+      .or(`requester_id.eq.${profile.id},receiver_id.eq.${profile.id}`);
+
+    if (error) throw error;
+    connections = data || [];
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to fetch connections:', err);
+    connections = [];
+  }
 }
 
 // ══════════════════════════════════════
@@ -1982,11 +3663,13 @@ function toggleChip(btn, group) {
   if (group === 'gender')   genderFilter   = btn.textContent;
   if (group === 'brokerage') brokerageFilter = btn.textContent;
   applyFilters();
+  updateMobileFilterButtons();
 }
 
 function updateRentFilter(val) {
   document.getElementById('rent-max-val').textContent = parseInt(val).toLocaleString();
   applyFilters();
+  updateMobileFilterButtons();
 }
 
 function resetFilters() {
@@ -1996,6 +3679,138 @@ function resetFilters() {
   proptypeFilter = 'Any'; bhkFilter = 'Any'; furnishingFilter = 'Any'; genderFilter = 'Any'; brokerageFilter = 'Any';
   document.querySelectorAll('.filter-chips').forEach(g => g.querySelectorAll('.chip').forEach((c,i) => c.classList.toggle('active', i===0)));
   applyFilters();
+  updateMobileFilterButtons();
+  closeMobileFilter();
+}
+
+// ══════════════════════════════════════
+// MOBILE FILTER BAR FUNCTIONS
+// ══════════════════════════════════════
+let currentMobileFilter = null;
+
+function openMobileFilter(filterType) {
+  currentMobileFilter = filterType;
+  const dropdown = document.getElementById('mobile-filter-dropdown');
+  const backdrop = document.getElementById('mobile-filter-backdrop');
+  const title = document.getElementById('mobile-filter-title');
+  const options = document.getElementById('mobile-filter-options');
+  
+  let filterOptions = [];
+  let currentValue = 'Any';
+  
+  switch(filterType) {
+    case 'proptype':
+      title.textContent = 'Property Type';
+      filterOptions = ['Any', 'Entire Apartment', 'Private Room', 'Shared Bed'];
+      currentValue = proptypeFilter;
+      break;
+    case 'bhk':
+      title.textContent = 'BHK / Size';
+      filterOptions = ['Any', '1 BHK', '2 BHK', '3 BHK+'];
+      currentValue = bhkFilter;
+      break;
+    case 'budget':
+      title.textContent = 'Max Budget';
+      filterOptions = ['₹10K', '₹15K', '₹20K', '₹25K', '₹30K', '₹50K', '₹1L'];
+      currentValue = document.getElementById('rent-max').value;
+      break;
+    case 'furnishing':
+      title.textContent = 'Furnishing';
+      filterOptions = ['Any', 'Fully furnished', 'Semi-furnished', 'Unfurnished'];
+      currentValue = furnishingFilter;
+      break;
+    case 'gender':
+      title.textContent = 'Gender Preference';
+      filterOptions = ['Any', 'Male', 'Female'];
+      currentValue = genderFilter;
+      break;
+  }
+  
+  options.innerHTML = '';
+  filterOptions.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'mobile-filter-option';
+    btn.textContent = opt;
+    
+    if (filterType === 'budget') {
+      const valMap = {'₹10K':10000,'₹15K':15000,'₹20K':20000,'₹25K':25000,'₹30K':30000,'₹50K':50000,'₹1L':100000};
+      if (parseInt(currentValue) === valMap[opt]) btn.classList.add('active');
+      btn.onclick = () => {
+        document.getElementById('rent-max').value = valMap[opt];
+        updateRentFilter(valMap[opt]);
+        closeMobileFilter();
+      };
+    } else {
+      if (opt === currentValue) btn.classList.add('active');
+      btn.onclick = () => {
+        selectMobileFilterOption(filterType, opt);
+        closeMobileFilter();
+      };
+    }
+    options.appendChild(btn);
+  });
+  
+  dropdown.classList.add('open');
+  backdrop.classList.add('open');
+}
+
+function closeMobileFilter() {
+  document.getElementById('mobile-filter-dropdown').classList.remove('open');
+  document.getElementById('mobile-filter-backdrop').classList.remove('open');
+  currentMobileFilter = null;
+}
+
+function selectMobileFilterOption(filterType, value) {
+  switch(filterType) {
+    case 'proptype':
+      proptypeFilter = value;
+      document.querySelectorAll('#proptype-chips .chip').forEach(c => c.classList.toggle('active', c.textContent === value));
+      break;
+    case 'bhk':
+      bhkFilter = value;
+      document.querySelectorAll('#bhk-chips .chip').forEach(c => c.classList.toggle('active', c.textContent === value));
+      break;
+    case 'furnishing':
+      furnishingFilter = value;
+      document.querySelectorAll('#furnishing-chips .chip').forEach(c => c.classList.toggle('active', c.textContent === value));
+      break;
+    case 'gender':
+      genderFilter = value;
+      break;
+  }
+  applyFilters();
+  updateMobileFilterButtons();
+}
+
+function updateMobileFilterButtons() {
+  const mfProptype = document.getElementById('mf-proptype');
+  const mfBhk = document.getElementById('mf-bhk');
+  const mfBudget = document.getElementById('mf-budget');
+  const mfFurnishing = document.getElementById('mf-furnishing');
+  const mfGender = document.getElementById('mf-gender');
+  
+  if (mfProptype) {
+    mfProptype.classList.toggle('has-value', proptypeFilter !== 'Any');
+    mfProptype.querySelector('span').textContent = proptypeFilter === 'Any' ? 'Type' : proptypeFilter.replace('Entire ','').replace('Private ','').replace('Shared ','');
+  }
+  if (mfBhk) {
+    mfBhk.classList.toggle('has-value', bhkFilter !== 'Any');
+    mfBhk.querySelector('span').textContent = bhkFilter === 'Any' ? 'BHK' : bhkFilter;
+  }
+  if (mfBudget) {
+    const rentVal = parseInt(document.getElementById('rent-max')?.value || 100000);
+    const hasValue = rentVal < 100000;
+    mfBudget.classList.toggle('has-value', hasValue);
+    mfBudget.querySelector('span').textContent = hasValue ? '₹' + (rentVal/1000) + 'K' : 'Budget';
+  }
+  if (mfFurnishing) {
+    mfFurnishing.classList.toggle('has-value', furnishingFilter !== 'Any');
+    mfFurnishing.querySelector('span').textContent = furnishingFilter === 'Any' ? 'Furnishing' : furnishingFilter.replace(' furnished','');
+  }
+  if (mfGender) {
+    mfGender.classList.toggle('has-value', genderFilter !== 'Any');
+    mfGender.querySelector('span').textContent = genderFilter === 'Any' ? 'Gender' : genderFilter;
+  }
 }
 
 // ══════════════════════════════════════
@@ -2590,8 +4405,8 @@ window.addEventListener('load', async () => {
         profile = null;
         myListings = [];
         applyProfileToUI();
-        return;
-      }
+        // Don't return - continue to mobile initialization below
+      } else {
 
       const [profileResult, listingsResult] = await Promise.all([
         _supabase.from('profiles').select('*').eq('id', session.user.id).single(),
@@ -2633,9 +4448,22 @@ window.addEventListener('load', async () => {
 
       saveProfile();
       applyProfileToUI(); 
+      updateBottomNav('landing');
+      
+      // Fetch connections for the logged-in user
+      await fetchConnections();
+      }
     } catch(e) {
       console.error("Session check failed:", e);
     }
+  }
+  
+  // Initialize bottom nav - on mobile, go to explore by default
+  const isMobile = window.innerWidth <= 768;
+  if (isMobile) {
+    showPage('explore');
+  } else {
+    updateBottomNav('landing');
   }
 });
 
