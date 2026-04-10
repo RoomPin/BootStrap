@@ -2222,15 +2222,13 @@ function loadProfile() {
 }
 
 function updateMapLegend() {
-  const legendDiv = document.getElementById('dynamic-map-legend');
-  if (!legendDiv) return;
-  let html = `<div class="legend-row"><div class="ldot g"></div> Available room</div>`;
-  if (profile && profile.role === 'owner') { 
-    html += `<div class="legend-row"><div class="ldot o"></div> Your listing</div>`; 
-  } else if (profile && profile.role === 'tenant') { 
-    html += `<div class="legend-row"><div class="ldot p"></div> Your search area</div>`; 
+  const legend = document.getElementById('dynamic-map-legend');
+  if (!legend) return;
+  let html = `<div class="legend-row"><span class="legend-dot owner"></span> Available room</div>`;
+  if (profile) {
+    html += `<div class="legend-row"><span class="legend-dot mine"></span> Your listing</div>`;
   }
-  legendDiv.innerHTML = html;
+  legend.innerHTML = html;
 }
   
 function applyProfileToUI() {
