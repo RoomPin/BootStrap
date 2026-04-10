@@ -2224,11 +2224,10 @@ function loadProfile() {
 function updateMapLegend() {
   const legend = document.getElementById('dynamic-map-legend');
   if (!legend) return;
-  let html = `<div class="legend-row"><span class="legend-dot owner"></span> Available room</div>`;
-  if (profile) {
-    html += `<div class="legend-row"><span class="legend-dot mine"></span> Your listing</div>`;
-  }
-  legend.innerHTML = html;
+  legend.innerHTML = `
+    <div class="legend-row"><span class="legend-dot owner"></span> Available room</div>
+    ${profile ? '<div class="legend-row"><span class="legend-dot mine"></span> Your listing</div>' : ''}
+  `;
 }
   
 function applyProfileToUI() {
@@ -4451,7 +4450,6 @@ window.addEventListener('load', async () => {
 
       saveProfile();
       applyProfileToUI(); 
-      updateMapLegend();
       updateBottomNav('landing');
       
       // Fetch connections for the logged-in user
