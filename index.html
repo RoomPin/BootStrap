@@ -1024,6 +1024,7 @@ input[type=date]:focus{border-color:var(--blue)}
     z-index: 500;
     gap: 6px;
     overflow-x: auto;
+    overflow-y: visible;
     padding: 4px;
     background: rgba(255,255,255,0.95);
     backdrop-filter: blur(8px);
@@ -1032,8 +1033,15 @@ input[type=date]:focus{border-color:var(--blue)}
     box-shadow: var(--shadow);
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
+    clip-path: none;
   }
   .mobile-filter-bar::-webkit-scrollbar { display: none; }
+  
+  /* Allow dropdowns to overflow the filter bar */
+  .filter-dropdown-wrapper {
+    position: static;
+    flex-shrink: 0;
+  }
   
   /* Filter dropdown wrapper - contains button + dropdown */
   .filter-dropdown-wrapper {
@@ -1085,16 +1093,16 @@ input[type=date]:focus{border-color:var(--blue)}
   .filter-inline-dropdown {
     display: none;
     position: fixed;
-    top: auto;
-    left: 0;
+    top: 60px;
+    left: 10px;
     min-width: 180px;
-    max-height: 60vh;
+    max-height: 50vh;
     overflow-y: auto;
     background: white;
     border: 1px solid var(--gray-200);
     border-radius: 12px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    z-index: 1001;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+    z-index: 1500;
     animation: dropdownFadeIn 0.15s ease;
   }
   .filter-inline-dropdown.open {
