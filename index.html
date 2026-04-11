@@ -1084,16 +1084,17 @@ input[type=date]:focus{border-color:var(--blue)}
   /* Inline dropdown that appears below each filter chip */
   .filter-inline-dropdown {
     display: none;
-    position: absolute;
-    top: calc(100% + 6px);
+    position: fixed;
+    top: auto;
     left: 0;
-    min-width: 160px;
+    min-width: 180px;
+    max-height: 60vh;
+    overflow-y: auto;
     background: white;
     border: 1px solid var(--gray-200);
     border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    z-index: 1000;
-    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    z-index: 1001;
     animation: dropdownFadeIn 0.15s ease;
   }
   .filter-inline-dropdown.open {
@@ -2525,9 +2526,14 @@ function showPage(page) {
 
   // Update bottom nav active state
   updateBottomNav(page);
-
-  if (page === 'explore') { 
-    if (!exploreMap) setTimeout(initExploreMap, 150); else { exploreMap.invalidateSize(); refreshExplore(); }
+if (page === 'explore') { 
+    if (!exploreMap) {
+      setTimeout(initExploreMap, 150);
+    } else { 
+      exploreMap.invalidateSize(); 
+      setTimeout(() => exploreMap.invalidateSize(), 300);
+      refreshExplore(); 
+    }
   }
   if (page === 'create') { 
     document.getElementById('listing-form').style.display = 'block'; 
@@ -2722,10 +2728,15 @@ function initExploreMap() {
   exploreMap.addLayer(markerLayer);
   circleLayer = L.layerGroup().addTo(exploreMap);
 
-  // Fix map sizing issue - tell Leaflet to recalculate
+   // Fix map sizing issue - tell Leaflet to recalculate
   setTimeout(() => {
     exploreMap.invalidateSize();
   }, 100);
+  
+  // Additional resize on window load to ensure tiles load
+  setTimeout(() => {
+    exploreMap.invalidateSize();
+  }, 500);
 
   // Initialize mobile filter buttons state
   if (window.innerWidth <= 768) {
@@ -3923,12 +3934,18 @@ function toggleFilterDropdown(filterType) {
   backdrop.classList.add('open');
   currentOpenDropdown = filterType;
   
-  // Position dropdown to stay on screen
+  // Position dropdown below the button using fixed positioning
+  const btnRect = button.getBoundingClientRect();
+  dropdown.style.position = 'fixed';
+  dropdown.style.top = (btnRect.bottom + 6) + 'px';
+  dropdown.style.left = btnRect.left + 'px';
+  
+  // Make sure dropdown doesn't overflow right edge
   setTimeout(() => {
-    const rect = dropdown.getBoundingClientRect();
-    if (rect.right > window.innerWidth) {
+    const dropRect = dropdown.getBoundingClientRect();
+    if (dropRect.right > window.innerWidth - 10) {
       dropdown.style.left = 'auto';
-      dropdown.style.right = '0';
+      dropdown.style.right = '10px';
     }
   }, 10);
 }
