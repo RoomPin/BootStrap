@@ -285,15 +285,43 @@ input[type=date]:focus{border-color:var(--blue)}
 .profile-role-badge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:100px;letter-spacing:.5px}
 .profile-role-badge.owner{background:var(--green-light);color:var(--green)}
 .profile-role-badge.tenant{background:var(--blue-light);color:var(--blue-mid)}
-.listing-item{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:9px;padding:16px;margin-bottom:10px}
+.listing-item{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:9px;padding:16px;margin-bottom:10px;cursor:pointer;transition:all .15s}
+.listing-item:hover{border-color:var(--blue);background:var(--blue-light)}
 .listing-item:last-child{margin-bottom:0}
 .listing-item-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
 .listing-item-title{font-size:14px;font-weight:600;color:var(--blue)}
 .listing-item-rent{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
 .listing-item-meta{font-size:12px;color:var(--gray-600)}
 .listing-item-actions{display:flex;gap:8px;margin-top:12px}
+.listing-item-hint{font-size:11px;color:var(--blue);margin-top:8px;font-weight:500}
 .no-listings{text-align:center;padding:32px 24px;color:var(--gray-400);font-size:14px}
 .no-listings .icon{font-size:36px;margin-bottom:10px;opacity:.4}
+
+/* Listing Detail/Edit View in Profile */
+.listing-detail-view{display:none}
+.listing-detail-view.active{display:block}
+.listing-detail-back{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--blue);cursor:pointer;margin-bottom:16px;padding:8px 0;border:none;background:none}
+.listing-detail-back:hover{text-decoration:underline}
+.listing-detail-photos{height:180px;background:var(--gray-100);border-radius:10px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.listing-detail-photos img{width:100%;height:100%;object-fit:cover}
+.listing-detail-photos .photo-scroll{display:flex;overflow-x:auto;width:100%;height:100%;scroll-snap-type:x mandatory}
+.listing-detail-photos .photo-scroll img{flex-shrink:0;width:100%;height:100%;object-fit:cover;scroll-snap-align:start}
+.listing-detail-header{margin-bottom:16px}
+.listing-detail-type{font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.listing-detail-price{font-family:'Instrument Serif',serif;font-size:28px;color:var(--text);line-height:1}
+.listing-detail-price small{font-family:'DM Sans',sans-serif;font-size:14px;color:var(--gray-600)}
+.edit-section{background:white;border:1.5px solid var(--gray-200);border-radius:11px;padding:20px;margin-bottom:16px}
+.edit-section-title{font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.edit-section-title .icon{font-size:14px}
+.locked-section{background:var(--gray-50);border:1.5px solid var(--gray-200);border-radius:11px;padding:20px;margin-bottom:16px}
+.locked-section-title{font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:6px}
+.locked-field{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--gray-200)}
+.locked-field:last-child{border-bottom:none}
+.locked-field-label{font-size:12px;color:var(--gray-600)}
+.locked-field-value{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:4px}
+.locked-field-value .lock-icon{font-size:12px;color:var(--gray-400)}
+.edit-actions{display:flex;gap:10px;margin-top:8px}
+.edit-actions .btn{flex:1;justify-content:center;padding:12px}
 
 .success-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center}
 .success-overlay.show{display:flex}
@@ -2130,7 +2158,38 @@ input[type=date]:focus{border-color:var(--blue)}
       <div id="profile-listings-body"></div>
     </div>
 
-    <div style="display:flex; flex-direction:column; gap:8px;">
+    <!-- Listing Detail/Edit View (hidden by default) -->
+    <div class="listing-detail-view" id="listing-detail-view">
+      <button class="listing-detail-back" onclick="closeListingDetail()">← Back to Profile</button>
+      
+      <div class="listing-detail-photos" id="listing-detail-photos">🏠</div>
+      
+      <div class="listing-detail-header">
+        <div class="listing-detail-type" id="listing-detail-type">Entire Apartment</div>
+        <div class="listing-detail-price" id="listing-detail-price">₹25,000<small>/month</small></div>
+      </div>
+
+      <!-- Editable Fields -->
+      <div class="edit-section">
+        <div class="edit-section-title"><span class="icon">✏️</span> Editable Details</div>
+        <div id="editable-fields-container"></div>
+      </div>
+
+      <!-- Locked Fields -->
+      <div class="locked-section">
+        <div class="locked-section-title"><span class="icon">🔒</span> Cannot Change</div>
+        <div id="locked-fields-container"></div>
+        <p style="font-size:11px;color:var(--gray-400);margin-top:12px;line-height:1.5">To change rent, location, or property type, please delete this listing and create a new one.</p>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="edit-actions">
+        <button class="btn btn-primary" id="save-listing-btn" onclick="saveListingChanges()">Save Changes</button>
+        <button class="btn btn-danger" id="delete-listing-btn" onclick="deleteListingFromDetail()">Delete</button>
+      </div>
+    </div>
+
+    <div id="profile-account-actions" style="display:flex; flex-direction:column; gap:8px;">
       <button class="btn btn-secondary" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="logoutUser()">Log Out</button>
       <button class="btn btn-danger" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="resetProfile()">Delete Account &amp; Start Over</button>
     </div>
@@ -2385,6 +2444,36 @@ async function goStep2() {
   if (existingProfile) {
     // THEY ARE AN EXISTING USER
     profile = existingProfile;
+    
+    // FETCH USER'S LISTINGS FROM DATABASE
+    const { data: userListings } = await _supabase
+      .from('listings')
+      .select('*')
+      .eq('user_id', profile.id);
+    
+    if (userListings && userListings.length > 0) {
+      myListings = userListings.map(row => {
+        const isOwner = row.role === 'owner';
+        let listing = {
+          id: row.id, role: row.role, name: profile.name, phone: profile.phone, ismine: true,
+          lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type,
+          movein: row.movein_date, gender: row.gender_pref || 'Any',
+          furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
+          bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
+          photo_urls: row.photo_urls,
+          radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
+          bedType: row.bed_type, capacity: row.capacity_allowed,
+          peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
+          people: row.tenant_people_count
+        };
+        if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
+        else { listing.budget = parseFloat(row.price); }
+        return listing;
+      });
+    } else {
+      myListings = [];
+    }
+    
     saveProfile();
     applyProfileToUI();
     updateMapLegend();
@@ -3058,6 +3147,15 @@ function buildConnectionButton(l) {
     </button>`;
   }
 
+  // Owners cannot connect with other owners
+  if (profile.role === 'owner' && l.role === 'owner') {
+    return `<div style="text-align:center; padding:12px; background:var(--gray-50); border-radius:8px; font-size:13px; color:var(--gray-600);">
+      <span style="font-size:18px;">🏠</span><br>
+      You're both property owners.<br>
+      <span style="font-size:12px; color:var(--gray-400);">Only tenants can send interest to owners.</span>
+    </div>`;
+  }
+
   // Check if connection already exists
   const existingConnection = connections.find(c => 
     (c.requester_id === profile.id && c.listing_id === l.id) ||
@@ -3101,6 +3199,138 @@ function buildConnectionButton(l) {
   return `<button class="interested-btn" id="ibtn-${l.id}" onclick="sendConnectionRequest('${l.id}', '${l.user_id}')">
     <span>✨</span> I'm Interested
   </button>`;
+}
+
+// Build connection button for Matches/Buddy pages
+function buildMatchConnectionButton(m) {
+  // Check if connection already exists
+  const existingConnection = connections.find(c => 
+    (c.requester_id === profile.id && c.listing_id === m.id) ||
+    (c.receiver_id === profile.id && c.listing_id === m.id)
+  );
+
+  if (existingConnection) {
+    if (existingConnection.status === 'accepted') {
+      return `
+        <div class="direct-contact-card" style="margin-top:0;">
+          <div class="direct-contact-info">
+            <a href="tel:${escHTML(m.phone)}" class="phone-icon-btn" style="text-decoration:none;">📞</a>
+            <div class="phone-text">${escHTML(m.phone)}</div>
+          </div>
+          <button class="message-btn" onclick="openChat('${existingConnection.id}')">
+            💬 Message
+          </button>
+        </div>`;
+    } else if (existingConnection.status === 'pending') {
+      if (existingConnection.requester_id === profile.id) {
+        return `<button class="interested-btn sent" style="width:100%;">
+          <span>⏳</span> Request Sent — Waiting for response
+        </button>`;
+      } else {
+        return `
+          <div style="text-align:center; margin-bottom:8px; font-size:13px; color:var(--gray-600);">
+            ${escHTML(m.name)} wants to connect with you!
+          </div>
+          <div class="connection-actions" style="display:flex; gap:8px;">
+            <button class="btn btn-primary" style="flex:1;" onclick="acceptConnectionAndRefresh('${existingConnection.id}')">✓ Accept</button>
+            <button class="btn btn-secondary" style="flex:1;" onclick="declineConnectionAndRefresh('${existingConnection.id}')">✕ Decline</button>
+          </div>`;
+      }
+    } else {
+      return `<button class="interested-btn sent" style="width:100%; background:#fee2e2; color:#dc2626;">
+        Request Declined
+      </button>`;
+    }
+  }
+
+  // No existing connection - show interest button
+  return `<button class="interested-btn" id="mbtn-${m.id}" style="width:100%;" onclick="sendMatchConnectionRequest('${m.id}', '${m.user_id}')">
+    <span>✨</span> I'm Interested — Connect
+  </button>`;
+}
+
+// Send connection request from Matches/Buddy page
+async function sendMatchConnectionRequest(listingId, receiverId) {
+  const btn = document.getElementById('mbtn-' + listingId);
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳</span> Sending...';
+  }
+
+  try {
+    const { data, error } = await _supabase
+      .from('connections')
+      .insert({
+        requester_id: profile.id,
+        receiver_id: receiverId,
+        listing_id: listingId,
+        status: 'pending'
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    connections.push(data);
+
+    if (btn) {
+      btn.classList.add('sent');
+      btn.innerHTML = '<span>✓</span> Request Sent!';
+    }
+
+    // Refresh matches page after a moment
+    setTimeout(() => renderMatchesContent(), 1500);
+
+  } catch (err) {
+    console.error('Failed to send connection request:', err);
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>✨</span> I\'m Interested — Connect';
+    }
+    alert('Failed to send request. Please try again.');
+  }
+}
+
+// Accept connection and refresh matches page
+async function acceptConnectionAndRefresh(connectionId) {
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .update({ status: 'accepted', updated_at: new Date().toISOString() })
+      .eq('id', connectionId);
+
+    if (error) throw error;
+
+    const conn = connections.find(c => c.id === connectionId);
+    if (conn) conn.status = 'accepted';
+
+    renderMatchesContent();
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to accept:', err);
+    alert('Failed to accept. Please try again.');
+  }
+}
+
+// Decline connection and refresh matches page
+async function declineConnectionAndRefresh(connectionId) {
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .update({ status: 'declined', updated_at: new Date().toISOString() })
+      .eq('id', connectionId);
+
+    if (error) throw error;
+
+    const conn = connections.find(c => c.id === connectionId);
+    if (conn) conn.status = 'declined';
+
+    renderMatchesContent();
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to decline:', err);
+    alert('Failed to decline. Please try again.');
+  }
 }
 
 // Send a connection request
@@ -3314,13 +3544,16 @@ function renderPropertyMatches(container) {
     return;
   }
 
-  let html = `<div style="font-size:13px; color:var(--gray-600); margin-bottom:16px; line-height:1.5; background:var(--green-light); padding:12px; border-radius:8px; color:var(--green);">
-    ✅ <strong>Direct Contact:</strong> These matches fit your criteria — contact info is shown directly!
+  let html = `<div style="font-size:13px; color:var(--gray-600); margin-bottom:16px; line-height:1.5;">
+    🎯 <strong>${matches.length} match${matches.length > 1 ? 'es' : ''}</strong> found based on your criteria. Send a request to connect!
   </div>`;
   
   matches.forEach(m => {
     const mIsOwner = m.role === 'owner';
     const dist = haversineKm(myListing.lat, myListing.lng, m.lat, m.lng).toFixed(1);
+    
+    // Check connection status for this match
+    const connectionHtml = buildMatchConnectionButton(m);
     
     html += `
       <div class="profile-card" style="margin-bottom:16px; padding:24px;">
@@ -3346,15 +3579,7 @@ function renderPropertyMatches(container) {
         
         ${m.desc ? `<div class="dp-desc" style="margin-bottom:16px;">${escHTML(m.desc)}</div>` : ''}
         
-        <div class="direct-contact-card">
-          <div class="direct-contact-info">
-            <div class="phone-icon">📞</div>
-            <div class="phone-text">${escHTML(m.phone)}</div>
-          </div>
-          <button class="message-btn" onclick="startDirectChat('${m.id}', '${m.user_id}', '${escHTML(m.name)}')">
-            💬 Message
-          </button>
-        </div>
+        ${connectionHtml}
       </div>
     `;
   });
@@ -3441,12 +3666,15 @@ function renderBuddyUp(container) {
   let html = `<div style="font-size:13px; color:var(--gray-600); margin-bottom:16px; line-height:1.5;">
     ${typeExplainer}
   </div>
-  <div style="font-size:13px; margin-bottom:16px; line-height:1.5; background:var(--green-light); padding:12px; border-radius:8px; color:var(--green);">
-    ✅ <strong>Direct Contact:</strong> These buddies match your criteria — contact info is shown directly!
+  <div style="font-size:13px; margin-bottom:16px; line-height:1.5;">
+    👥 <strong>${buddies.length} potential roommate${buddies.length > 1 ? 's' : ''}</strong> found. Send a request to connect!
   </div>`;
 
   buddies.forEach(b => {
     const distLabel = b.dist < 0.5 ? 'Same area' : b.dist.toFixed(1) + ' km away';
+    
+    // Check connection status for this buddy
+    const connectionHtml = buildMatchConnectionButton(b);
     
     html += `
       <div class="buddy-card">
@@ -3465,15 +3693,7 @@ function renderBuddyUp(container) {
         </div>
         ${b.desc ? `<div class="dp-desc" style="margin-bottom:12px;">${escHTML(b.desc)}</div>` : ''}
         
-        <div class="direct-contact-card" style="margin-top:0;">
-          <div class="direct-contact-info">
-            <div class="phone-icon">📞</div>
-            <div class="phone-text">${escHTML(b.phone)}</div>
-          </div>
-          <button class="message-btn" onclick="startDirectChat('${b.id}', '${b.user_id}', '${escHTML(b.name)}')">
-            💬 Message
-          </button>
-        </div>
+        ${connectionHtml}
       </div>
     `;
   });
@@ -4715,8 +4935,15 @@ function closeSuccess() {
 // ══════════════════════════════════════
 // PROFILE PAGE
 // ══════════════════════════════════════
+let currentEditingListingIdx = null;
+
 function renderProfilePage() {
   if (!profile) return;
+  
+  // Hide detail view, show listings and account buttons
+  document.getElementById('listing-detail-view').classList.remove('active');
+  document.getElementById('profile-listings-card').style.display = 'block';
+  document.getElementById('profile-account-actions').style.display = 'flex';
   
   const avatarDiv = document.getElementById('profile-avatar');
   const avatarUrl = profile.photo || profile.photo_url;
@@ -4762,6 +4989,7 @@ if (avatarUrl) {
     const isOwner = l.role === 'owner';
     const div = document.createElement('div');
     div.className = 'listing-item';
+    div.onclick = () => openListingDetail(idx);
     div.innerHTML = `
       <div class="listing-item-head">
         <span class="listing-item-title">${propTypeLabel(l.propType)}</span>
@@ -4769,10 +4997,7 @@ if (avatarUrl) {
       </div>
       <div class="listing-item-rent">${isOwner ? `₹${l.rent.toLocaleString()}/mo` : `Budget ₹${l.budget.toLocaleString()}/mo`}</div>
       <div class="listing-item-meta">${isOwner ? `${l.bhk||l.bedType||''} · ${l.gender||'Any'}` : `Search radius: ${l.radiusKm} km`}</div>
-      <div class="listing-item-actions">
-        <button class="btn btn-secondary btn-sm" onclick="showPage('explore')" style="font-size:12px;padding:6px 12px">View on Map</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteMyListing(${idx})" style="font-size:12px;padding:6px 12px">Delete</button>
-      </div>`;
+      <div class="listing-item-hint">Tap to view details & edit →</div>`;
     body.appendChild(div);
   });
 
@@ -4781,9 +5006,323 @@ if (avatarUrl) {
     addBtn.className = 'btn btn-primary';
     addBtn.style.cssText = 'width:100%;justify-content:center;margin-top:8px;font-size:13px';
     addBtn.textContent = '+ Post Additional Listings';
-    addBtn.onclick = () => showPage('create');
+    addBtn.onclick = (e) => { e.stopPropagation(); showPage('create'); };
     body.appendChild(addBtn);
   }
+}
+
+function openListingDetail(idx) {
+  currentEditingListingIdx = idx;
+  const l = myListings[idx];
+  const isOwner = l.role === 'owner';
+  
+  // Hide listings card and account buttons, show detail view
+  document.getElementById('profile-listings-card').style.display = 'none';
+  document.getElementById('profile-account-actions').style.display = 'none';
+  document.getElementById('listing-detail-view').classList.add('active');
+  
+  // Set photos
+  const photosDiv = document.getElementById('listing-detail-photos');
+  if (l.photo_urls && l.photo_urls.length > 0) {
+    let imgsHtml = l.photo_urls.map(url => `<img src="${url}">`).join('');
+    photosDiv.innerHTML = `<div class="photo-scroll">${imgsHtml}</div>`;
+  } else {
+    photosDiv.innerHTML = isOwner ? '🏠' : '🔍';
+  }
+  
+  // Set header
+  document.getElementById('listing-detail-type').textContent = propTypeLabel(l.propType);
+  document.getElementById('listing-detail-price').innerHTML = isOwner 
+    ? `₹${l.rent.toLocaleString()}<small>/month</small>` 
+    : `₹${l.budget.toLocaleString()}<small>/mo budget</small>`;
+  
+  // Build editable fields based on role and property type
+  const editableContainer = document.getElementById('editable-fields-container');
+  const lockedContainer = document.getElementById('locked-fields-container');
+  
+  if (isOwner) {
+    editableContainer.innerHTML = buildOwnerEditableFields(l);
+    lockedContainer.innerHTML = buildOwnerLockedFields(l);
+  } else {
+    editableContainer.innerHTML = buildTenantEditableFields(l);
+    lockedContainer.innerHTML = buildTenantLockedFields(l);
+  }
+}
+
+function buildOwnerEditableFields(l) {
+  const genderOptions = ['Any', 'Male', 'Female'].map(g => 
+    `<option ${l.gender === g ? 'selected' : ''}>${g}</option>`
+  ).join('');
+  
+  const furnishingOptions = ['Any', 'Fully Furnished', 'Semi Furnished', 'Unfurnished'].map(f => 
+    `<option ${l.furnishing === f ? 'selected' : ''}>${f}</option>`
+  ).join('');
+  
+  const brokerageOptions = ['No', 'Yes'].map(b => 
+    `<option ${l.brokerage === b ? 'selected' : ''}>${b}</option>`
+  ).join('');
+  
+  let capacityFields = '';
+  if (l.propType === 'entire') {
+    capacityFields = `
+      <div class="form-row">
+        <div class="fg">
+          <label>Brokerage</label>
+          <select id="edit-brokerage">${brokerageOptions}</select>
+        </div>
+        <div class="fg">
+          <label>Max People Allowed</label>
+          <input type="number" id="edit-capacity" value="${l.capacity || ''}" placeholder="e.g. 4">
+        </div>
+      </div>`;
+  } else if (l.propType === 'room') {
+    capacityFields = `
+      <div class="form-row">
+        <div class="fg">
+          <label>Brokerage</label>
+          <select id="edit-brokerage">${brokerageOptions}</select>
+        </div>
+        <div class="fg">
+          <label>Room Capacity</label>
+          <input type="number" id="edit-capacity" value="${l.capacity || ''}" placeholder="e.g. 2">
+        </div>
+      </div>
+      <div class="fg">
+        <label>People in Flat</label>
+        <input type="number" id="edit-people-flat" value="${l.peopleInFlat || ''}" placeholder="e.g. 3">
+      </div>`;
+  } else {
+    capacityFields = `
+      <div class="form-row">
+        <div class="fg">
+          <label>Brokerage</label>
+          <select id="edit-brokerage">${brokerageOptions}</select>
+        </div>
+        <div class="fg">
+          <label>People in Room</label>
+          <input type="number" id="edit-people-room" value="${l.peopleInRoom || ''}" placeholder="e.g. 3">
+        </div>
+      </div>`;
+  }
+  
+  return `
+    <div class="form-row">
+      <div class="fg">
+        <label>Move-in Date</label>
+        <input type="date" id="edit-movein" value="${l.movein || ''}">
+      </div>
+      <div class="fg">
+        <label>Gender Preference</label>
+        <select id="edit-gender">${genderOptions}</select>
+      </div>
+    </div>
+    <div class="fg">
+      <label>Furnishing</label>
+      <select id="edit-furnishing">${furnishingOptions}</select>
+    </div>
+    ${capacityFields}
+    <div class="fg">
+      <label>Description</label>
+      <textarea id="edit-desc" rows="3" placeholder="Describe your property...">${escHTML(l.desc || '')}</textarea>
+    </div>
+  `;
+}
+
+function buildTenantEditableFields(l) {
+  const genderOptions = ['Male', 'Female'].map(g => 
+    `<option ${l.gender === g ? 'selected' : ''}>${g}</option>`
+  ).join('');
+  
+  const furnishingOptions = ['Any', 'Fully Furnished', 'Semi Furnished', 'Unfurnished'].map(f => 
+    `<option ${l.furnishing === f ? 'selected' : ''}>${f}</option>`
+  ).join('');
+  
+  let peopleField = '';
+  if (l.propType === 'entire') {
+    peopleField = `
+      <div class="fg">
+        <label>Number of People</label>
+        <input type="number" id="edit-people" value="${l.people || ''}" placeholder="e.g. 2">
+      </div>`;
+  }
+  
+  return `
+    <div class="fg">
+      <label>Move-in Date</label>
+      <input type="date" id="edit-movein" value="${l.movein || ''}">
+    </div>
+    <div class="form-row">
+      <div class="fg">
+        <label>Your Gender</label>
+        <select id="edit-gender">${genderOptions}</select>
+      </div>
+      <div class="fg">
+        <label>Furnishing Preference</label>
+        <select id="edit-furnishing">${furnishingOptions}</select>
+      </div>
+    </div>
+    ${peopleField}
+    <div class="fg">
+      <label>About You</label>
+      <textarea id="edit-desc" rows="3" placeholder="Describe what you're looking for...">${escHTML(l.desc || '')}</textarea>
+    </div>
+  `;
+}
+
+function buildOwnerLockedFields(l) {
+  return `
+    <div class="locked-field">
+      <span class="locked-field-label">Monthly Rent</span>
+      <span class="locked-field-value">₹${l.rent.toLocaleString()} <span class="lock-icon">🔒</span></span>
+    </div>
+    <div class="locked-field">
+      <span class="locked-field-label">Deposit</span>
+      <span class="locked-field-value">₹${(l.deposit || 0).toLocaleString()} <span class="lock-icon">🔒</span></span>
+    </div>
+    <div class="locked-field">
+      <span class="locked-field-label">Property Type</span>
+      <span class="locked-field-value">${propTypeLabel(l.propType)} <span class="lock-icon">🔒</span></span>
+    </div>
+    ${l.bhk ? `<div class="locked-field">
+      <span class="locked-field-label">Size</span>
+      <span class="locked-field-value">${l.bhk} <span class="lock-icon">🔒</span></span>
+    </div>` : ''}
+    <div class="locked-field">
+      <span class="locked-field-label">Location</span>
+      <span class="locked-field-value">${l.lat.toFixed(4)}, ${l.lng.toFixed(4)} <span class="lock-icon">🔒</span></span>
+    </div>
+  `;
+}
+
+function buildTenantLockedFields(l) {
+  return `
+    <div class="locked-field">
+      <span class="locked-field-label">Max Budget</span>
+      <span class="locked-field-value">₹${l.budget.toLocaleString()}/mo <span class="lock-icon">🔒</span></span>
+    </div>
+    <div class="locked-field">
+      <span class="locked-field-label">Looking For</span>
+      <span class="locked-field-value">${propTypeLabel(l.propType)} <span class="lock-icon">🔒</span></span>
+    </div>
+    <div class="locked-field">
+      <span class="locked-field-label">Search Area</span>
+      <span class="locked-field-value">${l.radiusKm} km radius <span class="lock-icon">🔒</span></span>
+    </div>
+    <div class="locked-field">
+      <span class="locked-field-label">Center Point</span>
+      <span class="locked-field-value">${l.lat.toFixed(4)}, ${l.lng.toFixed(4)} <span class="lock-icon">🔒</span></span>
+    </div>
+  `;
+}
+
+function closeListingDetail() {
+  currentEditingListingIdx = null;
+  document.getElementById('listing-detail-view').classList.remove('active');
+  document.getElementById('profile-listings-card').style.display = 'block';
+  document.getElementById('profile-account-actions').style.display = 'flex';
+}
+
+async function saveListingChanges() {
+  if (currentEditingListingIdx === null) return;
+  
+  const l = myListings[currentEditingListingIdx];
+  const btn = document.getElementById('save-listing-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+  
+  // Get edited values
+  const newMovein = document.getElementById('edit-movein').value;
+  const newGender = document.getElementById('edit-gender').value;
+  const newFurnishing = document.getElementById('edit-furnishing').value;
+  const newDesc = document.getElementById('edit-desc').value;
+  
+  // Build update object
+  const updateData = {
+    movein_date: newMovein || null,
+    gender_pref: newGender,
+    furnishing: newFurnishing,
+    description: newDesc
+  };
+  
+  // Role-specific fields
+  if (l.role === 'owner') {
+    const newBrokerage = document.getElementById('edit-brokerage').value;
+    updateData.brokerage = newBrokerage;
+    
+    if (l.propType === 'entire') {
+      const newCapacity = document.getElementById('edit-capacity').value;
+      updateData.capacity_allowed = newCapacity || null;
+    } else if (l.propType === 'room') {
+      const newCapacity = document.getElementById('edit-capacity').value;
+      const newPeopleFlat = document.getElementById('edit-people-flat')?.value;
+      updateData.capacity_allowed = newCapacity || null;
+      updateData.people_in_flat = newPeopleFlat || null;
+    } else {
+      const newPeopleRoom = document.getElementById('edit-people-room')?.value;
+      updateData.people_in_room = newPeopleRoom || null;
+    }
+  } else {
+    // Tenant
+    if (l.propType === 'entire') {
+      const newPeople = document.getElementById('edit-people')?.value;
+      updateData.tenant_people_count = newPeople || null;
+    }
+  }
+  
+  try {
+    const { error } = await _supabase
+      .from('listings')
+      .update(updateData)
+      .eq('id', l.id);
+    
+    if (error) throw error;
+    
+    // Update local data
+    l.movein = newMovein;
+    l.gender = newGender;
+    l.furnishing = newFurnishing;
+    l.desc = newDesc;
+    
+    if (l.role === 'owner') {
+      l.brokerage = document.getElementById('edit-brokerage').value;
+      if (l.propType === 'entire' || l.propType === 'room') {
+        l.capacity = document.getElementById('edit-capacity')?.value;
+      }
+      if (l.propType === 'room') {
+        l.peopleInFlat = document.getElementById('edit-people-flat')?.value;
+      }
+      if (l.propType === 'bed') {
+        l.peopleInRoom = document.getElementById('edit-people-room')?.value;
+      }
+    } else {
+      if (l.propType === 'entire') {
+        l.people = document.getElementById('edit-people')?.value;
+      }
+    }
+    
+    saveProfile();
+    
+    btn.textContent = '✓ Saved!';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'Save Changes';
+    }, 1500);
+    
+    // Refresh explore if map is loaded
+    if (exploreMap) refreshExplore();
+    
+  } catch (err) {
+    console.error('Error saving listing:', err);
+    alert('Failed to save changes. Please try again.');
+    btn.disabled = false;
+    btn.textContent = 'Save Changes';
+  }
+}
+
+function deleteListingFromDetail() {
+  if (currentEditingListingIdx === null) return;
+  deleteMyListing(currentEditingListingIdx);
+  closeListingDetail();
 }
 
 async function deleteMyListing(idx) {
