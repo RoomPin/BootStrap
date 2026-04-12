@@ -2446,14 +2446,43 @@ async function finishSetup() {
     .select();
 
   if (dbError) {
-    console.error("Database Error:", dbError);
-    alert("Profile save failed, but you are logged in.");
+  console.error("Database Error:", dbError);
+  alert("Profile save failed, but you are logged in.");
+} else {
+  profile = profileData[0];
+  
+  // FETCH USER'S LISTINGS FROM DATABASE
+  const { data: userListings } = await _supabase
+    .from('listings')
+    .select('*')
+    .eq('user_id', profile.id);
+  
+  if (userListings && userListings.length > 0) {
+    myListings = userListings.map(row => {
+      const isOwner = row.role === 'owner';
+      let listing = {
+        id: row.id, role: row.role, name: profile.name, phone: profile.phone, ismine: true,
+        lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type,
+        movein: row.movein_date, gender: row.gender_pref || 'Any',
+        furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
+        bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
+        photo_urls: row.photo_urls,
+        radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
+        bedType: row.bed_type, capacity: row.capacity_allowed,
+        peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
+        people: row.tenant_people_count
+      };
+      if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
+      else { listing.budget = parseFloat(row.price); }
+      return listing;
+    });
   } else {
-    profile = profileData[0];
-    saveProfile();
-    // Fetch connections for the new user
-    await fetchConnections();
+    myListings = [];
   }
+  
+  saveProfile();
+  await fetchConnections();
+}
 
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
