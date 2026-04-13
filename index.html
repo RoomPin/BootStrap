@@ -32,7 +32,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .nav-links{display:flex;gap:4px;align-items:center}
 .nav-links a{font-size:13px;font-weight:600;color:var(--gray-600);text-decoration:none;padding:6px 13px;border-radius:6px;cursor:pointer;transition:all .15s}
 .nav-links a:hover{color:var(--blue);background:var(--gray-100)}
-.nav-badge-inline{background:#dc2626;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:4px;display:none}
+.nav-badge-inline{background:#2563a8;color:white;font-size:10px;font-weight:700;padding:2px 6px;border-radius:10px;margin-left:4px;display:none}
 .nav-badge-inline.show{display:inline}
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;border:none;font-family:inherit;line-height:1}
 .btn-primary{background:var(--blue);color:white}
@@ -110,7 +110,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .footer-links a:hover{color:var(--blue)}
 
 /* ════════ EXPLORE ════════ */
-#page-explore.active { display: flex; flex-direction: column; height: 100vh; padding-top: 72px; overflow: hidden; }
+#page-explore.active { display: flex; flex-direction: column; height: 100vh; padding-top: 72px; overflow: hidden; box-sizing: border-box; }
 .map-area { flex: 1; position: relative; width: 100%; height: 100%; z-index: 1; isolation: isolate; }
 #map { width: 100%; height: 100%; }
 
@@ -145,6 +145,24 @@ input[type=range]{width:100%;accent-color:var(--blue)}
 .filter-chips{display:flex;flex-wrap:wrap;gap:4px}
 .chip{padding:4px 10px;border-radius:100px;font-size:11px;font-weight:500;cursor:pointer;border:1.5px solid var(--gray-200);color:var(--gray-600);background:white;transition:all .15s;font-family:inherit}
 .chip.active{border-color:var(--blue);color:var(--blue);background:var(--blue-light)}
+.chip.disabled{opacity:.35;cursor:not-allowed;pointer-events:none}
+/* Smooth hide/show animation utility */
+.hide-smooth{opacity:0!important;max-height:0!important;padding:0!important;margin:0!important;overflow:hidden!important;pointer-events:none!important;transition:all 0.25s ease-out}
+/* Completely remove element from flow (for filter wrappers) */
+.hide-collapse{display:none!important}
+
+/* Lock body scroll when mobile filter dropdowns are open */
+body.modal-open { overflow: hidden; position: fixed; width: 100%; }
+
+/* Keep Leaflet controls beneath mobile filter backdrop */
+.leaflet-control-container { z-index: 400 !important; }
+/* Ensure elements have a transition even when the class is removed (for the expand animation) */
+.filter-section,#mf-bhk-wrapper,.chip,.dropdown-option{transition:all 0.25s ease-out}
+/* Set natural max-height on filter sections/chips so transition works on removal */
+.filter-section{max-height:200px;opacity:1}
+#mf-bhk-wrapper{max-height:60px;opacity:1}
+.chip{max-height:40px;opacity:1}
+.dropdown-option{max-height:50px;opacity:1}
 input[type=date]{width:100%;padding:6px 9px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:12px;color:var(--text);font-family:inherit;outline:none}
 input[type=date]:focus{border-color:var(--blue)}
 .filter-reset{padding:10px 16px 13px}
@@ -244,13 +262,24 @@ input[type=date]:focus{border-color:var(--blue)}
 .form-card{background:white;border:1.5px solid var(--gray-200);border-radius:11px;padding:24px;margin-bottom:16px}
 .form-card-title{font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:1px;text-transform:uppercase;margin-bottom:16px}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:480px){.form-row{grid-template-columns:1fr}}
+@media(max-width:480px){.form-row{grid-template-columns:1fr;gap:0}}
 .fg{margin-bottom:16px}
 .fg:last-child{margin-bottom:0}
-.fg label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
+@media(max-width:480px){
+  .fg{margin-bottom:14px}
+  /* Ensure last fg in form-row still has spacing since next form-row follows */
+  .form-row .fg:last-child{margin-bottom:14px}
+  /* Only remove margin from the very last fg in the entire form-card */
+  .form-card > .fg:last-child,
+  .dynamic-fields > .fg:last-child,
+  .edit-section > .fg:last-child{margin-bottom:0}
+}
+.fg label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:5px}
 .fg input:not([type="file"]), .fg select { width:100%; padding:0 12px; height:44px; border:1.5px solid var(--gray-200); border-radius:7px; font-size:14px; color:var(--text); background:white; font-family:inherit; outline:none; transition:border-color .15s; box-sizing:border-box;}
 .fg textarea { width:100%; padding:12px; border:1.5px solid var(--gray-200); border-radius:7px; font-size:14px; color:var(--text); background:white; font-family:inherit; outline:none; transition:border-color .15s; box-sizing:border-box; resize:vertical; min-height:80px; line-height:1.5;}
 .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--blue)}
+.immediate-label{display:inline-flex!important;align-items:center;gap:5px;font-size:12px;font-weight:500;color:var(--gray-600);cursor:pointer;margin-top:4px;margin-bottom:0!important}
+.immediate-label input[type="checkbox"]{width:16px;height:16px;margin:0;flex-shrink:0;accent-color:var(--blue)}
 .prop-type-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:4px}
 @media(max-width:460px){.prop-type-cards{grid-template-columns:1fr}}
 .prop-card{border:2px solid var(--gray-200);border-radius:8px;padding:16px 12px;text-align:center;cursor:pointer;transition:all .15s}
@@ -454,12 +483,12 @@ input[type=date]:focus{border-color:var(--blue)}
 .nav-badge {
   display: none;
   position: absolute;
-  top: -2px;
+  top: 0px;
   right: 50%;
-  transform: translateX(12px);
+  transform: translateX(16px);
   min-width: 16px;
   height: 16px;
-  background: #ef4444;
+  background: #2563a8;
   color: white;
   font-size: 9px;
   font-weight: 700;
@@ -470,12 +499,22 @@ input[type=date]:focus{border-color:var(--blue)}
 }
 
 .nav-badge.show {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Messages nav item needs relative positioning for badge */
 #bnav-messages {
   position: relative;
+}
+
+/* Badge positioning fix */
+#bnav-messages .nav-badge {
+  position: absolute;
+  top: 0;
+  right: 50%;
+  transform: translateX(18px);
 }
 
 /* ════════ MESSAGES PAGE ════════ */
@@ -539,7 +578,7 @@ input[type=date]:focus{border-color:var(--blue)}
   justify-content: center;
   min-width: 18px;
   height: 18px;
-  background: #ef4444;
+  background: #2563a8;
   color: white;
   font-size: 10px;
   font-weight: 700;
@@ -1048,7 +1087,7 @@ input[type=date]:focus{border-color:var(--blue)}
   .role-card h3 { font-size: 12px; }
   .role-card p { font-size: 10px; }
   
-  #page-explore.active { padding-top: 56px; padding-bottom: 64px; height: calc(100vh); box-sizing: border-box; }
+  #page-explore.active { padding-top: 56px; padding-bottom: 0; height: 100vh; box-sizing: border-box; overflow: hidden; }
   
   /* Flatten Leaflet z-index so it cannot block our filter dropdowns */
   #page-explore .leaflet-pane { z-index: auto !important; }
@@ -1078,6 +1117,7 @@ input[type=date]:focus{border-color:var(--blue)}
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     transform: translateZ(0);
+    -ms-overflow-style: none;
   }
   .mobile-filter-bar::-webkit-scrollbar { display: none; }
   
@@ -1197,6 +1237,10 @@ input[type=date]:focus{border-color:var(--blue)}
     color: var(--blue);
     font-weight: 600;
   }
+  .dropdown-option.disabled {
+    opacity: .35;
+    pointer-events: none;
+  }
   .dropdown-option .check {
     width: 20px;
     height: 20px;
@@ -1290,10 +1334,12 @@ input[type=date]:focus{border-color:var(--blue)}
   #page-explore .leaflet-control-zoom { margin-left: 10px !important; margin-top: 58px !important; }
 
   .detail-panel {
-    top: auto; right: 0; bottom: 64px; left: 0;
-    width: 100%; max-height: calc(75vh - 64px);
+    top: auto; right: 0; bottom: 0; left: 0;
+    width: 100%; max-height: calc(75vh);
     border-radius: 16px 16px 0 0;
     transform: translateY(110%);
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 1100;
   }
   .detail-panel.open { transform: translateY(0); }
   .detail-panel::before {
@@ -1305,7 +1351,7 @@ input[type=date]:focus{border-color:var(--blue)}
   .dp-grid { gap: 6px; }
   .dp-field { padding: 6px 8px; }
 
-  .map-legend { bottom: 74px; right: 10px; padding: 6px 8px; }
+  .map-legend { bottom: 80px; right: 10px; padding: 6px 8px; }
   .legend-row { font-size: 10px; }
   .price-marker { font-size: 12px; padding: 4px 8px; min-width: 44px; }
   
@@ -1341,10 +1387,10 @@ input[type=date]:focus{border-color:var(--blue)}
   .create-hd { margin-bottom: 20px; }
   .create-hd h1 { font-size: 24px; }
   .create-hd p { font-size: 13px; }
-  .form-card { padding: 18px 16px; margin-bottom: 12px; }
-  .form-card-title { font-size: 10px; margin-bottom: 14px; }
+  .form-card { padding: 16px 14px; margin-bottom: 12px; }
+  .form-card-title { font-size: 10px; margin-bottom: 12px; }
   .fg { margin-bottom: 14px; }
-  .fg label { font-size: 12px; margin-bottom: 5px; }
+  .fg label { font-size: 12px; margin-bottom: 4px; }
   .fg input:not([type="file"]), .fg select { height: 42px; font-size: 14px; }
   .fg textarea { padding: 10px; font-size: 14px; }
   #map-picker { height: 220px; }
@@ -1448,6 +1494,8 @@ input[type=date]:focus{border-color:var(--blue)}
   
   .form-card { padding: 14px 12px; }
   .profile-card { padding: 16px 12px; }
+  .edit-section { padding: 14px 12px; }
+  .locked-section { padding: 14px 12px; }
   
   .footer-links { gap: 12px; }
   .footer-links a { font-size: 12px; }
@@ -1539,7 +1587,7 @@ input[type=date]:focus{border-color:var(--blue)}
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <h3>Explore & Buddy Up</h3>
+          <h3>Explore &amp; Buddy Up</h3>
           <p>Browse the map, or check your Smart Matches to find properties and potential roommates to team up with.</p>
         </div>
         <div class="step">
@@ -1669,11 +1717,17 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="dropdown-option active" data-value="Any" onclick="selectDropdownOption('gender', 'Any')">
       <span class="check">✓</span> Any
     </div>
-    <div class="dropdown-option" data-value="Male" onclick="selectDropdownOption('gender', 'Male')">
+    <div class="dropdown-option" data-value="Male Only" onclick="selectDropdownOption('gender', 'Male Only')">
       <span class="check">✓</span> Male Only
     </div>
-    <div class="dropdown-option" data-value="Female" onclick="selectDropdownOption('gender', 'Female')">
+    <div class="dropdown-option" data-value="Female Only" onclick="selectDropdownOption('gender', 'Female Only')">
       <span class="check">✓</span> Female Only
+    </div>
+    <div class="dropdown-option" data-value="Couple / Mixed" onclick="selectDropdownOption('gender', 'Couple / Mixed')">
+      <span class="check">✓</span> Couple / Mixed
+    </div>
+    <div class="dropdown-option" data-value="Family" onclick="selectDropdownOption('gender', 'Family')">
+      <span class="check">✓</span> Family
     </div>
   </div>
 
@@ -1696,6 +1750,37 @@ input[type=date]:focus{border-color:var(--blue)}
     </div>
   </div>
 
+  <div class="filter-inline-dropdown" id="dropdown-brokerage">
+    <div class="dropdown-header">
+      <h3>Brokerage</h3>
+      <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
+    </div>
+    <div class="dropdown-option active" data-value="Any" onclick="selectDropdownOption('brokerage', 'Any')">
+      <span class="check">✓</span> Any
+    </div>
+    <div class="dropdown-option" data-value="No" onclick="selectDropdownOption('brokerage', 'No')">
+      <span class="check">✓</span> No Brokerage
+    </div>
+    <div class="dropdown-option" data-value="Yes" onclick="selectDropdownOption('brokerage', 'Yes')">
+      <span class="check">✓</span> Has Brokerage
+    </div>
+  </div>
+
+  <div class="filter-inline-dropdown" id="dropdown-movein">
+    <div class="dropdown-header">
+      <h3>Move-in Date</h3>
+      <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
+    </div>
+    <div style="padding:14px 16px;">
+      <div style="font-size:13px;font-weight:500;color:var(--gray-600);margin-bottom:8px;">Move-in before:</div>
+      <input type="date" id="movein-filter-mobile" style="width:100%;padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:8px;font-size:14px;font-family:inherit;outline:none;" onchange="syncMoveinFilter('mobile')">
+      <label class="immediate-label" style="margin-top:10px;">
+        <input type="checkbox" id="movein-immediate-filter-mobile" onchange="syncMoveinImmediateFilter('mobile')"> Immediate
+      </label>
+      <button class="btn btn-primary" style="width:100%;margin-top:14px;justify-content:center;" onclick="closeAllDropdowns()">Apply</button>
+    </div>
+  </div>
+
   <div class="mobile-filter-backdrop" id="mobile-filter-backdrop" onclick="closeAllDropdowns()"></div>
 
   <div class="map-area">
@@ -1705,16 +1790,14 @@ input[type=date]:focus{border-color:var(--blue)}
       <!-- Property Type -->
       <div class="filter-dropdown-wrapper">
         <button class="mobile-filter-item" id="mf-proptype" onclick="toggleFilterDropdown('proptype')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
           <span>Type</span>
           <span class="arrow">▼</span>
         </button>
       </div>
       
       <!-- BHK -->
-      <div class="filter-dropdown-wrapper">
+      <div class="filter-dropdown-wrapper" id="mf-bhk-wrapper">
         <button class="mobile-filter-item" id="mf-bhk" onclick="toggleFilterDropdown('bhk')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
           <span>BHK</span>
           <span class="arrow">▼</span>
         </button>
@@ -1723,17 +1806,7 @@ input[type=date]:focus{border-color:var(--blue)}
       <!-- Budget -->
       <div class="filter-dropdown-wrapper">
         <button class="mobile-filter-item" id="mf-budget" onclick="toggleFilterDropdown('budget')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
           <span>Budget</span>
-          <span class="arrow">▼</span>
-        </button>
-      </div>
-      
-      <!-- Furnishing -->
-      <div class="filter-dropdown-wrapper">
-        <button class="mobile-filter-item" id="mf-furnishing" onclick="toggleFilterDropdown('furnishing')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-          <span>Furnishing</span>
           <span class="arrow">▼</span>
         </button>
       </div>
@@ -1741,8 +1814,31 @@ input[type=date]:focus{border-color:var(--blue)}
       <!-- Gender -->
       <div class="filter-dropdown-wrapper">
         <button class="mobile-filter-item" id="mf-gender" onclick="toggleFilterDropdown('gender')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           <span>Gender</span>
+          <span class="arrow">▼</span>
+        </button>
+      </div>
+      
+      <!-- Move-in -->
+      <div class="filter-dropdown-wrapper">
+        <button class="mobile-filter-item" id="mf-movein" onclick="toggleFilterDropdown('movein')">
+          <span>Move-in</span>
+          <span class="arrow">▼</span>
+        </button>
+      </div>
+      
+      <!-- Furnishing -->
+      <div class="filter-dropdown-wrapper">
+        <button class="mobile-filter-item" id="mf-furnishing" onclick="toggleFilterDropdown('furnishing')">
+          <span>Furnishing</span>
+          <span class="arrow">▼</span>
+        </button>
+      </div>
+      
+      <!-- Brokerage -->
+      <div class="filter-dropdown-wrapper">
+        <button class="mobile-filter-item" id="mf-brokerage" onclick="toggleFilterDropdown('brokerage')">
+          <span>Brokerage</span>
           <span class="arrow">▼</span>
         </button>
       </div>
@@ -1750,7 +1846,6 @@ input[type=date]:focus{border-color:var(--blue)}
       <!-- Sort -->
       <div class="sort-dropdown-wrapper">
         <button class="mobile-filter-item" id="mf-sort" onclick="toggleFilterDropdown('sort')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"></line><line x1="4" y1="12" x2="16" y2="12"></line><line x1="4" y1="18" x2="12" y2="18"></line></svg>
           <span>Sort</span>
           <span class="arrow">▼</span>
         </button>
@@ -1758,7 +1853,6 @@ input[type=date]:focus{border-color:var(--blue)}
       
       <!-- Reset Button -->
       <button class="mobile-filter-item" onclick="resetAllFilters()" id="mf-reset" style="margin-left: auto;">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
         <span>Reset</span>
       </button>
     </div>
@@ -1789,7 +1883,7 @@ input[type=date]:focus{border-color:var(--blue)}
           <button class="chip" onclick="toggleChip(this,'proptype')">Shared Bed</button>
         </div>
       </div>
-      <div class="filter-section">
+      <div class="filter-section" id="bhk-filter-section">
         <div class="filter-label">BHK / Size</div>
         <div class="filter-chips" id="bhk-chips">
           <button class="chip active" onclick="toggleChip(this,'bhk')">Any</button>
@@ -1806,6 +1900,23 @@ input[type=date]:focus{border-color:var(--blue)}
         <div class="range-display">Up to ₹<span id="rent-max-val">1,00,000</span></div>
         <input type="range" id="rent-max" min="3000" max="100000" step="500" value="100000" oninput="updateRentFilter(this.value)">
       </div>
+      <div class="filter-section" id="gender-filter-section">
+        <div class="filter-label">Gender Preference</div>
+        <div class="filter-chips" id="gender-chips">
+          <button class="chip active" onclick="toggleChip(this,'gender')">Any</button>
+          <button class="chip" onclick="toggleChip(this,'gender')">Male Only</button>
+          <button class="chip" onclick="toggleChip(this,'gender')">Female Only</button>
+          <button class="chip" onclick="toggleChip(this,'gender')">Couple / Mixed</button>
+          <button class="chip" onclick="toggleChip(this,'gender')">Family</button>
+        </div>
+      </div>
+      <div class="filter-section">
+        <div class="filter-label">Move-in Before</div>
+        <input type="date" id="movein-filter" onchange="applyFilters()">
+        <label class="immediate-label">
+          <input type="checkbox" id="movein-immediate-filter" onchange="handleMoveinImmediateFilter()"> Immediate
+        </label>
+      </div>
       <div class="filter-section">
         <div class="filter-label">Furnishing</div>
         <div class="filter-chips" id="furnishing-chips">
@@ -1816,24 +1927,16 @@ input[type=date]:focus{border-color:var(--blue)}
         </div>
       </div>
       <div class="filter-section">
-        <div class="filter-label">Gender Preference</div>
-        <div class="filter-chips">
-          <button class="chip active" onclick="toggleChip(this,'gender')">Any</button>
-          <button class="chip" onclick="toggleChip(this,'gender')">Male</button>
-          <button class="chip" onclick="toggleChip(this,'gender')">Female</button>
-        </div>
-      </div>
-      <div class="filter-section">
         <div class="filter-label">Brokerage</div>
         <div class="filter-chips">
           <button class="chip active" onclick="toggleChip(this,'brokerage')">Any</button>
           <button class="chip" onclick="toggleChip(this,'brokerage')">No</button>
           <button class="chip" onclick="toggleChip(this,'brokerage')">Yes</button>
         </div>
-      </div>
-      <div class="filter-section">
-        <div class="filter-label">Move-in Before</div>
-        <input type="date" id="movein-filter" onchange="applyFilters()">
+        <div id="brokerage-slider-section" style="display:none;margin-top:10px;">
+          <div class="range-display">Max Brokerage ₹<span id="brokerage-max-val">1,00,000</span></div>
+          <input type="range" id="brokerage-max" min="1000" max="100000" step="1000" value="100000" oninput="updateBrokerageFilter(this.value)">
+        </div>
       </div>
       <div class="filter-reset">
         <button class="btn-reset" onclick="resetFilters()">↺ Reset Filters</button>
@@ -1860,11 +1963,11 @@ input[type=date]:focus{border-color:var(--blue)}
     </div>
     
     <div class="message-tabs" id="message-tabs">
-      <button class="message-tab active" onclick="switchMessageTab('connections', this)">
-        Connections <span class="tab-badge" id="pending-badge" style="display:none">0</span>
-      </button>
-      <button class="message-tab" onclick="switchMessageTab('chats', this)">
+      <button class="message-tab active" onclick="switchMessageTab('chats', this)">
         Chats <span class="tab-badge" id="unread-badge" style="display:none">0</span>
+      </button>
+      <button class="message-tab" onclick="switchMessageTab('connections', this)">
+        Connections <span class="tab-badge" id="pending-badge" style="display:none">0</span>
       </button>
     </div>
     
@@ -1951,24 +2054,15 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Apartment Size</label>
               <select id="o-entire-bhk"><option value="">Select</option><option>1 RK</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
             </div>
-            <div class="fg"><label>Monthly Rent (₹)</label><input type="number" id="o-entire-rent" placeholder="25000"></div>
-          </div>
-          <div class="form-row">
-            <div class="fg"><label>Security Deposit (Refundable) (₹)</label><input type="number" id="o-entire-deposit" placeholder="50000"></div>
-            <div class="fg">
-              <label>Available From</label>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <input type="date" id="o-entire-movein" style="flex:1;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;">
-                  <input type="checkbox" id="o-entire-immediate" onchange="handleImmediateCheck('o-entire-immediate','o-entire-movein')"> Immediate
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-row">
             <div class="fg"><label>Furnishing</label>
-              <select id="o-entire-furnishing"><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+              <select id="o-entire-furnishing"><option value="">Select</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
             </div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Monthly Rent (₹)</label><input type="number" id="o-entire-rent" placeholder="25000"></div>
+            <div class="fg"><label>Security Deposit (Refundable) (₹)</label><input type="number" id="o-entire-deposit" placeholder="50000"></div>
+          </div>
+          <div class="form-row">
             <div class="fg"><label>Max People Allowed</label>
               <select id="o-entire-people" onchange="handlePeopleOthers('o-entire-people','o-entire-people-custom')">
                 <option value="">Select</option>
@@ -1979,13 +2073,21 @@ input[type=date]:focus{border-color:var(--blue)}
               </select>
               <input type="number" id="o-entire-people-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
+            <div class="fg"><label>Gender Preference</label>
+              <select id="o-entire-gender"><option value="">Select</option><option>Any</option><option>Male only</option><option>Female only</option></select>
+            </div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Brokerage Applicable</label>
-              <select id="o-entire-brokerage"><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
+            <div class="fg">
+              <label>Available From</label>
+              <input type="date" id="o-entire-movein">
+              <label class="immediate-label">
+                <input type="checkbox" id="o-entire-immediate" onchange="handleImmediateCheck('o-entire-immediate','o-entire-movein')"> Immediate
+              </label>
             </div>
-            <div class="fg"><label>Gender Preference</label>
-              <select id="o-entire-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
+            <div class="fg"><label>Brokerage Applicable</label>
+              <select id="o-entire-brokerage" onchange="toggleBrokerageAmount('o-entire-brokerage','o-entire-brokerage-amt')"><option value="">Select</option><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
+              <input type="number" id="o-entire-brokerage-amt" placeholder="Brokerage Amount (₹)" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
           </div>
           <div class="fg"><label>Description</label><textarea id="o-entire-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
@@ -2002,37 +2104,36 @@ input[type=date]:focus{border-color:var(--blue)}
             </div>
           </div>
           <div class="form-row">
+            <div class="fg"><label>Attached Washroom</label>
+              <select id="o-room-washroom"><option value="">Select</option><option value="Yes">Yes</option><option value="No">No</option></select>
+            </div>
+            <div class="fg"><label>Furnishing</label>
+              <select id="o-room-furnishing"><option value="">Select</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+            </div>
+          </div>
+          <div class="form-row">
             <div class="fg"><label>Rent per Room (₹)</label><input type="number" id="o-room-rent" placeholder="12000"></div>
             <div class="fg"><label>Security Deposit (Refundable) (₹)</label><input type="number" id="o-room-deposit" placeholder="24000"></div>
           </div>
           <div class="form-row">
-            <div class="fg">
-              <label>Available From</label>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <input type="date" id="o-room-movein" style="flex:1;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;">
-                  <input type="checkbox" id="o-room-immediate" onchange="handleImmediateCheck('o-room-immediate','o-room-movein')"> Immediate
-                </label>
-              </div>
+            <div class="fg"><label>Max People for Room</label>
+              <select id="o-room-capacity"><option value="">Select</option><option value="1 (Single Occupancy)">1 (Single Occupancy)</option><option value="2 (Couple/Two Friends)">2 (Couple/Two Friends)</option><option value="3 (Group/Friends)">3 (Group/Friends)</option></select>
             </div>
             <div class="fg"><label>Gender Preference</label>
-              <select id="o-room-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
+              <select id="o-room-gender"><option value="">Select</option><option>Any</option><option>Male only</option><option>Female only</option></select>
             </div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Furnishing</label>
-              <select id="o-room-furnishing"><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+            <div class="fg">
+              <label>Available From</label>
+              <input type="date" id="o-room-movein">
+              <label class="immediate-label">
+                <input type="checkbox" id="o-room-immediate" onchange="handleImmediateCheck('o-room-immediate','o-room-movein')"> Immediate
+              </label>
             </div>
-            <div class="fg"><label>Max People for Room</label>
-              <select id="o-room-capacity"><option value="1 (Single Occupancy)">1 (Single Occupancy)</option><option value="2 (Couple/Two Friends)">2 (Couple/Two Friends)</option><option value="3 (Group/Friends)">3 (Group/Friends)</option></select>
-            </div>
-          </div>
-          <div class="form-row">
             <div class="fg"><label>Brokerage Applicable</label>
-              <select id="o-room-brokerage"><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
-            </div>
-            <div class="fg"><label>Attached Washroom</label>
-              <select id="o-room-washroom"><option value="">Select</option><option value="Yes">Yes</option><option value="No">No</option></select>
+              <select id="o-room-brokerage" onchange="toggleBrokerageAmount('o-room-brokerage','o-room-brokerage-amt')"><option value="">Select</option><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
+              <input type="number" id="o-room-brokerage-amt" placeholder="Brokerage Amount (₹)" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
           </div>
           <div class="fg"><label>Description</label><textarea id="o-room-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
@@ -2053,25 +2154,24 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Security Deposit (Refundable) (₹)</label><input type="number" id="o-bed-deposit" placeholder="14000"></div>
           </div>
           <div class="form-row">
-            <div class="fg">
-              <label>Available From</label>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <input type="date" id="o-bed-movein" style="flex:1;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;">
-                  <input type="checkbox" id="o-bed-immediate" onchange="handleImmediateCheck('o-bed-immediate','o-bed-movein')"> Immediate
-                </label>
-              </div>
-            </div>
             <div class="fg"><label>Gender Preference</label>
-              <select id="o-bed-gender"><option>Any</option><option>Male only</option><option>Female only</option></select>
+              <select id="o-bed-gender"><option value="">Select</option><option>Any</option><option>Male only</option><option>Female only</option></select>
+            </div>
+            <div class="fg"><label>Furnishing</label>
+              <select id="o-bed-furnishing"><option value="">Select</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
             </div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Furnishing</label>
-              <select id="o-bed-furnishing"><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+            <div class="fg">
+              <label>Available From</label>
+              <input type="date" id="o-bed-movein">
+              <label class="immediate-label">
+                <input type="checkbox" id="o-bed-immediate" onchange="handleImmediateCheck('o-bed-immediate','o-bed-movein')"> Immediate
+              </label>
             </div>
             <div class="fg"><label>Brokerage Applicable</label>
-              <select id="o-bed-brokerage"><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
+              <select id="o-bed-brokerage" onchange="toggleBrokerageAmount('o-bed-brokerage','o-bed-brokerage-amt')"><option value="">Select</option><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
+              <input type="number" id="o-bed-brokerage-amt" placeholder="Brokerage Amount (₹)" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
           </div>
           <div class="fg"><label>Description</label><textarea id="o-bed-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
@@ -2081,8 +2181,23 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="form-card-title">Preferences</div>
           <div class="form-row">
             <div class="fg"><label>Apartment Preference</label>
-              <select id="t-entire-bhk"><option value="Any">Any</option><option>1 RK</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
+              <select id="t-entire-bhk"><option value="">Select</option><option value="Any">Any</option><option>1 RK</option><option>1 BHK</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
             </div>
+            <div class="fg"><label>Furnishing Preference</label>
+              <select id="t-entire-furnishing"><option value="">Select</option><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-entire-budget" placeholder="25000"></div>
+            <div class="fg">
+              <label>Move-in Date</label>
+              <input type="date" id="t-entire-movein">
+              <label class="immediate-label">
+                <input type="checkbox" id="t-entire-immediate" onchange="handleImmediateCheck('t-entire-immediate','t-entire-movein')"> Immediate
+              </label>
+            </div>
+          </div>
+          <div class="form-row">
             <div class="fg"><label>Number of People</label>
               <select id="t-entire-people" onchange="handlePeopleOthers('t-entire-people','t-entire-people-custom')">
                 <option value="">Select</option>
@@ -2093,25 +2208,8 @@ input[type=date]:focus{border-color:var(--blue)}
               </select>
               <input type="number" id="t-entire-people-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
-          </div>
-          <div class="form-row">
-            <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-entire-budget" placeholder="25000"></div>
-            <div class="fg">
-              <label>Move-in Date</label>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <input type="date" id="t-entire-movein" style="flex:1;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;">
-                  <input type="checkbox" id="t-entire-immediate" onchange="handleImmediateCheck('t-entire-immediate','t-entire-movein')"> Immediate
-                </label>
-              </div>
-            </div>
-          </div>
-          <div class="form-row">
             <div class="fg"><label>People Living</label>
-              <select id="t-entire-gender"><option>Men</option><option>Women</option><option>Both</option></select>
-            </div>
-            <div class="fg"><label>Furnishing Preference</label>
-              <select id="t-entire-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+              <select id="t-entire-gender"><option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
             </div>
           </div>
           <div class="fg"><label>About You</label><textarea id="t-entire-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
@@ -2123,34 +2221,38 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Apartment Preference</label>
               <select id="t-room-bhk"><option value="">Select</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
             </div>
-            <div class="fg"><label>Number of People</label>
-              <select id="t-room-people">
-                <option value="">Select</option>
-                <option value="Just me (1 person)">Just me (1 person)</option>
-                <option value="Me + Partner/Friend (2 people)">Me + Partner/Friend (2 people)</option>
-                <option value="3 (Group/Friends)">3 (Group/Friends)</option>
-              </select>
+            <div class="fg"><label>Furnishing Preference</label>
+              <select id="t-room-furnishing"><option value="">Select</option><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
             </div>
           </div>
           <div class="form-row">
             <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-room-budget" placeholder="12000"></div>
             <div class="fg">
               <label>Move-in Date</label>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <input type="date" id="t-room-movein" style="flex:1;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;">
-                  <input type="checkbox" id="t-room-immediate" onchange="handleImmediateCheck('t-room-immediate','t-room-movein')"> Immediate
-                </label>
-              </div>
+              <input type="date" id="t-room-movein">
+              <label class="immediate-label">
+                <input type="checkbox" id="t-room-immediate" onchange="handleImmediateCheck('t-room-immediate','t-room-movein')"> Immediate
+              </label>
             </div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Your Gender</label>
-              <select id="t-room-gender"><option>Male</option><option>Female</option></select>
+            <div class="fg"><label>Number of People</label>
+              <select id="t-room-people" onchange="updateTenantRoomGender()">
+                <option value="">Select</option>
+                <option value="Just me (1 person)">Just me (1 person)</option>
+                <option value="Me + Partner/Friend (2 people)">Me + Partner/Friend (2 people)</option>
+                <option value="3 (Group/Friends)">3 (Group/Friends)</option>
+              </select>
             </div>
-            <div class="fg"><label>Furnishing Preference</label>
-              <select id="t-room-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+            <div class="fg" id="t-room-gender-container"><label id="t-room-gender-label">Your Gender</label>
+              <select id="t-room-gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
             </div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Attached Washroom Requirement</label>
+              <select id="t-room-washroom"><option value="Any">Any</option><option value="Must have">Must have</option></select>
+            </div>
+            <div class="fg"></div>
           </div>
           <div class="fg"><label>About You</label><textarea id="t-room-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
         </div>
@@ -2161,24 +2263,22 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Sharing Preference</label>
               <select id="t-bed-type"><option value="">Select</option><option>Double Sharing</option><option>Triple Sharing</option><option>Four+ Sharing</option></select>
             </div>
-            <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-bed-budget" placeholder="7000"></div>
+            <div class="fg"><label>Furnishing Preference</label>
+              <select id="t-bed-furnishing"><option value="">Select</option><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+            </div>
           </div>
           <div class="form-row">
+            <div class="fg"><label>Max Budget (₹/mo)</label><input type="number" id="t-bed-budget" placeholder="7000"></div>
             <div class="fg">
               <label>Move-in Date</label>
-              <div style="display:flex;align-items:center;gap:8px;">
-                <input type="date" id="t-bed-movein" style="flex:1;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--gray-600);white-space:nowrap;cursor:pointer;">
-                  <input type="checkbox" id="t-bed-immediate" onchange="handleImmediateCheck('t-bed-immediate','t-bed-movein')"> Immediate
-                </label>
-              </div>
-            </div>
-            <div class="fg"><label>Your Gender</label>
-              <select id="t-bed-gender"><option>Male</option><option>Female</option></select>
+              <input type="date" id="t-bed-movein">
+              <label class="immediate-label">
+                <input type="checkbox" id="t-bed-immediate" onchange="handleImmediateCheck('t-bed-immediate','t-bed-movein')"> Immediate
+              </label>
             </div>
           </div>
-          <div class="fg"><label>Furnishing Preference</label>
-            <select id="t-bed-furnishing"><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
+          <div class="fg"><label>Your Gender</label>
+            <select id="t-bed-gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
           </div>
           <div class="fg"><label>About You</label><textarea id="t-bed-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
         </div>
@@ -2316,6 +2416,7 @@ input[type=date]:focus{border-color:var(--blue)}
   </button>
   <button class="bottom-nav-item special" id="bnav-matches" onclick="showPage('matches')">
     <div class="nav-icon-wrapper">
+      <span class="nav-badge" id="matches-badge" style="top: -6px; right: -6px; transform: none;"></span>
       <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
       </svg>
@@ -2323,10 +2424,10 @@ input[type=date]:focus{border-color:var(--blue)}
     <span>Matches</span>
   </button>
   <button class="bottom-nav-item" id="bnav-messages" onclick="showPage('messages')">
+    <span class="nav-badge" id="messages-nav-badge"></span>
     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
     </svg>
-    <span class="nav-badge" id="messages-nav-badge"></span>
     <span>Messages</span>
   </button>
   <button class="bottom-nav-item" id="bnav-profile" onclick="showPage('profile')">
@@ -2353,9 +2454,10 @@ input[type=date]:focus{border-color:var(--blue)}
 <script>
 const { createClient } = supabase;
 const supabaseUrl = 'https://gtgahphxuzvotrheyyaw.supabase.co';
-// ⚠️ IMPORTANT: Verify this is your ANON PUBLIC key (not service_role key)
-// Go to Supabase Dashboard → Settings → API → Copy the "anon public" key
-// The "sb_publishable_" prefix looks non-standard — double-check it matches exactly
+// ⚠️ IMPORTANT: This key looks like a non-standard format.
+// Supabase anon keys are usually JWTs starting with 'eyJ'.
+// Go to Supabase Dashboard → Settings → API → Copy the "anon public" key.
+// Replace the value below with your actual anon key.
 const supabaseKey = 'sb_publishable_1L8tasN-T01VDqU8L2y6bQ_r1dDG_I5';
 const _supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -2438,7 +2540,7 @@ let currentFilteredListings = [];
 let connections = [];
 let currentChat = null;
 let chatMessages = [];
-let activeMessageTab = 'connections';
+let activeMessageTab = 'chats';
   
 let exploreMap = null, pickerMap = null, previewMap = null;
 let markerLayer = null, circleLayer = null;
@@ -2461,8 +2563,8 @@ function checkStep1() {
   const otpVisible = document.getElementById('otp-section').style.display === 'block';
   const otp = document.getElementById('setup-otp').value.trim();
   
-  // Now it only checks if the phone number is entered
-  let isValid = phone.length >= 6;
+  // Validate Indian phone number: exactly 10 digits, numbers only
+  let isValid = phone.length === 10 && /^\d+$/.test(phone);
   if (otpVisible) { isValid = isValid && otp.length >= 4; } else { isValid = false; }
   
   document.getElementById('step1-btn').disabled = !isValid;
@@ -2557,7 +2659,8 @@ async function goStep2() {
           radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
           bedType: row.bed_type, capacity: row.capacity_allowed,
           peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-          people: row.tenant_people_count
+          people: row.tenant_people_count, washroom: row.washroom || null,
+          brokerageAmt: row.brokerage_amt || null
         };
         if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
         else { listing.budget = parseFloat(row.price); }
@@ -2652,7 +2755,8 @@ async function finishSetup() {
         radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
         bedType: row.bed_type, capacity: row.capacity_allowed,
         peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-        people: row.tenant_people_count
+        people: row.tenant_people_count, washroom: row.washroom || null,
+        brokerageAmt: row.brokerage_amt || null
       };
       if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
       else { listing.budget = parseFloat(row.price); }
@@ -2669,7 +2773,9 @@ async function finishSetup() {
   document.getElementById('page-setup').classList.remove('active');
   applyProfileToUI();
   updateMapLegend();
-  showPage('profile'); 
+  showPage('profile');
+  btn.disabled = false;
+  btn.textContent = "Complete Setup →";
 }
 
 function saveProfile() {
@@ -2695,7 +2801,8 @@ function updateMapLegend() {
   
 function applyProfileToUI() {
   if (!profile) return;
-  document.getElementById('nav-profile-btn').textContent = profile.name.charAt(0).toUpperCase();
+  const initial = (profile.name || 'U').charAt(0).toUpperCase();
+  document.getElementById('nav-profile-btn').textContent = initial;
   if (profile.role) {
     document.getElementById('create-title').textContent = profile.role === 'owner' ? 'Post a Room' : 'Post Your Search';
     document.getElementById('create-sub').textContent = profile.role === 'owner' ? 'List your property. Free. Reach tenants directly.' : 'Tell people what you\'re looking for.';
@@ -2752,6 +2859,15 @@ async function resetProfile() {
   
   try {
     if (profile && profile.id) {
+      // Delete all photos from storage for all user's listings
+      for (const listing of myListings) {
+        if (listing.photo_urls && listing.photo_urls.length > 0) {
+          const fileNames = listing.photo_urls.map(url => url.split('/').pop());
+          const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
+          if (storageErr) console.error("Error deleting photos from storage:", storageErr);
+        }
+      }
+
       // Delete all user's listings from Supabase
       const { error: listErr } = await _supabase
         .from('listings')
@@ -2781,7 +2897,7 @@ function showPage(page) {
     document.getElementById('page-setup').classList.add('active'); 
     
     const footer = document.getElementById('global-footer');
-    if (footer) footer.style.display = 'block';
+    if (footer) footer.style.display = 'none';
     updateBottomNav(page);
     return; 
   }
@@ -2799,14 +2915,18 @@ if (page === 'explore') {
     if (!exploreMap) {
       setTimeout(initExploreMap, 150);
     } else { 
-      exploreMap.invalidateSize(); 
-      setTimeout(() => exploreMap.invalidateSize(), 300);
-      refreshExplore(); 
+      setTimeout(() => {
+        exploreMap.invalidateSize(); 
+        setTimeout(() => exploreMap.invalidateSize(), 300);
+        refreshExplore();
+      }, 50);
     }
   }
   if (page === 'create') { 
-    document.getElementById('listing-form').style.display = 'block'; 
     checkTenantAlreadyListed(); 
+    if (pickerMap) {
+      setTimeout(() => pickerMap.invalidateSize(), 50);
+    }
   }
   if (page === 'profile') renderProfilePage();
   if (page === 'matches') renderMatchesContent();
@@ -2857,12 +2977,256 @@ function updateMessagesBadge() {
   }
 }
 
+function isGenderMatch(ownerGender, tenantGender) {
+  if (!ownerGender || ownerGender === 'Any') return true;
+  const maleValues = ['Male', 'Male only', 'Only Men', 'Men'];
+  const femaleValues = ['Female', 'Female only', 'Only Women', 'Women'];
+  if (ownerGender === 'Male only' || ownerGender === 'Male') {
+    return maleValues.includes(tenantGender);
+  }
+  if (ownerGender === 'Female only' || ownerGender === 'Female') {
+    return femaleValues.includes(tenantGender);
+  }
+  return true;
+}
+
+// Helper: parse a numeric people/capacity count from various string formats
+function parseHeadcount(val) {
+  if (!val) return 0;
+  if (typeof val === 'number') return val;
+  const s = String(val).trim();
+  // "Just me (1 person)" -> 1, "2 (Couple/Friends)" -> 2, "3 (Group/Friends)" -> 3
+  // "1 (Single)" -> 1, "Bachelors (Max 3)" -> 3, "1 (Single Occupancy)" -> 1
+  // "Me + Partner/Friend (2 people)" -> 2
+  const numMatch = s.match(/(\d+)/);
+  if (numMatch) return parseInt(numMatch[1]);
+  return 0;
+}
+
+// Helper: normalize a move-in date. "Immediate" means today's date.
+function normalizeMoveinDate(val) {
+  if (!val) return null;
+  if (val === 'Immediate') return new Date(new Date().toISOString().split('T')[0]);
+  const d = new Date(val);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+// Helper: check furnishing match for property matching (owner must match tenant's specific preference)
+function isFurnishingMatch(tenantFurnishing, ownerFurnishing) {
+  if (!tenantFurnishing || tenantFurnishing === 'Any') return true;
+  return tenantFurnishing === ownerFurnishing;
+}
+
+// Helper: check furnishing compatibility for buddy matching (conflict = one insists Fully, other insists Unfurnished)
+function isBuddyFurnishingCompatible(f1, f2) {
+  const insistFurnished = (f) => f === 'Fully furnished';
+  const insistUnfurnished = (f) => f === 'Unfurnished';
+  if (insistFurnished(f1) && insistUnfurnished(f2)) return false;
+  if (insistUnfurnished(f1) && insistFurnished(f2)) return false;
+  return true;
+}
+
+// Helper: check if two tenants are the exact same gender for buddy matching
+function isSameGenderForBuddy(g1, g2) {
+  if (!g1 || !g2) return false;
+  const maleGroup = ['Male', 'Only Men'];
+  const femaleGroup = ['Female', 'Only Women'];
+  if (maleGroup.includes(g1) && maleGroup.includes(g2)) return true;
+  if (femaleGroup.includes(g1) && femaleGroup.includes(g2)) return true;
+  if (g1 === 'Couple / Mixed' && g2 === 'Couple / Mixed') return true;
+  return false;
+}
+
+// Full property matching: tenant looking for owner's property
+function isPropertyMatch(tenant, owner) {
+  // ═══ HARD FILTERS (determine isMatch) ═══
+  // 1. Same property type
+  if (tenant.propType !== owner.propType) return { isMatch: false, score: 0 };
+
+  // 2. Location: owner's pin must be inside tenant's search circle
+  const dist = haversineKm(tenant.lat, tenant.lng, owner.lat, owner.lng);
+  const maxRadius = tenant.radiusKm || 1;
+  if (dist > maxRadius) return { isMatch: false, score: 0 };
+
+  // 3. Budget: owner's rent must be at or below tenant's max budget
+  const rent = owner.rent || 0;
+  const budget = tenant.budget || 0;
+  if (rent > budget) return { isMatch: false, score: 0 };
+
+  // --- Type-specific hard rules (unchanged) ---
+  if (tenant.propType === 'entire') {
+    if (tenant.bhk && tenant.bhk !== 'Any' && owner.bhk) {
+      if (tenant.bhk !== owner.bhk) return { isMatch: false, score: 0 };
+    }
+    const tenantPeople = parseHeadcount(tenant.people);
+    const ownerCapacity = parseHeadcount(owner.capacity);
+    if (tenantPeople > 0 && ownerCapacity > 0) {
+      if (ownerCapacity < tenantPeople) return { isMatch: false, score: 0 };
+    }
+    if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
+  } else if (tenant.propType === 'room') {
+    if (tenant.bhk && owner.bhk) {
+      if (tenant.bhk !== owner.bhk) return { isMatch: false, score: 0 };
+    }
+    const tenantPeople = parseHeadcount(tenant.people);
+    const ownerCapacity = parseHeadcount(owner.capacity);
+    if (tenantPeople > 0 && ownerCapacity > 0) {
+      if (ownerCapacity < tenantPeople) return { isMatch: false, score: 0 };
+    }
+    if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
+  } else if (tenant.propType === 'bed') {
+    if (tenant.bedType && owner.bedType) {
+      if (tenant.bedType !== owner.bedType) return { isMatch: false, score: 0 };
+    }
+    if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
+  }
+
+  // ═══ SOFT FILTERS (determine score out of 100) ═══
+  let score = 0;
+
+  // Distance (30 pts): 30 if 0, scales to 0 at maxRadius
+  score += maxRadius > 0 ? 30 * (1 - dist / maxRadius) : 30;
+
+  // Budget (30 pts): 30 if rent <= 85% of budget, 15 if rent == budget, proportional in between
+  if (budget > 0) {
+    const threshold85 = budget * 0.85;
+    if (rent <= threshold85) {
+      score += 30;
+    } else if (rent >= budget) {
+      score += 15;
+    } else {
+      // rent is between 85% and 100% of budget — scale 30 down to 15
+      score += 30 - 15 * ((rent - threshold85) / (budget - threshold85));
+    }
+  }
+
+  // Timeline (20 pts): 20 if owner available <= tenant movein, scale to 0 if 7 days later
+  const tenantDate = normalizeMoveinDate(tenant.movein);
+  const ownerDate = normalizeMoveinDate(owner.movein);
+  if (tenantDate && ownerDate) {
+    const diffMs = ownerDate - tenantDate;
+    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    if (diffDays <= 0) {
+      score += 20; // owner available on or before tenant's date
+    } else if (diffDays >= 7) {
+      score += 0;
+    } else {
+      score += 20 * (1 - diffDays / 7);
+    }
+  } else {
+    // If either date is missing, give partial credit
+    score += 10;
+  }
+
+  // Washroom (10 pts): only for Private Room
+  if (tenant.propType === 'room') {
+    const tenantWR = tenant.washroom || 'Any';
+    if (tenantWR === 'Any') {
+      score += 10;
+    } else if (tenantWR === 'Must have') {
+      score += (owner.washroom === 'Yes') ? 10 : 0;
+    }
+  } else {
+    score += 10; // full points for non-room types (not applicable)
+  }
+
+  // Furnishing (10 pts): 10 exact, 5 partial (one is Any or Semi matches either), 0 clash
+  score += scoreFurnishingProperty(tenant.furnishing, owner.furnishing);
+
+  return { isMatch: true, score: Math.round(score) };
+}
+
+function scoreFurnishingProperty(tenantF, ownerF) {
+  if (!tenantF || tenantF === 'Any') return 10;
+  if (tenantF === ownerF) return 10;
+  // Partial: Semi-furnished matches with Fully or Unfurnished
+  if (tenantF === 'Semi-furnished' || ownerF === 'Semi-furnished') return 5;
+  // Clash: Fully vs Unfurnished
+  return 0;
+}
+
+// Full buddy matching: tenant finding another tenant
+function isBuddyMatch(myListing, other) {
+  // ═══ HARD FILTERS (determine isMatch) ═══
+  // Only for room and bed types
+  if (myListing.propType === 'entire' || other.propType === 'entire') return { isMatch: false, score: 0 };
+
+  // 1. Same goal: both want the same type
+  if (myListing.propType !== other.propType) return { isMatch: false, score: 0 };
+
+  // 2. BHK ignored — except for beds, sharing type must match
+  if (myListing.propType === 'bed') {
+    if (myListing.bedType && other.bedType && myListing.bedType !== other.bedType) return { isMatch: false, score: 0 };
+  }
+
+  // 3. Location: search circles must overlap
+  const dist = haversineKm(myListing.lat, myListing.lng, other.lat, other.lng);
+  const myRadius = myListing.radiusKm || 1;
+  const theirRadius = other.radiusKm || 1;
+  const sumRadii = myRadius + theirRadius;
+  if (dist >= sumRadii) return { isMatch: false, score: 0 };
+
+  // 4. Gender: must be the exact same gender
+  if (!isSameGenderForBuddy(myListing.gender, other.gender)) return { isMatch: false, score: 0 };
+
+  // 5. Budget alignment: cannot be more than 25% apart
+  const myBudget = myListing.budget || 0;
+  const theirBudget = other.budget || 0;
+  const higherBudget = Math.max(myBudget, theirBudget);
+  if (higherBudget <= 0) return { isMatch: false, score: 0 };
+  const budgetDiff = Math.abs(myBudget - theirBudget);
+  if ((budgetDiff / higherBudget) > 0.25) return { isMatch: false, score: 0 };
+
+  // 6. Timeline: within 10 days of each other
+  const myDate = normalizeMoveinDate(myListing.movein);
+  const theirDate = normalizeMoveinDate(other.movein);
+  if (myDate && theirDate) {
+    const daysDiff = Math.abs(myDate - theirDate) / (1000 * 60 * 60 * 24);
+    if (daysDiff > 10) return { isMatch: false, score: 0 };
+  } else {
+    return { isMatch: false, score: 0 };
+  }
+
+  // NOTE: Furnishing is NO LONGER a hard filter (Objective 2)
+
+  // ═══ SOFT FILTERS (determine score out of 100) ═══
+  let score = 0;
+
+  // Location Overlap (30 pts): 30 if centers coincide, 0 at sumRadii
+  score += sumRadii > 0 ? 30 * (1 - dist / sumRadii) : 30;
+
+  // Budget Alignment (30 pts): 30 if identical, 0 at 25% tolerance
+  const budgetRatio = budgetDiff / higherBudget;
+  score += 30 * (1 - budgetRatio / 0.25);
+
+  // Timeline (25 pts): 25 if identical, 0 at 10 days
+  const daysDiff = Math.abs(myDate - theirDate) / (1000 * 60 * 60 * 24);
+  score += 25 * (1 - daysDiff / 10);
+
+  // Furnishing (15 pts): 15 exact, 7 if one is Any/flexible, 0 clash
+  score += scoreFurnishingBuddy(myListing.furnishing, other.furnishing);
+
+  return { isMatch: true, score: Math.round(score) };
+}
+
+function scoreFurnishingBuddy(f1, f2) {
+  if (!f1 || !f2) return 7;
+  if (f1 === f2) return 15;
+  if (f1 === 'Any' || f2 === 'Any') return 7;
+  // Direct clash: Fully vs Unfurnished
+  const clash = (f1 === 'Fully furnished' && f2 === 'Unfurnished') || (f1 === 'Unfurnished' && f2 === 'Fully furnished');
+  if (clash) return 0;
+  // Semi + anything else = partial
+  return 7;
+}
+
 function updateMatchesBadge() {
+  // Badge element doesn't exist in current HTML - safely skip if not found
   const badge = document.getElementById('matches-badge');
   if (!badge) return;
   
   // Only show badge for tenants looking for room or bed
-  if (!profile || profile.role !== 'tenant' || myListings.length === 0) {
+  if (!profile || profile.role !== 'tenant' || !myListings || myListings.length === 0) {
     badge.classList.remove('show');
     return;
   }
@@ -2873,26 +3237,13 @@ function updateMatchesBadge() {
     return;
   }
   
-  // Count buddy matches
+  // Count buddy matches using the full buddy matching logic
   const otherTenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
   let buddyCount = 0;
   
   otherTenants.forEach(t => {
-    const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
-    const myRadius = myListing.radiusKm || 1;
-    const theirRadius = t.radiusKm || 1;
-    const overlap = dist < (myRadius + theirRadius);
-    const sameType = myListing.propType === t.propType;
-    const myGender = myListing.gender || '';
-    const theirGender = t.gender || '';
-    const sameGender = myGender && theirGender && myGender === theirGender;
-    const myBudget = myListing.budget || 0;
-    const theirBudget = t.budget || 0;
-    const higherBudget = Math.max(myBudget, theirBudget);
-    const budgetDiff = Math.abs(myBudget - theirBudget);
-    const budgetMatch = higherBudget > 0 && (budgetDiff / higherBudget) <= 0.25;
-    
-    if (overlap && sameType && sameGender && budgetMatch) buddyCount++;
+    const result = isBuddyMatch(myListing, t);
+    if (result.isMatch) buddyCount++;
   });
   
   if (buddyCount > 0) {
@@ -2967,7 +3318,8 @@ async function fetchLiveListings() {
         lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type, ismine: isMine, movein: row.movein_date,
         gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
         radiusKm: row.radius_km ? parseFloat(row.radius_km) : null, bedType: row.bed_type, capacity: row.capacity_allowed,
-        peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count, photo_urls: row.photo_urls || []
+        peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count, photo_urls: row.photo_urls || [],
+        washroom: row.washroom || null, brokerageAmt: row.brokerage_amt || null
       };
 
       if (isOwner) { uiListing.rent = parseFloat(row.price); uiListing.deposit = parseFloat(row.deposit); } 
@@ -2975,6 +3327,11 @@ async function fetchLiveListings() {
       
       return uiListing;
     });
+
+    // Sync connection statuses with backend on every map refresh
+    if (profile) {
+      await fetchConnections();
+    }
 
     if (document.getElementById('page-explore').classList.contains('active')) applyFilters();
     if (document.getElementById('page-matches') && document.getElementById('page-matches').classList.contains('active')) renderMatchesContent();
@@ -3032,7 +3389,9 @@ function applyFilters() {
   if (!exploreMap) return;
   const ownerListings = liveListings.filter(l => l.role === 'owner');
   const rentMax  = parseInt(document.getElementById('rent-max').value);
-  const movein   = document.getElementById('movein-filter').value;
+  const moveinImmediateChk = document.getElementById('movein-immediate-filter');
+  const moveinImmediate = moveinImmediateChk && moveinImmediateChk.checked;
+  const movein   = moveinImmediate ? '' : document.getElementById('movein-filter').value;
 
   let filteredOwners = ownerListings.filter(l => {
     if (proptypeFilter !== 'Any') {
@@ -3046,12 +3405,36 @@ function applyFilters() {
     if (l.rent > rentMax) return false;
     if (furnishingFilter !== 'Any' && l.furnishing !== furnishingFilter) return false;
     if (genderFilter !== 'Any') {
-      const genderMap = { 'Male': 'Male only', 'Female': 'Female only' };
-      const mappedGender = genderMap[genderFilter];
-      if (l.gender !== 'Any' && l.gender !== mappedGender) return false;
+      const maleValues = ['Male only', 'Male', 'Only Men', 'Men'];
+      const femaleValues = ['Female only', 'Female', 'Only Women', 'Women'];
+      const coupleValues = ['Couple (Unmarried)', 'Mixed Group (Friends)', 'Couple / Mixed'];
+      if (genderFilter === 'Male Only') {
+        if (!maleValues.includes(l.gender) && l.gender !== 'Any') return false;
+      } else if (genderFilter === 'Female Only') {
+        if (!femaleValues.includes(l.gender) && l.gender !== 'Any') return false;
+      } else if (genderFilter === 'Couple / Mixed') {
+        if (!coupleValues.includes(l.gender) && l.gender !== 'Any') return false;
+      } else if (genderFilter === 'Family') {
+        if (l.gender !== 'Family' && l.gender !== 'Any') return false;
+      }
     }
     if (brokerageFilter !== 'Any' && l.brokerage !== brokerageFilter) return false;
-    if (movein && l.movein > movein) return false;
+    if (brokerageFilter === 'Yes') {
+      const brokerageMax = parseInt(document.getElementById('brokerage-max').value);
+      if (brokerageMax < 100000) {
+        const listingBrokerageAmt = parseInt(l.brokerageAmt) || 0;
+        if (listingBrokerageAmt > brokerageMax) return false;
+      }
+    }
+    if (moveinImmediate) {
+      const today = new Date(new Date().toISOString().split('T')[0]);
+      const listingDate = normalizeMoveinDate(l.movein);
+      if (!listingDate || listingDate > today) return false;
+    } else if (movein) {
+      const filterDate = new Date(movein);
+      const listingDate = normalizeMoveinDate(l.movein);
+      if (listingDate && listingDate > filterDate) return false;
+    }
     return true;
   });
 
@@ -3086,7 +3469,7 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 function getMySearchArea() {
-  if (!profile || profile.role !== 'tenant' || myListings.length === 0) return null;
+  if (!profile || profile.role !== 'tenant' || !myListings || myListings.length === 0) return null;
   const l = myListings[0];
   if (l.lat && l.radiusKm) return { lat: l.lat, lng: l.lng, radiusKm: l.radiusKm };
   return null;
@@ -3209,10 +3592,11 @@ function renderSingleDetail(l, showBackBtn = false) {
   const ownBanner = l.ismine ? `<div class="own-listing-banner">This is your listing</div>` : '';
 
   let fields = '';
+  const brokerageDisplay = l.brokerage === 'Yes' && l.brokerageAmt ? `Yes (₹${parseInt(l.brokerageAmt).toLocaleString()})` : (l.brokerage || 'No');
   if (isOwner) {
-    if (l.propType === 'entire') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div><div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${l.capacity||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; } 
-    else if (l.propType === 'room') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div><div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${l.capacity||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">People in flat</div><div class="dp-field-val">${l.peopleInFlat||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`; } 
-    else { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">${l.bedType||'Shared Bed'}</div></div><div class="dp-field"><div class="dp-field-lbl">People in room</div><div class="dp-field-val">${l.peopleInRoom||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${l.brokerage||'No'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; }
+    if (l.propType === 'entire') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div><div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${l.capacity||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; } 
+    else if (l.propType === 'room') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div><div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${l.capacity||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">People in flat</div><div class="dp-field-val">${l.peopleInFlat||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${l.washroom||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`; } 
+    else { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">${l.bedType||'Shared Bed'}</div></div><div class="dp-field"><div class="dp-field-lbl">People in room</div><div class="dp-field-val">${l.peopleInRoom||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; }
   } else {
     fields = `<div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div><div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${l.people||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>`;
   }
@@ -3282,9 +3666,12 @@ function buildConnectionButton(l) {
         <div style="text-align:center; font-size:12px; color:var(--green); margin-top:8px;">✓ Connected</div>`;
     } else if (existingConnection.status === 'pending') {
       if (existingConnection.requester_id === profile.id) {
-        return `<button class="interested-btn sent">
-          <span>⏳</span> Request Sent — Waiting for response
-        </button>`;
+        return `<div style="display:flex; flex-direction:column; gap:8px;">
+          <button class="interested-btn sent">
+            <span>⏳</span> Request Sent — Waiting for response
+          </button>
+          <button class="btn btn-danger" style="width:100%; justify-content:center;" onclick="withdrawAndRefreshDetail('${existingConnection.id}', '${l.id}')">✕ Withdraw Request</button>
+        </div>`;
       } else {
         // They sent us a request - show accept/decline
         return `
@@ -3331,9 +3718,12 @@ function buildMatchConnectionButton(m) {
         <div style="text-align:center; font-size:12px; color:var(--green); margin-top:8px;">✓ Connected</div>`;
     } else if (existingConnection.status === 'pending') {
       if (existingConnection.requester_id === profile.id) {
-        return `<button class="interested-btn sent" style="width:100%;">
-          <span>⏳</span> Request Sent — Waiting for response
-        </button>`;
+        return `<div style="display:flex; flex-direction:column; gap:8px;">
+          <button class="interested-btn sent" style="width:100%;">
+            <span>⏳</span> Request Sent — Waiting for response
+          </button>
+          <button class="btn btn-danger" style="width:100%; justify-content:center;" onclick="withdrawAndRefreshMatches('${existingConnection.id}')">✕ Withdraw Request</button>
+        </div>`;
       } else {
         return `
           <div style="text-align:center; margin-bottom:8px; font-size:13px; color:var(--gray-600);">
@@ -3587,7 +3977,7 @@ function renderMatchesContent() {
   }
 
   // --- EXISTING LOGGED IN BUT NO LISTING STATE ---
-  if (profile && myListings.length === 0) {
+  if (profile && (!myListings || myListings.length === 0)) {
     if (tabsEl) tabsEl.style.display = 'none';
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
@@ -3618,27 +4008,39 @@ function renderMatchesContent() {
 }
 
 function renderPropertyMatches(container) {
-  const myListing = myListings[0];
+  if (!myListings || myListings.length === 0) {
+    container.innerHTML = `<div class="already-listed-card" style="margin-top:4px;"><h3>No Active Listing</h3><p>Post a listing first to see your matches.</p></div>`;
+    return;
+  }
   const isOwner = profile.role === 'owner';
   let matches = [];
 
   if (isOwner) {
+    // Check tenants against ALL owner listings
     const tenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
-    matches = tenants.filter(t => {
-      const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
-      const withinArea = dist <= (t.radiusKm || 1);
-      const withinBudget = t.budget >= myListing.rent;
-      return withinArea && withinBudget;
+    tenants.forEach(t => {
+      let bestScore = 0;
+      let matched = false;
+      myListings.forEach(myListing => {
+        const result = isPropertyMatch(t, myListing);
+        if (result.isMatch && result.score > bestScore) {
+          bestScore = result.score;
+          matched = true;
+        }
+      });
+      if (matched) matches.push({ ...t, matchScore: bestScore });
     });
   } else {
+    const myListing = myListings[0];
     const owners = liveListings.filter(l => l.role === 'owner' && !l.ismine);
-    matches = owners.filter(o => {
-      const dist = haversineKm(myListing.lat, myListing.lng, o.lat, o.lng);
-      const withinArea = dist <= (myListing.radiusKm || 1);
-      const withinBudget = o.rent <= myListing.budget;
-      return withinArea && withinBudget;
+    owners.forEach(o => {
+      const result = isPropertyMatch(myListing, o);
+      if (result.isMatch) matches.push({ ...o, matchScore: result.score });
     });
   }
+
+  // Sort by score descending
+  matches.sort((a, b) => b.matchScore - a.matchScore);
 
   if (matches.length === 0) {
     container.innerHTML = `
@@ -3658,10 +4060,17 @@ function renderPropertyMatches(container) {
   
   matches.forEach(m => {
     const mIsOwner = m.role === 'owner';
-    const dist = haversineKm(myListing.lat, myListing.lng, m.lat, m.lng).toFixed(1);
+    // For owners, find the closest listing distance
+    let dist;
+    if (isOwner) {
+      dist = Math.min(...myListings.map(ml => haversineKm(ml.lat, ml.lng, m.lat, m.lng))).toFixed(1);
+    } else {
+      dist = haversineKm(myListings[0].lat, myListings[0].lng, m.lat, m.lng).toFixed(1);
+    }
     
-    // Check connection status for this match
     const connectionHtml = buildMatchConnectionButton(m);
+    const scoreColor = m.matchScore >= 75 ? '#15803d' : m.matchScore >= 50 ? '#b45309' : '#dc2626';
+    const scoreBg = m.matchScore >= 75 ? '#dcfce7' : m.matchScore >= 50 ? '#fef3c7' : '#fee2e2';
     
     html += `
       <div class="profile-card" style="margin-bottom:16px; padding:24px;">
@@ -3673,6 +4082,7 @@ function renderPropertyMatches(container) {
             <div class="profile-name" style="font-size:18px;">${escHTML(m.name)}</div>
           </div>
           <div class="match-card-right" style="text-align:right;">
+            <div style="display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:100px;background:${scoreBg};color:${scoreColor};margin-bottom:6px;">⭐ Match Score: ${m.matchScore}%</div>
             <div class="dp-rent" style="margin-bottom:2px; font-size:22px;">₹${(mIsOwner ? m.rent : m.budget).toLocaleString()}</div>
             <div style="font-size:12px; color:var(--gray-500); font-weight:600;">${dist} km away</div>
           </div>
@@ -3727,33 +4137,17 @@ function renderBuddyUp(container) {
 
   const otherTenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
   
-  let buddies = otherTenants.map(t => {
+  let buddies = [];
+  otherTenants.forEach(t => {
     const dist = haversineKm(myListing.lat, myListing.lng, t.lat, t.lng);
-    const myRadius = myListing.radiusKm || 1;
-    const theirRadius = t.radiusKm || 1;
-    const overlap = dist < (myRadius + theirRadius);
-    const sameType = myListing.propType === t.propType;
-    const myGender = myListing.gender || '';
-    const theirGender = t.gender || '';
-    const sameGender = myGender && theirGender && myGender === theirGender;
-    const myBudget = myListing.budget || 0;
-    const theirBudget = t.budget || 0;
-    const higherBudget = Math.max(myBudget, theirBudget);
-    const budgetDiff = Math.abs(myBudget - theirBudget);
-    const budgetMatch = higherBudget > 0 && (budgetDiff / higherBudget) <= 0.25;
-    let moveinMatch = false;
-    if (myListing.movein && t.movein) {
-      const myDate = new Date(myListing.movein);
-      const theirDate = new Date(t.movein);
-      const daysDiff = Math.abs(myDate - theirDate) / (1000 * 60 * 60 * 24);
-      moveinMatch = daysDiff <= 5;
+    const result = isBuddyMatch(myListing, t);
+    if (result.isMatch) {
+      buddies.push({ ...t, dist, compatScore: result.score });
     }
-    
-    const isMatch = overlap && sameType && sameGender && budgetMatch && moveinMatch;
-    return { ...t, dist, isMatch };
-  }).filter(t => t.isMatch);
+  });
 
-  buddies.sort((a, b) => a.dist - b.dist);
+  // Sort by compatibility score descending
+  buddies.sort((a, b) => b.compatScore - a.compatScore);
 
   if (buddies.length === 0) {
     const typeLabel = myListing.propType === 'room' ? 'private room' : 'shared bed';
@@ -3780,9 +4174,9 @@ function renderBuddyUp(container) {
 
   buddies.forEach(b => {
     const distLabel = b.dist < 0.5 ? 'Same area' : b.dist.toFixed(1) + ' km away';
-    
-    // Check connection status for this buddy
     const connectionHtml = buildMatchConnectionButton(b);
+    const scoreColor = b.compatScore >= 75 ? '#15803d' : b.compatScore >= 50 ? '#b45309' : '#dc2626';
+    const scoreBg = b.compatScore >= 75 ? '#dcfce7' : b.compatScore >= 50 ? '#fef3c7' : '#fee2e2';
     
     html += `
       <div class="buddy-card">
@@ -3792,6 +4186,7 @@ function renderBuddyUp(container) {
             <div class="buddy-meta">${propTypeLabel(b.propType)} · ${b.gender || '—'} · Move-in ${fmtDate(b.movein)}</div>
           </div>
           <div style="text-align:right;">
+            <div style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:100px;background:${scoreBg};color:${scoreColor};margin-bottom:4px;">💫 Compatibility: ${b.compatScore}%</div>
             <div class="buddy-budget">₹${b.budget.toLocaleString()}</div>
             <div style="font-size:11px; color:var(--gray-500);">budget/mo</div>
           </div>
@@ -3953,6 +4348,9 @@ function renderConnectionsList(container) {
               <strong>${propTypeLabel(listing.propType)}</strong> · ₹${(listing.rent || listing.budget || 0).toLocaleString()}/mo
             </div>
           ` : ''}
+          <div class="connection-actions">
+            <button class="btn btn-danger" onclick="withdrawConnection('${c.id}')" style="flex:1; justify-content:center;">✕ Withdraw Request</button>
+          </div>
         </div>
       `;
     });
@@ -4083,10 +4481,95 @@ async function declineConnectionFromList(connectionId) {
   }
 }
 
+// Withdraw from matches page and refresh
+async function withdrawAndRefreshMatches(connectionId) {
+  if (!confirm('Withdraw this connection request?')) return;
+  
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .delete()
+      .eq('id', connectionId);
+
+    if (error) throw error;
+    connections = connections.filter(c => c.id !== connectionId);
+    
+    renderMatchesContent();
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to withdraw:', err);
+    alert('Failed to withdraw request. Please try again.');
+  }
+}
+
+// Withdraw from detail panel and refresh it
+async function withdrawAndRefreshDetail(connectionId, listingId) {
+  if (!confirm('Withdraw this connection request?')) return;
+  
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .delete()
+      .eq('id', connectionId);
+
+    if (error) throw error;
+    connections = connections.filter(c => c.id !== connectionId);
+    
+    // Re-render the detail panel
+    const l = liveListings.find(x => x.id === listingId);
+    if (l) renderSingleDetail(l);
+    
+    updateMessagesBadge();
+  } catch (err) {
+    console.error('Failed to withdraw:', err);
+    alert('Failed to withdraw request. Please try again.');
+  }
+}
+
+// Withdraw a sent connection request
+async function withdrawConnection(connectionId) {
+  if (!confirm('Withdraw this connection request?')) return;
+  
+  try {
+    const { error } = await _supabase
+      .from('connections')
+      .delete()
+      .eq('id', connectionId);
+
+    if (error) throw error;
+
+    // Remove from local connections array
+    connections = connections.filter(c => c.id !== connectionId);
+
+    renderMessagesPage();
+    updateMessagesBadge();
+    
+    // Also refresh detail panel if open
+    const detailPanel = document.getElementById('detail-panel');
+    if (detailPanel && detailPanel.classList.contains('open')) {
+      // Re-render any open detail to update button state
+      const dpBody = document.getElementById('dp-body');
+      if (dpBody) {
+        const listingId = connections.length > 0 ? null : null; // will just close
+      }
+    }
+  } catch (err) {
+    console.error('Failed to withdraw:', err);
+    alert('Failed to withdraw request. Please try again.');
+  }
+}
+
 // Open chat with a connection
 async function openChat(connectionId) {
   currentChat = connections.find(c => c.id === connectionId);
   if (!currentChat) return;
+
+  // Ensure we're on the messages page
+  const messagesPage = document.getElementById('page-messages');
+  if (!messagesPage.classList.contains('active')) {
+    showPage('messages');
+    await new Promise(r => setTimeout(r, 50));
+  }
 
   const container = document.getElementById('messages-container');
   const otherId = currentChat.requester_id === profile.id ? currentChat.receiver_id : currentChat.requester_id;
@@ -4223,8 +4706,17 @@ function formatChatTime(timestamp) {
   
   if (diff < 60000) return 'Just now';
   if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
-  if (diff < 86400000) return date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
-  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+  
+  // Check if same day
+  const isToday = date.getDate() === now.getDate() && 
+                  date.getMonth() === now.getMonth() && 
+                  date.getFullYear() === now.getFullYear();
+  
+  if (isToday) {
+    return 'Today ' + date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
+  }
+  
+  return date.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' }) + ' ' + date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false });
 }
 
 // Start a direct chat (for matches/buddy) - creates connection if needed
@@ -4291,14 +4783,159 @@ async function fetchConnections() {
 // ══════════════════════════════════════
 // FILTER CONTROLS
 // ══════════════════════════════════════
+
+// BHK options that are invalid for room/bed property types
+const bhkInvalidForRoomBed = ['1 RK', 'Studio', '1 BHK'];
+
+function resetBhkToAny() {
+  bhkFilter = 'Any';
+  // Reset desktop chips
+  document.querySelectorAll('#bhk-chips .chip').forEach(c => {
+    c.classList.toggle('active', c.textContent.trim() === 'Any');
+  });
+  // Reset mobile dropdown options
+  const bhkDropdown = document.getElementById('dropdown-bhk');
+  if (bhkDropdown) {
+    bhkDropdown.querySelectorAll('.dropdown-option').forEach(o => {
+      o.classList.toggle('active', (o.dataset.value || '').trim() === 'Any');
+    });
+  }
+}
+
+function resetGenderToAny() {
+  genderFilter = 'Any';
+  // Reset desktop chips
+  document.querySelectorAll('#gender-chips .chip').forEach(c => {
+    c.classList.toggle('active', c.textContent.trim() === 'Any');
+  });
+  // Reset mobile dropdown options
+  const genderDropdown = document.getElementById('dropdown-gender');
+  if (genderDropdown) {
+    genderDropdown.querySelectorAll('.dropdown-option').forEach(o => {
+      o.classList.toggle('active', (o.dataset.value || '').trim() === 'Any');
+    });
+  }
+}
+
+function updateBhkOptionsForPropType() {
+  const bhkSection = document.getElementById('bhk-filter-section');
+  const mfBhkWrapper = document.getElementById('mf-bhk-wrapper');
+  const bhkDropdown = document.getElementById('dropdown-bhk');
+  const bhkChips = document.querySelectorAll('#bhk-chips .chip');
+  const genderChips = document.querySelectorAll('#gender-chips .chip');
+  const genderDropdown = document.getElementById('dropdown-gender');
+  const genderHiddenValues = ['Couple / Mixed', 'Family'];
+
+  if (proptypeFilter === 'Shared Bed') {
+    // --- SHARED BED: smoothly hide entire BHK section ---
+    if (bhkSection) bhkSection.classList.add('hide-smooth');
+    if (mfBhkWrapper) { mfBhkWrapper.classList.add('hide-collapse'); mfBhkWrapper.classList.remove('hide-smooth'); }
+    resetBhkToAny();
+
+    // Hide "Couple / Mixed" and "Family" from gender filter
+    if (genderHiddenValues.includes(genderFilter)) {
+      resetGenderToAny();
+    }
+    genderChips.forEach(chip => {
+      const val = chip.textContent.trim();
+      if (genderHiddenValues.includes(val)) {
+        chip.classList.add('hide-smooth');
+      } else {
+        chip.classList.remove('hide-smooth');
+      }
+    });
+    if (genderDropdown) {
+      genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+        const val = (opt.dataset.value || '').trim();
+        if (genderHiddenValues.includes(val)) {
+          opt.classList.add('hide-smooth');
+        } else {
+          opt.classList.remove('hide-smooth');
+        }
+      });
+    }
+
+  } else if (proptypeFilter === 'Private Room') {
+    // --- PRIVATE ROOM: show section, but smoothly hide invalid individual BHK options ---
+    if (bhkSection) bhkSection.classList.remove('hide-smooth');
+    if (mfBhkWrapper) { mfBhkWrapper.classList.remove('hide-collapse'); mfBhkWrapper.classList.remove('hide-smooth'); }
+
+    if (bhkInvalidForRoomBed.includes(bhkFilter)) {
+      resetBhkToAny();
+    }
+
+    bhkChips.forEach(chip => {
+      const val = chip.textContent.trim();
+      chip.classList.remove('disabled');
+      if (bhkInvalidForRoomBed.includes(val)) {
+        chip.classList.add('hide-smooth');
+      } else {
+        chip.classList.remove('hide-smooth');
+      }
+    });
+
+    if (bhkDropdown) {
+      bhkDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+        const val = (opt.dataset.value || '').trim();
+        opt.classList.remove('disabled');
+        if (bhkInvalidForRoomBed.includes(val)) {
+          opt.classList.add('hide-smooth');
+        } else {
+          opt.classList.remove('hide-smooth');
+        }
+      });
+    }
+
+    // Show all gender options for Private Room
+    genderChips.forEach(chip => chip.classList.remove('hide-smooth'));
+    if (genderDropdown) {
+      genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('hide-smooth'));
+    }
+
+  } else {
+    // --- ENTIRE PLACE / ANY: smoothly show everything ---
+    if (bhkSection) bhkSection.classList.remove('hide-smooth');
+    if (mfBhkWrapper) { mfBhkWrapper.classList.remove('hide-collapse'); mfBhkWrapper.classList.remove('hide-smooth'); }
+
+    bhkChips.forEach(chip => {
+      chip.classList.remove('disabled');
+      chip.classList.remove('hide-smooth');
+    });
+
+    if (bhkDropdown) {
+      bhkDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+        opt.classList.remove('disabled');
+        opt.classList.remove('hide-smooth');
+      });
+    }
+
+    // Show all gender options
+    genderChips.forEach(chip => chip.classList.remove('hide-smooth'));
+    if (genderDropdown) {
+      genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('hide-smooth'));
+    }
+  }
+}
+
 function toggleChip(btn, group) {
   btn.closest('.filter-chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
-  if (group === 'proptype') proptypeFilter = btn.textContent;
-  if (group === 'bhk')      bhkFilter = btn.textContent;
-  if (group === 'furnishing') furnishingFilter = btn.textContent;
-  if (group === 'gender')   genderFilter   = btn.textContent;
-  if (group === 'brokerage') brokerageFilter = btn.textContent;
+  const chipVal = btn.textContent.trim();
+  if (group === 'proptype') { proptypeFilter = chipVal; updateBhkOptionsForPropType(); }
+  if (group === 'bhk')      bhkFilter = chipVal;
+  if (group === 'furnishing') furnishingFilter = chipVal;
+  if (group === 'gender')   genderFilter   = chipVal;
+  if (group === 'brokerage') {
+    brokerageFilter = chipVal;
+    const sliderSection = document.getElementById('brokerage-slider-section');
+    if (sliderSection) {
+      sliderSection.style.display = brokerageFilter === 'Yes' ? 'block' : 'none';
+      if (brokerageFilter !== 'Yes') {
+        document.getElementById('brokerage-max').value = 100000;
+        document.getElementById('brokerage-max-val').textContent = '1,00,000';
+      }
+    }
+  }
   applyFilters();
   updateMobileFilterButtons();
 }
@@ -4309,13 +4946,36 @@ function updateRentFilter(val) {
   updateMobileFilterButtons();
 }
 
+function updateBrokerageFilter(val) {
+  document.getElementById('brokerage-max-val').textContent = parseInt(val).toLocaleString();
+  applyFilters();
+  updateMobileFilterButtons();
+}
+
 function resetFilters() {
   document.getElementById('rent-max').value = 100000;
   document.getElementById('rent-max-val').textContent = '1,00,000';
   document.getElementById('movein-filter').value = '';
+  document.getElementById('movein-filter').disabled = false;
+  const moveinImmReset = document.getElementById('movein-immediate-filter');
+  if (moveinImmReset) moveinImmReset.checked = false;
+  const moveinImmMobileR = document.getElementById('movein-immediate-filter-mobile');
+  if (moveinImmMobileR) moveinImmMobileR.checked = false;
+  const moveinMobileR = document.getElementById('movein-filter-mobile');
+  if (moveinMobileR) { moveinMobileR.value = ''; moveinMobileR.disabled = false; }
+  document.getElementById('brokerage-max').value = 100000;
+  document.getElementById('brokerage-max-val').textContent = '1,00,000';
+  const brokerageSlider = document.getElementById('brokerage-slider-section');
+  if (brokerageSlider) brokerageSlider.style.display = 'none';
   proptypeFilter = 'Any'; bhkFilter = 'Any'; furnishingFilter = 'Any'; genderFilter = 'Any'; brokerageFilter = 'Any';
   currentSortOrder = 'default';
-  document.querySelectorAll('.filter-chips').forEach(g => g.querySelectorAll('.chip').forEach((c,i) => c.classList.toggle('active', i===0)));
+  document.querySelectorAll('.filter-chips').forEach(g => g.querySelectorAll('.chip').forEach((c,i) => { c.classList.toggle('active', i===0); c.classList.remove('disabled'); c.classList.remove('hide-smooth'); }));
+  document.querySelectorAll('#dropdown-bhk .dropdown-option').forEach(o => { o.classList.remove('disabled'); o.classList.remove('hide-smooth'); });
+  document.querySelectorAll('#dropdown-gender .dropdown-option').forEach(o => { o.classList.remove('disabled'); o.classList.remove('hide-smooth'); });
+  const bhkSec = document.getElementById('bhk-filter-section');
+  const mfBhkW = document.getElementById('mf-bhk-wrapper');
+  if (bhkSec) bhkSec.classList.remove('hide-smooth');
+  if (mfBhkW) { mfBhkW.classList.remove('hide-smooth'); mfBhkW.classList.remove('hide-collapse'); }
   applyFilters();
   updateMobileFilterButtons();
   updateActiveFiltersBar();
@@ -4347,6 +5007,7 @@ function toggleFilterDropdown(filterType) {
   dropdown.classList.add('open');
   button.classList.add('dropdown-open');
   backdrop.classList.add('open');
+  document.body.classList.add('modal-open');
   currentOpenDropdown = filterType;
 }
 
@@ -4360,6 +5021,7 @@ function closeAllDropdowns() {
   });
   const backdrop = document.getElementById('mobile-filter-backdrop');
   if (backdrop) backdrop.classList.remove('open');
+  document.body.classList.remove('modal-open');
   currentOpenDropdown = null;
 }
 
@@ -4376,13 +5038,14 @@ function selectDropdownOption(filterType, value) {
     case 'proptype':
       proptypeFilter = value;
       document.querySelectorAll('#proptype-chips .chip').forEach(c => 
-        c.classList.toggle('active', c.textContent === value)
+        c.classList.toggle('active', c.textContent.trim() === value)
       );
+      updateBhkOptionsForPropType();
       break;
     case 'bhk':
       bhkFilter = value;
       document.querySelectorAll('#bhk-chips .chip').forEach(c => 
-        c.classList.toggle('active', c.textContent === value)
+        c.classList.toggle('active', c.textContent.trim() === value)
       );
       break;
     case 'budget':
@@ -4392,14 +5055,36 @@ function selectDropdownOption(filterType, value) {
     case 'furnishing':
       furnishingFilter = value;
       document.querySelectorAll('#furnishing-chips .chip').forEach(c => 
-        c.classList.toggle('active', c.textContent === value)
+        c.classList.toggle('active', c.textContent.trim() === value)
       );
       break;
     case 'gender':
       genderFilter = value;
+      document.querySelectorAll('#gender-chips .chip').forEach(c => 
+        c.classList.toggle('active', c.textContent.trim() === value)
+      );
       break;
     case 'sort':
       currentSortOrder = value;
+      break;
+    case 'brokerage':
+      brokerageFilter = value;
+      document.querySelectorAll('.filter-chips').forEach(g => {
+        // Find the brokerage chips (check parent section)
+        g.querySelectorAll('.chip').forEach(c => {
+          if (g.closest('.filter-section')?.querySelector('.filter-label')?.textContent?.trim() === 'Brokerage') {
+            c.classList.toggle('active', c.textContent.trim() === value);
+          }
+        });
+      });
+      const sliderSection = document.getElementById('brokerage-slider-section');
+      if (sliderSection) {
+        sliderSection.style.display = value === 'Yes' ? 'block' : 'none';
+        if (value !== 'Yes') {
+          document.getElementById('brokerage-max').value = 100000;
+          document.getElementById('brokerage-max-val').textContent = '1,00,000';
+        }
+      }
       break;
   }
   
@@ -4424,18 +5109,44 @@ function resetAllFilters() {
   document.getElementById('rent-max').value = 100000;
   document.getElementById('rent-max-val').textContent = '1,00,000';
   document.getElementById('movein-filter').value = '';
+  document.getElementById('movein-filter').disabled = false;
+  const moveinImmResetAll = document.getElementById('movein-immediate-filter');
+  if (moveinImmResetAll) moveinImmResetAll.checked = false;
+  const moveinImmMobileReset = document.getElementById('movein-immediate-filter-mobile');
+  if (moveinImmMobileReset) moveinImmMobileReset.checked = false;
+  const moveinMobileReset = document.getElementById('movein-filter-mobile');
+  if (moveinMobileReset) { moveinMobileReset.value = ''; moveinMobileReset.disabled = false; }
+  document.getElementById('brokerage-max').value = 100000;
+  document.getElementById('brokerage-max-val').textContent = '1,00,000';
+  const brokerageSliderReset = document.getElementById('brokerage-slider-section');
+  if (brokerageSliderReset) brokerageSliderReset.style.display = 'none';
   
   // Reset desktop filter chips
   document.querySelectorAll('.filter-chips').forEach(g => 
-    g.querySelectorAll('.chip').forEach((c,i) => c.classList.toggle('active', i===0))
+    g.querySelectorAll('.chip').forEach((c,i) => { c.classList.toggle('active', i===0); c.classList.remove('disabled'); c.classList.remove('hide-smooth'); })
   );
   
   // Reset all dropdowns to show first option as active
   document.querySelectorAll('.filter-inline-dropdown').forEach(dropdown => {
     dropdown.querySelectorAll('.dropdown-option').forEach((opt, idx) => {
       opt.classList.toggle('active', idx === 0);
+      opt.classList.remove('disabled');
+      opt.classList.remove('hide-smooth');
     });
   });
+  
+  // Restore BHK section/wrapper visibility (since proptype is reset to Any)
+  const bhkSectionReset = document.getElementById('bhk-filter-section');
+  const mfBhkWrapperReset = document.getElementById('mf-bhk-wrapper');
+  if (bhkSectionReset) bhkSectionReset.classList.remove('hide-smooth');
+  if (mfBhkWrapperReset) { mfBhkWrapperReset.classList.remove('hide-smooth'); mfBhkWrapperReset.classList.remove('hide-collapse'); }
+  
+  // Restore all gender chips/options visibility
+  document.querySelectorAll('#gender-chips .chip').forEach(c => c.classList.remove('hide-smooth'));
+  const genderDropdownReset = document.getElementById('dropdown-gender');
+  if (genderDropdownReset) {
+    genderDropdownReset.querySelectorAll('.dropdown-option').forEach(o => o.classList.remove('hide-smooth'));
+  }
   
   // Apply and update UI
   applyFilters();
@@ -4457,35 +5168,63 @@ function updateMobileFilterButtons() {
     const hasValue = proptypeFilter !== 'Any';
     mfProptype.classList.toggle('has-value', hasValue);
     const label = proptypeFilter === 'Any' ? 'Type' : proptypeFilter.replace('Entire ','').replace('Private ','').replace('Shared ','');
-    mfProptype.querySelector('span:not(.arrow)').textContent = label;
+    const labelSpan = mfProptype.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) labelSpan[0].textContent = label;
   }
   if (mfBhk) {
     const hasValue = bhkFilter !== 'Any';
     mfBhk.classList.toggle('has-value', hasValue);
-    mfBhk.querySelector('span:not(.arrow)').textContent = bhkFilter === 'Any' ? 'BHK' : bhkFilter;
+    const labelSpan = mfBhk.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) labelSpan[0].textContent = bhkFilter === 'Any' ? 'BHK' : bhkFilter;
   }
   if (mfBudget) {
     const rentVal = parseInt(document.getElementById('rent-max')?.value || 100000);
     const hasValue = rentVal < 100000;
     mfBudget.classList.toggle('has-value', hasValue);
-    mfBudget.querySelector('span:not(.arrow)').textContent = hasValue ? '₹' + (rentVal/1000) + 'K' : 'Budget';
+    const labelSpan = mfBudget.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) labelSpan[0].textContent = hasValue ? '₹' + (rentVal/1000) + 'K' : 'Budget';
   }
   if (mfFurnishing) {
     const hasValue = furnishingFilter !== 'Any';
     mfFurnishing.classList.toggle('has-value', hasValue);
     const label = furnishingFilter === 'Any' ? 'Furnishing' : furnishingFilter.replace(' furnished','').replace('-furnished','');
-    mfFurnishing.querySelector('span:not(.arrow)').textContent = label;
+    const labelSpan = mfFurnishing.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) labelSpan[0].textContent = label;
   }
   if (mfGender) {
     const hasValue = genderFilter !== 'Any';
     mfGender.classList.toggle('has-value', hasValue);
-    mfGender.querySelector('span:not(.arrow)').textContent = genderFilter === 'Any' ? 'Gender' : genderFilter;
+    const labelSpan = mfGender.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) labelSpan[0].textContent = genderFilter === 'Any' ? 'Gender' : genderFilter;
   }
   if (mfSort) {
     const hasValue = currentSortOrder !== 'default';
     mfSort.classList.toggle('has-value', hasValue);
     const sortLabels = { 'default': 'Sort', 'price-low': 'Low→High', 'price-high': 'High→Low', 'newest': 'Newest' };
-    mfSort.querySelector('span:not(.arrow)').textContent = sortLabels[currentSortOrder] || 'Sort';
+    const labelSpan = mfSort.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) labelSpan[0].textContent = sortLabels[currentSortOrder] || 'Sort';
+  }
+  const mfBrokerage = document.getElementById('mf-brokerage');
+  if (mfBrokerage) {
+    const hasValue = brokerageFilter !== 'Any';
+    mfBrokerage.classList.toggle('has-value', hasValue);
+    const labelSpan = mfBrokerage.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) labelSpan[0].textContent = brokerageFilter === 'Any' ? 'Brokerage' : (brokerageFilter === 'No' ? 'No Brokerage' : 'Has Brokerage');
+  }
+  const mfMovein = document.getElementById('mf-movein');
+  if (mfMovein) {
+    const moveinVal = document.getElementById('movein-filter')?.value || '';
+    const immChecked = document.getElementById('movein-immediate-filter')?.checked || false;
+    const hasValue = moveinVal || immChecked;
+    mfMovein.classList.toggle('has-value', !!hasValue);
+    const labelSpan = mfMovein.querySelectorAll('span:not(.arrow)');
+    if (labelSpan.length > 0) {
+      if (immChecked) labelSpan[0].textContent = 'Immediate';
+      else if (moveinVal) {
+        const d = new Date(moveinVal);
+        labelSpan[0].textContent = d.toLocaleDateString('en-IN', { day:'numeric', month:'short' });
+      } else labelSpan[0].textContent = 'Move-in';
+    }
   }
 }
 
@@ -4511,6 +5250,15 @@ function updateActiveFiltersBar() {
   }
   if (genderFilter !== 'Any') {
     tags.push(createFilterTag('gender', genderFilter));
+  }
+  if (brokerageFilter !== 'Any') {
+    tags.push(createFilterTag('brokerage', brokerageFilter === 'No' ? 'No Brokerage' : 'Has Brokerage'));
+  }
+  const moveinFilterVal = document.getElementById('movein-filter')?.value || '';
+  const moveinImmVal = document.getElementById('movein-immediate-filter')?.checked || false;
+  if (moveinFilterVal || moveinImmVal) {
+    const label = moveinImmVal ? 'Immediate' : new Date(moveinFilterVal).toLocaleDateString('en-IN', { day:'numeric', month:'short' });
+    tags.push(createFilterTag('movein', label));
   }
   if (currentSortOrder !== 'default') {
     const sortLabels = { 'price-low': '↑ Price', 'price-high': '↓ Price', 'newest': 'Newest' };
@@ -4551,6 +5299,22 @@ function removeFilterTag(filterKey) {
       break;
     case 'gender':
       selectDropdownOption('gender', 'Any');
+      break;
+    case 'brokerage':
+      selectDropdownOption('brokerage', 'Any');
+      break;
+    case 'movein':
+      document.getElementById('movein-filter').value = '';
+      document.getElementById('movein-filter').disabled = false;
+      const mifChk = document.getElementById('movein-immediate-filter');
+      if (mifChk) mifChk.checked = false;
+      const mifChkMobile = document.getElementById('movein-immediate-filter-mobile');
+      if (mifChkMobile) mifChkMobile.checked = false;
+      const mifDtMobile = document.getElementById('movein-filter-mobile');
+      if (mifDtMobile) { mifDtMobile.value = ''; mifDtMobile.disabled = false; }
+      applyFilters();
+      updateMobileFilterButtons();
+      updateActiveFiltersBar();
       break;
     case 'sort':
       selectDropdownOption('sort', 'default');
@@ -4611,6 +5375,13 @@ async function deleteTenantListing() {
   if (!confirm('Delete your current search area? It will be removed from the map.')) return;
 
   if (myListings.length > 0 && myListings[0].id) {
+    // Delete photos from storage bucket first
+    if (myListings[0].photo_urls && myListings[0].photo_urls.length > 0) {
+      const fileNames = myListings[0].photo_urls.map(url => url.split('/').pop());
+      const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
+      if (storageErr) console.error("Error deleting photos from storage:", storageErr);
+    }
+
     const { error } = await _supabase
       .from('listings')
       .delete()
@@ -4812,22 +5583,44 @@ function validateListingFields() {
       const rent = parseInt(document.getElementById('o-entire-rent').value);
       if (!rent || rent <= 0) missing.push('Monthly Rent');
       if (!isImmediate('o-entire-immediate') && !document.getElementById('o-entire-movein').value) missing.push('Available From date');
+      const peopleVal = document.getElementById('o-entire-people').value;
+      if (peopleVal === 'Others') {
+        const customVal = parseInt(document.getElementById('o-entire-people-custom').value);
+        if (!customVal || customVal <= 0) missing.push('Exact Number of People');
+      }
+      if (document.getElementById('o-entire-brokerage').value === 'Yes') {
+        const brokerageAmt = parseInt(document.getElementById('o-entire-brokerage-amt').value);
+        if (!brokerageAmt || brokerageAmt <= 0) missing.push('Brokerage Amount');
+      }
     } else if (type === 'room') {
       if (!document.getElementById('o-room-bhk').value) missing.push('Apartment Size');
       const rent = parseInt(document.getElementById('o-room-rent').value);
       if (!rent || rent <= 0) missing.push('Rent per Room');
       if (!isImmediate('o-room-immediate') && !document.getElementById('o-room-movein').value) missing.push('Available From date');
+      if (document.getElementById('o-room-brokerage').value === 'Yes') {
+        const brokerageAmt = parseInt(document.getElementById('o-room-brokerage-amt').value);
+        if (!brokerageAmt || brokerageAmt <= 0) missing.push('Brokerage Amount');
+      }
     } else {
       if (!document.getElementById('o-bed-type').value) missing.push('Room Type');
       const rent = parseInt(document.getElementById('o-bed-rent').value);
       if (!rent || rent <= 0) missing.push('Rent per Bed');
       if (!isImmediate('o-bed-immediate') && !document.getElementById('o-bed-movein').value) missing.push('Available From date');
+      if (document.getElementById('o-bed-brokerage').value === 'Yes') {
+        const brokerageAmt = parseInt(document.getElementById('o-bed-brokerage-amt').value);
+        if (!brokerageAmt || brokerageAmt <= 0) missing.push('Brokerage Amount');
+      }
     }
   } else {
     if (type === 'entire') {
       const budget = parseInt(document.getElementById('t-entire-budget').value);
       if (!budget || budget <= 0) missing.push('Max Budget');
       if (!isImmediate('t-entire-immediate') && !document.getElementById('t-entire-movein').value) missing.push('Move-in Date');
+      const peopleVal = document.getElementById('t-entire-people').value;
+      if (peopleVal === 'Others') {
+        const customVal = parseInt(document.getElementById('t-entire-people-custom').value);
+        if (!customVal || customVal <= 0) missing.push('Exact Number of People');
+      }
     } else if (type === 'room') {
       const budget = parseInt(document.getElementById('t-room-budget').value);
       if (!budget || budget <= 0) missing.push('Max Budget');
@@ -4869,16 +5662,16 @@ async function submitListing() {
       const peopleCustom = document.getElementById('o-entire-people-custom').value;
       const finalPeople = peopleVal === 'Others' && peopleCustom ? peopleCustom : peopleVal;
       const immChk = document.getElementById('o-entire-immediate');
-      const moveinVal = immChk && immChk.checked ? 'Immediate' : document.getElementById('o-entire-movein').value;
-      listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, capacity: finalPeople, brokerage: document.getElementById('o-entire-brokerage').value, gender: document.getElementById('o-entire-gender').value, rent: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein: moveinVal, furnishing: document.getElementById('o-entire-furnishing').value, desc: document.getElementById('o-entire-desc').value };
+      const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-entire-movein').value;
+      listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, capacity: finalPeople, brokerage: document.getElementById('o-entire-brokerage').value, brokerageAmt: document.getElementById('o-entire-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-entire-brokerage-amt').value) || 0 : null, gender: document.getElementById('o-entire-gender').value, rent: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein: moveinVal, furnishing: document.getElementById('o-entire-furnishing').value, desc: document.getElementById('o-entire-desc').value };
     } else if (selectedPropType === 'room') {
       const immChk = document.getElementById('o-room-immediate');
-      const moveinVal = immChk && immChk.checked ? 'Immediate' : document.getElementById('o-room-movein').value;
-      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, peopleInFlat: document.getElementById('o-room-people').value, capacity: document.getElementById('o-room-capacity').value, brokerage: document.getElementById('o-room-brokerage').value, washroom: document.getElementById('o-room-washroom').value, rent: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-room-gender').value, furnishing: document.getElementById('o-room-furnishing').value, desc: document.getElementById('o-room-desc').value };
+      const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-room-movein').value;
+      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, peopleInFlat: document.getElementById('o-room-people').value, capacity: document.getElementById('o-room-capacity').value, brokerage: document.getElementById('o-room-brokerage').value, brokerageAmt: document.getElementById('o-room-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-room-brokerage-amt').value) || 0 : null, washroom: document.getElementById('o-room-washroom').value, rent: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-room-gender').value, furnishing: document.getElementById('o-room-furnishing').value, desc: document.getElementById('o-room-desc').value };
     } else {
       const immChk = document.getElementById('o-bed-immediate');
-      const moveinVal = immChk && immChk.checked ? 'Immediate' : document.getElementById('o-bed-movein').value;
-      listing = { ...listing, bedType: document.getElementById('o-bed-type').value, peopleInRoom: document.getElementById('o-bed-people').value, brokerage: document.getElementById('o-bed-brokerage').value, rent: parseInt(document.getElementById('o-bed-rent').value)||7000, deposit: parseInt(document.getElementById('o-bed-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-bed-gender').value, furnishing: document.getElementById('o-bed-furnishing').value, desc: document.getElementById('o-bed-desc').value };
+      const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-bed-movein').value;
+      listing = { ...listing, bedType: document.getElementById('o-bed-type').value, peopleInRoom: document.getElementById('o-bed-people').value, brokerage: document.getElementById('o-bed-brokerage').value, brokerageAmt: document.getElementById('o-bed-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-bed-brokerage-amt').value) || 0 : null, rent: parseInt(document.getElementById('o-bed-rent').value)||7000, deposit: parseInt(document.getElementById('o-bed-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-bed-gender').value, furnishing: document.getElementById('o-bed-furnishing').value, desc: document.getElementById('o-bed-desc').value };
     }
   } else {
     if (!selectedTenantLooking) { alert('Please select what you are looking for.'); resetBtn(btn); return; }
@@ -4894,40 +5687,20 @@ async function submitListing() {
       const peopleCustom = document.getElementById('t-entire-people-custom').value;
       const finalPeople = peopleVal === 'Others' && peopleCustom ? peopleCustom : peopleVal;
       const immChk = document.getElementById('t-entire-immediate');
-      const moveinVal = immChk && immChk.checked ? 'Immediate' : document.getElementById('t-entire-movein').value;
+      const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-entire-movein').value;
       listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, people: finalPeople, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: moveinVal, gender: document.getElementById('t-entire-gender').value, furnishing: document.getElementById('t-entire-furnishing').value, desc: document.getElementById('t-entire-desc').value };
     } else if (selectedTenantLooking === 'room') {
       const immChk = document.getElementById('t-room-immediate');
-      const moveinVal = immChk && immChk.checked ? 'Immediate' : document.getElementById('t-room-movein').value;
-      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, people: document.getElementById('t-room-people').value, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: moveinVal, gender: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, desc: document.getElementById('t-room-desc').value };
+      const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-room-movein').value;
+      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, people: document.getElementById('t-room-people').value, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: moveinVal, gender: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, washroom: document.getElementById('t-room-washroom').value, desc: document.getElementById('t-room-desc').value };
     } else {
       const immChk = document.getElementById('t-bed-immediate');
-      const moveinVal = immChk && immChk.checked ? 'Immediate' : document.getElementById('t-bed-movein').value;
+      const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-bed-movein').value;
       listing = { ...listing, bedType: document.getElementById('t-bed-type').value, budget: parseInt(document.getElementById('t-bed-budget').value)||7000, movein: moveinVal, gender: document.getElementById('t-bed-gender').value, furnishing: document.getElementById('t-bed-furnishing').value, desc: document.getElementById('t-bed-desc').value };
     }
   }
 
   let finalPhotoUrls = [];
-  if (selectedPropertyPhotos.length > 0 && profile.role === 'owner') {
-    btn.textContent = "Uploading photos...";
-    
-    for (let i = 0; i < selectedPropertyPhotos.length; i++) {
-      const file = selectedPropertyPhotos[i];
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${profile.id}-${Date.now()}-${i}.${fileExt}`;
-      
-      const { data: uploadData, error: uploadError } = await _supabase.storage
-        .from('property_photos')
-        .upload(fileName, file);
-        
-      if (!uploadError) {
-        const { data: publicUrlData } = _supabase.storage.from('property_photos').getPublicUrl(fileName);
-        finalPhotoUrls.push(publicUrlData.publicUrl);
-      } else {
-        console.error("Image upload failed:", uploadError);
-      }
-    }
-  }
   btn.textContent = "Saving listing...";
 
   const dbListingData = {
@@ -4950,10 +5723,13 @@ async function submitListing() {
     people_in_flat: listing.peopleInFlat || null,
     people_in_room: listing.peopleInRoom || null,
     tenant_people_count: listing.people || null,
-    photo_urls: finalPhotoUrls.length > 0 ? finalPhotoUrls : null,
+    washroom: listing.washroom || null,
+    brokerage_amt: listing.brokerageAmt || null,
+    photo_urls: null,
     created_at: new Date().toISOString() 
   };
 
+  // Step 1: Insert listing row first (without photos)
   const { data, error } = await _supabase
     .from('listings')
     .insert([dbListingData])
@@ -4966,7 +5742,40 @@ async function submitListing() {
     return;
   }
 
-  listing.id = data[0].id;
+  const insertedId = data[0].id;
+
+  // Step 2: Upload photos (only if insert succeeded)
+  if (selectedPropertyPhotos.length > 0 && profile.role === 'owner') {
+    btn.textContent = "Uploading photos...";
+    
+    for (let i = 0; i < selectedPropertyPhotos.length; i++) {
+      const file = selectedPropertyPhotos[i];
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${profile.id}-${Date.now()}-${i}.${fileExt}`;
+      
+      const { data: uploadData, error: uploadError } = await _supabase.storage
+        .from('property_photos')
+        .upload(fileName, file);
+        
+      if (!uploadError) {
+        const { data: publicUrlData } = _supabase.storage.from('property_photos').getPublicUrl(fileName);
+        finalPhotoUrls.push(publicUrlData.publicUrl);
+      } else {
+        console.error("Image upload failed:", uploadError);
+      }
+    }
+
+    // Step 3: Update listing with photo URLs
+    if (finalPhotoUrls.length > 0) {
+      const { error: updateErr } = await _supabase
+        .from('listings')
+        .update({ photo_urls: finalPhotoUrls })
+        .eq('id', insertedId);
+      if (updateErr) console.error("Error updating photo URLs:", updateErr);
+    }
+  }
+
+  listing.id = insertedId;
   listing.photo_urls = finalPhotoUrls; 
 
   if (profile.role === 'owner') {
@@ -4996,11 +5805,11 @@ function resetBtn(btn) {
 
 function resetCreateForm() {
   const formIds = [
-    'o-entire-bhk','o-entire-rent','o-entire-deposit','o-entire-movein','o-entire-furnishing','o-entire-people','o-entire-people-custom','o-entire-brokerage','o-entire-gender','o-entire-desc',
-    'o-room-bhk','o-room-people','o-room-rent','o-room-deposit','o-room-movein','o-room-gender','o-room-furnishing','o-room-capacity','o-room-brokerage','o-room-washroom','o-room-desc',
-    'o-bed-type','o-bed-people','o-bed-rent','o-bed-deposit','o-bed-movein','o-bed-gender','o-bed-furnishing','o-bed-brokerage','o-bed-desc',
+    'o-entire-bhk','o-entire-rent','o-entire-deposit','o-entire-movein','o-entire-furnishing','o-entire-people','o-entire-people-custom','o-entire-brokerage','o-entire-brokerage-amt','o-entire-gender','o-entire-desc',
+    'o-room-bhk','o-room-people','o-room-rent','o-room-deposit','o-room-movein','o-room-gender','o-room-furnishing','o-room-capacity','o-room-brokerage','o-room-brokerage-amt','o-room-washroom','o-room-desc',
+    'o-bed-type','o-bed-people','o-bed-rent','o-bed-deposit','o-bed-movein','o-bed-gender','o-bed-furnishing','o-bed-brokerage','o-bed-brokerage-amt','o-bed-desc',
     't-entire-bhk','t-entire-people','t-entire-people-custom','t-entire-budget','t-entire-movein','t-entire-gender','t-entire-furnishing','t-entire-desc',
-    't-room-bhk','t-room-people','t-room-budget','t-room-movein','t-room-gender','t-room-furnishing','t-room-desc',
+    't-room-bhk','t-room-people','t-room-budget','t-room-movein','t-room-gender','t-room-furnishing','t-room-washroom','t-room-desc',
     't-bed-type','t-bed-budget','t-bed-movein','t-bed-gender','t-bed-furnishing','t-bed-desc'
   ];
   formIds.forEach(id => {
@@ -5010,7 +5819,7 @@ function resetCreateForm() {
       else if (el.tagName === 'TEXTAREA') el.value = '';
       else el.value = '';
       el.disabled = false;
-      el.style.display = (id.includes('-custom')) ? 'none' : '';
+      el.style.display = (id.includes('-custom') || id.includes('-brokerage-amt')) ? 'none' : '';
     }
   });
 
@@ -5056,6 +5865,8 @@ function resetCreateForm() {
   
   const searchInput = document.getElementById('map-search-input');
   if (searchInput) searchInput.value = '';
+
+  updateTenantRoomGender();
 }
 
 function goToExploreAfterPost() {
@@ -5066,7 +5877,7 @@ function goToExploreAfterPost() {
     if (pt) {
       proptypeFilter = pt;
       document.querySelectorAll('#proptype-chips .chip').forEach(c => {
-        c.classList.toggle('active', c.textContent === pt);
+        c.classList.toggle('active', c.textContent.trim() === pt);
       });
     }
   }
@@ -5092,11 +5903,12 @@ function renderProfilePage() {
   
   const avatarDiv = document.getElementById('profile-avatar');
   const avatarUrl = profile.photo || profile.photo_url;
+  const initial = (profile.name || 'U').charAt(0).toUpperCase();
 if (avatarUrl) {
-  avatarDiv.innerHTML = `<img src="${escHTML(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='${profile.name.charAt(0).toUpperCase()}';this.parentElement.style.border='3px solid var(--gray-200)';">`;
+  avatarDiv.innerHTML = `<img src="${escHTML(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='${initial}';this.parentElement.style.border='3px solid var(--gray-200)';">`;
   avatarDiv.style.border = 'none';
 } else {
-  avatarDiv.innerHTML = profile.name.charAt(0).toUpperCase();
+  avatarDiv.innerHTML = initial;
   avatarDiv.style.border = '3px solid var(--gray-200)';
 }
 
@@ -5195,12 +6007,12 @@ function openListingDetail(idx) {
 }
 
 function buildOwnerEditableFields(l) {
-  const genderOptions = ['Any', 'Male', 'Female'].map(g => 
-    `<option ${l.gender === g ? 'selected' : ''}>${g}</option>`
+  const genderOptions = ['Any', 'Male only', 'Female only'].map(g => 
+    `<option value="${g}" ${l.gender === g ? 'selected' : ''}>${g}</option>`
   ).join('');
   
-  const furnishingOptions = ['Any', 'Fully Furnished', 'Semi Furnished', 'Unfurnished'].map(f => 
-    `<option ${l.furnishing === f ? 'selected' : ''}>${f}</option>`
+  const furnishingOptions = ['Any', 'Fully furnished', 'Semi-furnished', 'Unfurnished'].map(f => 
+    `<option value="${f}" ${l.furnishing === f ? 'selected' : ''}>${f}</option>`
   ).join('');
   
   const brokerageOptions = ['No', 'Yes'].map(b => 
@@ -5209,43 +6021,73 @@ function buildOwnerEditableFields(l) {
   
   let capacityFields = '';
   if (l.propType === 'entire') {
+    const standardOptions = ['', '1 (Single)', '2 (Couple/Friends)', 'Bachelors (Max 3)', 'Others'];
+    const isCustomCapacity = l.capacity && !standardOptions.includes(l.capacity);
+    const entirePeopleOptions = standardOptions.map(p => {
+      const isSelected = isCustomCapacity ? (p === 'Others') : (l.capacity === p);
+      return `<option value="${p}" ${isSelected ? 'selected' : ''}>${p || 'Select'}</option>`;
+    }).join('');
+    const customDisplay = isCustomCapacity ? 'block' : 'none';
+    const customValue = isCustomCapacity ? l.capacity : '';
     capacityFields = `
       <div class="form-row">
         <div class="fg">
           <label>Brokerage</label>
-          <select id="edit-brokerage">${brokerageOptions}</select>
+          <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
         </div>
         <div class="fg">
           <label>Max People Allowed</label>
-          <input type="number" id="edit-capacity" value="${l.capacity || ''}" placeholder="e.g. 4">
+          <select id="edit-capacity" onchange="handlePeopleOthers('edit-capacity','edit-people-custom')">${entirePeopleOptions}</select>
+          <input type="number" id="edit-people-custom" placeholder="Enter exact number" value="${customValue}" style="display:${customDisplay};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
         </div>
       </div>`;
   } else if (l.propType === 'room') {
+    const washroomOptions = ['', 'Yes', 'No'].map(w => 
+      `<option value="${w}" ${l.washroom === w ? 'selected' : ''}>${w || 'Select'}</option>`
+    ).join('');
+    const roomCapacityOptions = ['', '1 (Single Occupancy)', '2 (Couple/Two Friends)', '3 (Group/Friends)'].map(c =>
+      `<option value="${c}" ${l.capacity === c ? 'selected' : ''}>${c || 'Select'}</option>`
+    ).join('');
+    const roomPeopleOptions = ['', '1', '2', '3+'].map(p =>
+      `<option value="${p}" ${l.peopleInFlat === p ? 'selected' : ''}>${p || 'Select'}</option>`
+    ).join('');
     capacityFields = `
       <div class="form-row">
         <div class="fg">
           <label>Brokerage</label>
-          <select id="edit-brokerage">${brokerageOptions}</select>
+          <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
         </div>
         <div class="fg">
           <label>Room Capacity</label>
-          <input type="number" id="edit-capacity" value="${l.capacity || ''}" placeholder="e.g. 2">
+          <select id="edit-capacity">${roomCapacityOptions}</select>
         </div>
       </div>
-      <div class="fg">
-        <label>People in Flat</label>
-        <input type="number" id="edit-people-flat" value="${l.peopleInFlat || ''}" placeholder="e.g. 3">
+      <div class="form-row">
+        <div class="fg">
+          <label>People in Flat</label>
+          <select id="edit-people-flat">${roomPeopleOptions}</select>
+        </div>
+        <div class="fg">
+          <label>Attached Washroom</label>
+          <select id="edit-washroom">${washroomOptions}</select>
+        </div>
       </div>`;
   } else {
+    const bedPeopleOptions = ['', '1', '2', '3'].map(p =>
+      `<option value="${p}" ${l.peopleInRoom === p ? 'selected' : ''}>${p || 'Select'}</option>`
+    ).join('');
     capacityFields = `
       <div class="form-row">
         <div class="fg">
           <label>Brokerage</label>
-          <select id="edit-brokerage">${brokerageOptions}</select>
+          <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
         </div>
         <div class="fg">
           <label>People in Room</label>
-          <input type="number" id="edit-people-room" value="${l.peopleInRoom || ''}" placeholder="e.g. 3">
+          <select id="edit-people-room">${bedPeopleOptions}</select>
         </div>
       </div>`;
   }
@@ -5255,6 +6097,9 @@ function buildOwnerEditableFields(l) {
       <div class="fg">
         <label>Move-in Date</label>
         <input type="date" id="edit-movein" value="${l.movein || ''}">
+        <label class="immediate-label">
+          <input type="checkbox" id="edit-immediate" onchange="handleImmediateCheck('edit-immediate','edit-movein')"${l.movein === new Date().toISOString().split('T')[0] ? ' checked' : ''}> Immediate
+        </label>
       </div>
       <div class="fg">
         <label>Gender Preference</label>
@@ -5274,20 +6119,60 @@ function buildOwnerEditableFields(l) {
 }
 
 function buildTenantEditableFields(l) {
-  const genderOptions = ['Male', 'Female'].map(g => 
+  let genderLabel = 'Your Gender';
+  let genderOptionsList;
+  
+  if (l.propType === 'entire') {
+    genderLabel = 'People Living';
+    genderOptionsList = ['Only Men', 'Only Women', 'Family', 'Couple (Unmarried)', 'Mixed Group (Friends)'];
+  } else if (l.propType === 'room' && l.people && l.people !== 'Just me (1 person)') {
+    genderLabel = 'Group Composition';
+    genderOptionsList = ['Only Men', 'Only Women', 'Couple / Mixed'];
+  } else {
+    genderOptionsList = ['Male', 'Female'];
+  }
+  
+  const genderOptions = genderOptionsList.map(g => 
     `<option ${l.gender === g ? 'selected' : ''}>${g}</option>`
   ).join('');
   
-  const furnishingOptions = ['Any', 'Fully Furnished', 'Semi Furnished', 'Unfurnished'].map(f => 
-    `<option ${l.furnishing === f ? 'selected' : ''}>${f}</option>`
+  const furnishingOptions = ['Any', 'Fully furnished', 'Semi-furnished', 'Unfurnished'].map(f => 
+    `<option value="${f}" ${l.furnishing === f ? 'selected' : ''}>${f}</option>`
   ).join('');
   
-  let peopleField = '';
+  let extraField = '';
   if (l.propType === 'entire') {
-    peopleField = `
+    const standardPeopleOptions = ['', '1', '2', '3', 'Others'];
+    const isCustomPeople = l.people && !standardPeopleOptions.includes(String(l.people));
+    const entirePeopleOptions = standardPeopleOptions.map(p => {
+      const isSelected = isCustomPeople ? (p === 'Others') : (String(l.people) === p);
+      return `<option value="${p}" ${isSelected ? 'selected' : ''}>${p || 'Select'}</option>`;
+    }).join('');
+    const customDisplay = isCustomPeople ? 'block' : 'none';
+    const customValue = isCustomPeople ? l.people : '';
+    extraField = `
       <div class="fg">
         <label>Number of People</label>
-        <input type="number" id="edit-people" value="${l.people || ''}" placeholder="e.g. 2">
+        <select id="edit-people" onchange="handlePeopleOthers('edit-people','edit-people-custom')">${entirePeopleOptions}</select>
+        <input type="number" id="edit-people-custom" placeholder="Enter exact number" value="${customValue}" style="display:${customDisplay};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+      </div>`;
+  } else if (l.propType === 'room') {
+    const roomPeopleOptions = ['', 'Just me (1 person)', 'Me + Partner/Friend (2 people)', '3 (Group/Friends)'].map(p =>
+      `<option value="${p}" ${l.people === p ? 'selected' : ''}>${p || 'Select'}</option>`
+    ).join('');
+    extraField = `
+      <div class="fg">
+        <label>Number of People</label>
+        <select id="edit-people" onchange="updateEditTenantRoomGender()">${roomPeopleOptions}</select>
+      </div>`;
+  } else if (l.propType === 'bed') {
+    const bedTypeOptions = ['', 'Double Sharing', 'Triple Sharing', 'Four+ Sharing'].map(b =>
+      `<option value="${b}" ${l.bedType === b ? 'selected' : ''}>${b || 'Select'}</option>`
+    ).join('');
+    extraField = `
+      <div class="fg">
+        <label>Sharing Preference</label>
+        <select id="edit-bed-type">${bedTypeOptions}</select>
       </div>`;
   }
   
@@ -5295,10 +6180,13 @@ function buildTenantEditableFields(l) {
     <div class="fg">
       <label>Move-in Date</label>
       <input type="date" id="edit-movein" value="${l.movein || ''}">
+      <label class="immediate-label">
+        <input type="checkbox" id="edit-immediate" onchange="handleImmediateCheck('edit-immediate','edit-movein')"${l.movein === new Date().toISOString().split('T')[0] ? ' checked' : ''}> Immediate
+      </label>
     </div>
     <div class="form-row">
       <div class="fg">
-        <label>Your Gender</label>
+        <label>${genderLabel}</label>
         <select id="edit-gender">${genderOptions}</select>
       </div>
       <div class="fg">
@@ -5306,7 +6194,7 @@ function buildTenantEditableFields(l) {
         <select id="edit-furnishing">${furnishingOptions}</select>
       </div>
     </div>
-    ${peopleField}
+    ${extraField}
     <div class="fg">
       <label>About You</label>
       <textarea id="edit-desc" rows="3" placeholder="Describe what you're looking for...">${escHTML(l.desc || '')}</textarea>
@@ -5340,6 +6228,21 @@ function buildOwnerLockedFields(l) {
 }
 
 function buildTenantLockedFields(l) {
+  let extraLockedFields = '';
+  if (l.propType === 'room' && l.people) {
+    extraLockedFields += `
+    <div class="locked-field">
+      <span class="locked-field-label">Number of People</span>
+      <span class="locked-field-value">${l.people} <span class="lock-icon">🔒</span></span>
+    </div>`;
+  }
+  if (l.propType === 'bed' && l.bedType) {
+    extraLockedFields += `
+    <div class="locked-field">
+      <span class="locked-field-label">Sharing Preference</span>
+      <span class="locked-field-value">${l.bedType} <span class="lock-icon">🔒</span></span>
+    </div>`;
+  }
   return `
     <div class="locked-field">
       <span class="locked-field-label">Max Budget</span>
@@ -5349,6 +6252,7 @@ function buildTenantLockedFields(l) {
       <span class="locked-field-label">Looking For</span>
       <span class="locked-field-value">${propTypeLabel(l.propType)} <span class="lock-icon">🔒</span></span>
     </div>
+    ${extraLockedFields}
     <div class="locked-field">
       <span class="locked-field-label">Search Area</span>
       <span class="locked-field-value">${l.radiusKm} km radius <span class="lock-icon">🔒</span></span>
@@ -5376,7 +6280,8 @@ async function saveListingChanges() {
   btn.textContent = 'Saving...';
   
   // Get edited values
-  const newMovein = document.getElementById('edit-movein').value;
+  const editImmChk = document.getElementById('edit-immediate');
+  const newMovein = (editImmChk && editImmChk.checked) ? new Date().toISOString().split('T')[0] : document.getElementById('edit-movein').value;
   const newGender = document.getElementById('edit-gender').value;
   const newFurnishing = document.getElementById('edit-furnishing').value;
   const newDesc = document.getElementById('edit-desc').value;
@@ -5393,15 +6298,23 @@ async function saveListingChanges() {
   if (l.role === 'owner') {
     const newBrokerage = document.getElementById('edit-brokerage').value;
     updateData.brokerage = newBrokerage;
+    const brokerageAmtEl = document.getElementById('edit-brokerage-amt');
+    updateData.brokerage_amt = (newBrokerage === 'Yes' && brokerageAmtEl) ? parseInt(brokerageAmtEl.value) || null : null;
     
     if (l.propType === 'entire') {
-      const newCapacity = document.getElementById('edit-capacity').value;
+      let newCapacity = document.getElementById('edit-capacity').value;
+      const customPeopleEl = document.getElementById('edit-people-custom');
+      if (newCapacity === 'Others' && customPeopleEl && customPeopleEl.value) {
+        newCapacity = customPeopleEl.value;
+      }
       updateData.capacity_allowed = newCapacity || null;
     } else if (l.propType === 'room') {
       const newCapacity = document.getElementById('edit-capacity').value;
       const newPeopleFlat = document.getElementById('edit-people-flat')?.value;
+      const newWashroom = document.getElementById('edit-washroom')?.value;
       updateData.capacity_allowed = newCapacity || null;
       updateData.people_in_flat = newPeopleFlat || null;
+      updateData.washroom = newWashroom || null;
     } else {
       const newPeopleRoom = document.getElementById('edit-people-room')?.value;
       updateData.people_in_room = newPeopleRoom || null;
@@ -5409,8 +6322,19 @@ async function saveListingChanges() {
   } else {
     // Tenant
     if (l.propType === 'entire') {
+      let newPeople = document.getElementById('edit-people')?.value;
+      const customPeopleEl = document.getElementById('edit-people-custom');
+      if (newPeople === 'Others' && customPeopleEl && customPeopleEl.value) {
+        newPeople = customPeopleEl.value;
+      }
+      updateData.tenant_people_count = newPeople || null;
+    } else if (l.propType === 'room') {
       const newPeople = document.getElementById('edit-people')?.value;
       updateData.tenant_people_count = newPeople || null;
+    }
+    if (l.propType === 'bed') {
+      const newBedType = document.getElementById('edit-bed-type')?.value;
+      updateData.bed_type = newBedType || null;
     }
   }
   
@@ -5430,18 +6354,34 @@ async function saveListingChanges() {
     
     if (l.role === 'owner') {
       l.brokerage = document.getElementById('edit-brokerage').value;
-      if (l.propType === 'entire' || l.propType === 'room') {
-        l.capacity = document.getElementById('edit-capacity')?.value;
+      const brokerageAmtEl = document.getElementById('edit-brokerage-amt');
+      l.brokerageAmt = (l.brokerage === 'Yes' && brokerageAmtEl) ? parseInt(brokerageAmtEl.value) || null : null;
+      if (l.propType === 'entire') {
+        let cap = document.getElementById('edit-capacity')?.value;
+        const customEl = document.getElementById('edit-people-custom');
+        if (cap === 'Others' && customEl && customEl.value) cap = customEl.value;
+        l.capacity = cap;
       }
       if (l.propType === 'room') {
+        l.capacity = document.getElementById('edit-capacity')?.value;
         l.peopleInFlat = document.getElementById('edit-people-flat')?.value;
+        l.washroom = document.getElementById('edit-washroom')?.value;
       }
       if (l.propType === 'bed') {
         l.peopleInRoom = document.getElementById('edit-people-room')?.value;
       }
     } else {
       if (l.propType === 'entire') {
+        let ppl = document.getElementById('edit-people')?.value;
+        const customEl = document.getElementById('edit-people-custom');
+        if (ppl === 'Others' && customEl && customEl.value) ppl = customEl.value;
+        l.people = ppl;
+      }
+      if (l.propType === 'room') {
         l.people = document.getElementById('edit-people')?.value;
+      }
+      if (l.propType === 'bed') {
+        l.bedType = document.getElementById('edit-bed-type')?.value;
       }
     }
     
@@ -5464,9 +6404,9 @@ async function saveListingChanges() {
   }
 }
 
-function deleteListingFromDetail() {
+async function deleteListingFromDetail() {
   if (currentEditingListingIdx === null) return;
-  deleteMyListing(currentEditingListingIdx);
+  await deleteMyListing(currentEditingListingIdx);
   closeListingDetail();
 }
 
@@ -5476,6 +6416,13 @@ async function deleteMyListing(idx) {
   const listingToDelete = myListings[idx];
 
   if (listingToDelete.id) {
+    // Delete photos from storage bucket first
+    if (listingToDelete.photo_urls && listingToDelete.photo_urls.length > 0) {
+      const fileNames = listingToDelete.photo_urls.map(url => url.split('/').pop());
+      const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
+      if (storageErr) console.error("Error deleting photos from storage:", storageErr);
+    }
+
     const { error } = await _supabase
       .from('listings')
       .delete()
@@ -5541,10 +6488,12 @@ window.addEventListener('load', async () => {
             movein: row.movein_date, gender: row.gender_pref || 'Any',
             furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
             bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
+            photo_urls: row.photo_urls,
             radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
             bedType: row.bed_type, capacity: row.capacity_allowed,
             peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-            people: row.tenant_people_count
+            people: row.tenant_people_count, washroom: row.washroom || null,
+            brokerageAmt: row.brokerage_amt || null
           };
           if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
           else { listing.budget = parseFloat(row.price); }
@@ -5584,6 +6533,57 @@ function handleImmediateCheck(checkId, dateId) {
   }
 }
 
+function handleMoveinImmediateFilter() {
+  const chk = document.getElementById('movein-immediate-filter');
+  const dt = document.getElementById('movein-filter');
+  if (dt) {
+    dt.disabled = chk.checked;
+    if (chk.checked) dt.value = '';
+  }
+  // Sync to mobile
+  const mobileChk = document.getElementById('movein-immediate-filter-mobile');
+  const mobileDt = document.getElementById('movein-filter-mobile');
+  if (mobileChk) mobileChk.checked = chk.checked;
+  if (mobileDt) { mobileDt.disabled = chk.checked; if (chk.checked) mobileDt.value = ''; }
+  applyFilters();
+  updateMobileFilterButtons();
+}
+
+// Sync move-in date between mobile and desktop
+function syncMoveinFilter(source) {
+  const desktopDt = document.getElementById('movein-filter');
+  const mobileDt = document.getElementById('movein-filter-mobile');
+  if (source === 'mobile') {
+    if (desktopDt && mobileDt) desktopDt.value = mobileDt.value;
+  } else {
+    if (desktopDt && mobileDt) mobileDt.value = desktopDt.value;
+  }
+  applyFilters();
+  updateMobileFilterButtons();
+}
+
+// Sync move-in immediate between mobile and desktop
+function syncMoveinImmediateFilter(source) {
+  const desktopChk = document.getElementById('movein-immediate-filter');
+  const desktopDt = document.getElementById('movein-filter');
+  const mobileChk = document.getElementById('movein-immediate-filter-mobile');
+  const mobileDt = document.getElementById('movein-filter-mobile');
+  
+  if (source === 'mobile') {
+    const checked = mobileChk?.checked || false;
+    if (desktopChk) desktopChk.checked = checked;
+    if (desktopDt) { desktopDt.disabled = checked; if (checked) desktopDt.value = ''; }
+    if (mobileDt) { mobileDt.disabled = checked; if (checked) mobileDt.value = ''; }
+  } else {
+    const checked = desktopChk?.checked || false;
+    if (mobileChk) mobileChk.checked = checked;
+    if (mobileDt) { mobileDt.disabled = checked; if (checked) mobileDt.value = ''; }
+    if (desktopDt) { desktopDt.disabled = checked; if (checked) desktopDt.value = ''; }
+  }
+  applyFilters();
+  updateMobileFilterButtons();
+}
+
 function handlePeopleOthers(selectId, inputId) {
   const sel = document.getElementById(selectId);
   const inp = document.getElementById(inputId);
@@ -5591,6 +6591,55 @@ function handlePeopleOthers(selectId, inputId) {
     inp.style.display = sel.value === 'Others' ? 'block' : 'none';
     if (sel.value !== 'Others') inp.value = '';
   }
+}
+
+function toggleBrokerageAmount(selectId, inputId) {
+  const sel = document.getElementById(selectId);
+  const inp = document.getElementById(inputId);
+  if (inp) {
+    inp.style.display = sel.value === 'Yes' ? 'block' : 'none';
+    if (sel.value !== 'Yes') inp.value = '';
+  }
+}
+
+function updateTenantRoomGender() {
+  const peopleVal = document.getElementById('t-room-people').value;
+  const label = document.getElementById('t-room-gender-label');
+  const select = document.getElementById('t-room-gender');
+  if (!label || !select) return;
+  if (peopleVal === 'Just me (1 person)') {
+    label.textContent = 'Your Gender';
+    select.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
+  } else if (peopleVal === 'Me + Partner/Friend (2 people)' || peopleVal === '3 (Group/Friends)') {
+    label.textContent = 'Group Composition';
+    select.innerHTML = '<option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Couple / Mixed</option>';
+  } else {
+    label.textContent = 'Your Gender';
+    select.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
+  }
+}
+
+function updateEditTenantRoomGender() {
+  const peopleEl = document.getElementById('edit-people');
+  const genderEl = document.getElementById('edit-gender');
+  if (!peopleEl || !genderEl) return;
+  const peopleVal = peopleEl.value;
+  const currentGender = genderEl.value;
+  // Find the label element for gender
+  const genderLabel = genderEl.closest('.fg')?.querySelector('label');
+  if (peopleVal === 'Just me (1 person)') {
+    if (genderLabel) genderLabel.textContent = 'Your Gender';
+    genderEl.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
+  } else if (peopleVal === 'Me + Partner/Friend (2 people)' || peopleVal === '3 (Group/Friends)') {
+    if (genderLabel) genderLabel.textContent = 'Group Composition';
+    genderEl.innerHTML = '<option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Couple / Mixed</option>';
+  } else {
+    if (genderLabel) genderLabel.textContent = 'Your Gender';
+    genderEl.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
+  }
+  // Try to re-select the previous value if it exists in new options
+  const opts = Array.from(genderEl.options).map(o => o.value);
+  if (opts.includes(currentGender)) genderEl.value = currentGender;
 }
 
 let selectedPropertyPhotos = [];
