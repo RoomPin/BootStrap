@@ -1645,9 +1645,6 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="dropdown-option" data-value="1 RK" onclick="selectDropdownOption('bhk', '1 RK')">
       <span class="check">✓</span> 1 RK
     </div>
-    <div class="dropdown-option" data-value="Studio" onclick="selectDropdownOption('bhk', 'Studio')">
-      <span class="check">✓</span> Studio
-    </div>
     <div class="dropdown-option" data-value="1 BHK" onclick="selectDropdownOption('bhk', '1 BHK')">
       <span class="check">✓</span> 1 BHK
     </div>
@@ -1667,26 +1664,18 @@ input[type=date]:focus{border-color:var(--blue)}
       <h3>Max Budget</h3>
       <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
     </div>
-    <div class="dropdown-option active" data-value="100000" onclick="selectDropdownOption('budget', '100000')">
-      <span class="check">✓</span> Any Budget
-    </div>
-    <div class="dropdown-option" data-value="10000" onclick="selectDropdownOption('budget', '10000')">
-      <span class="check">✓</span> Under ₹10K
-    </div>
-    <div class="dropdown-option" data-value="15000" onclick="selectDropdownOption('budget', '15000')">
-      <span class="check">✓</span> Under ₹15K
-    </div>
-    <div class="dropdown-option" data-value="20000" onclick="selectDropdownOption('budget', '20000')">
-      <span class="check">✓</span> Under ₹20K
-    </div>
-    <div class="dropdown-option" data-value="25000" onclick="selectDropdownOption('budget', '25000')">
-      <span class="check">✓</span> Under ₹25K
-    </div>
-    <div class="dropdown-option" data-value="30000" onclick="selectDropdownOption('budget', '30000')">
-      <span class="check">✓</span> Under ₹30K
-    </div>
-    <div class="dropdown-option" data-value="50000" onclick="selectDropdownOption('budget', '50000')">
-      <span class="check">✓</span> Under ₹50K
+    <div style="padding:14px 16px;">
+      <div class="range-display" style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);margin-bottom:8px;">
+        Up to ₹<span id="rent-max-val-mobile" style="font-weight:600;color:var(--blue);">1,00,000</span>
+      </div>
+      <input type="range" id="rent-max-mobile" min="3000" max="100000" step="500" value="100000" 
+        style="width:100%;accent-color:var(--blue);"
+        oninput="updateRentFilterMobile(this.value)">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:4px;">
+        <span>₹3,000</span>
+        <span>₹1,00,000</span>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:14px;justify-content:center;" onclick="closeAllDropdowns()">Apply</button>
     </div>
   </div>
 
@@ -1755,14 +1744,27 @@ input[type=date]:focus{border-color:var(--blue)}
       <h3>Brokerage</h3>
       <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
     </div>
-    <div class="dropdown-option active" data-value="Any" onclick="selectDropdownOption('brokerage', 'Any')">
+    <div class="dropdown-option active" data-value="Any" onclick="selectBrokerageOptionMobile('Any')">
       <span class="check">✓</span> Any
     </div>
-    <div class="dropdown-option" data-value="No" onclick="selectDropdownOption('brokerage', 'No')">
+    <div class="dropdown-option" data-value="No" onclick="selectBrokerageOptionMobile('No')">
       <span class="check">✓</span> No Brokerage
     </div>
-    <div class="dropdown-option" data-value="Yes" onclick="selectDropdownOption('brokerage', 'Yes')">
+    <div class="dropdown-option" data-value="Yes" onclick="selectBrokerageOptionMobile('Yes')">
       <span class="check">✓</span> Has Brokerage
+    </div>
+    <div id="brokerage-slider-section-mobile" style="display:none;padding:14px 16px;border-top:1px solid var(--gray-100);">
+      <div class="range-display" style="display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);margin-bottom:8px;">
+        Max Brokerage ₹<span id="brokerage-max-val-mobile" style="font-weight:600;color:var(--blue);">1,00,000</span>
+      </div>
+      <input type="range" id="brokerage-max-mobile" min="1000" max="100000" step="1000" value="100000" 
+        style="width:100%;accent-color:var(--blue);"
+        oninput="updateBrokerageFilterMobile(this.value)">
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:4px;">
+        <span>₹1,000</span>
+        <span>₹1,00,000</span>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:14px;justify-content:center;" onclick="closeAllDropdowns()">Apply</button>
     </div>
   </div>
 
@@ -1888,7 +1890,6 @@ input[type=date]:focus{border-color:var(--blue)}
         <div class="filter-chips" id="bhk-chips">
           <button class="chip active" onclick="toggleChip(this,'bhk')">Any</button>
           <button class="chip" onclick="toggleChip(this,'bhk')">1 RK</button>
-          <button class="chip" onclick="toggleChip(this,'bhk')">Studio</button>
           <button class="chip" onclick="toggleChip(this,'bhk')">1 BHK</button>
           <button class="chip" onclick="toggleChip(this,'bhk')">2 BHK</button>
           <button class="chip" onclick="toggleChip(this,'bhk')">3 BHK</button>
@@ -2063,18 +2064,18 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Security Deposit (Refundable) (₹)</label><input type="number" id="o-entire-deposit" placeholder="50000"></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Max People Allowed</label>
+            <div class="fg"><label>Number of People Allowed</label>
               <select id="o-entire-people" onchange="handlePeopleOthers('o-entire-people','o-entire-people-custom')">
                 <option value="">Select</option>
-                <option value="1 (Single)">1 (Single)</option>
-                <option value="2 (Couple/Friends)">2 (Couple/Friends)</option>
-                <option value="Bachelors (Max 3)">Bachelors (Max 3)</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
                 <option value="Others">Others</option>
               </select>
               <input type="number" id="o-entire-people-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
-            <div class="fg"><label>Gender Preference</label>
-              <select id="o-entire-gender"><option value="">Select</option><option>Any</option><option>Male only</option><option>Female only</option></select>
+            <div class="fg"><label>Tenant Type Preference</label>
+              <select id="o-entire-gender"><option value="">Select</option><option>Any</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
             </div>
           </div>
           <div class="form-row">
@@ -2116,11 +2117,18 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Security Deposit (Refundable) (₹)</label><input type="number" id="o-room-deposit" placeholder="24000"></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Max People for Room</label>
-              <select id="o-room-capacity"><option value="">Select</option><option value="1 (Single Occupancy)">1 (Single Occupancy)</option><option value="2 (Couple/Two Friends)">2 (Couple/Two Friends)</option><option value="3 (Group/Friends)">3 (Group/Friends)</option></select>
+            <div class="fg"><label>Number of People Allowed</label>
+              <select id="o-room-capacity" onchange="handlePeopleOthers('o-room-capacity','o-room-capacity-custom')">
+                <option value="">Select</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="Others">Others</option>
+              </select>
+              <input type="number" id="o-room-capacity-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
-            <div class="fg"><label>Gender Preference</label>
-              <select id="o-room-gender"><option value="">Select</option><option>Any</option><option>Male only</option><option>Female only</option></select>
+            <div class="fg"><label>Tenant Type Preference</label>
+              <select id="o-room-gender"><option value="">Select</option><option>Any</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
             </div>
           </div>
           <div class="form-row">
@@ -2154,8 +2162,8 @@ input[type=date]:focus{border-color:var(--blue)}
             <div class="fg"><label>Security Deposit (Refundable) (₹)</label><input type="number" id="o-bed-deposit" placeholder="14000"></div>
           </div>
           <div class="form-row">
-            <div class="fg"><label>Gender Preference</label>
-              <select id="o-bed-gender"><option value="">Select</option><option>Any</option><option>Male only</option><option>Female only</option></select>
+            <div class="fg"><label>Tenant Type Preference</label>
+              <select id="o-bed-gender"><option value="">Select</option><option>Any</option><option>Only Men</option><option>Only Women</option></select>
             </div>
             <div class="fg"><label>Furnishing</label>
               <select id="o-bed-furnishing"><option value="">Select</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
@@ -2219,7 +2227,7 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="form-card-title">Preferences</div>
           <div class="form-row">
             <div class="fg"><label>Apartment Preference</label>
-              <select id="t-room-bhk"><option value="">Select</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
+              <select id="t-room-bhk"><option value="">Select</option><option value="Any">Any</option><option>2 BHK</option><option>3 BHK</option><option>4 BHK</option></select>
             </div>
             <div class="fg"><label>Furnishing Preference</label>
               <select id="t-room-furnishing"><option value="">Select</option><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
@@ -2237,15 +2245,17 @@ input[type=date]:focus{border-color:var(--blue)}
           </div>
           <div class="form-row">
             <div class="fg"><label>Number of People</label>
-              <select id="t-room-people" onchange="updateTenantRoomGender()">
+              <select id="t-room-people" onchange="handlePeopleOthers('t-room-people','t-room-people-custom')">
                 <option value="">Select</option>
-                <option value="Just me (1 person)">Just me (1 person)</option>
-                <option value="Me + Partner/Friend (2 people)">Me + Partner/Friend (2 people)</option>
-                <option value="3 (Group/Friends)">3 (Group/Friends)</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="Others">Others</option>
               </select>
+              <input type="number" id="t-room-people-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
             </div>
-            <div class="fg" id="t-room-gender-container"><label id="t-room-gender-label">Your Gender</label>
-              <select id="t-room-gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
+            <div class="fg"><label>People Living</label>
+              <select id="t-room-gender"><option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
             </div>
           </div>
           <div class="form-row">
@@ -2261,7 +2271,7 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="form-card-title">Preferences</div>
           <div class="form-row">
             <div class="fg"><label>Sharing Preference</label>
-              <select id="t-bed-type"><option value="">Select</option><option>Double Sharing</option><option>Triple Sharing</option><option>Four+ Sharing</option></select>
+              <select id="t-bed-type"><option value="">Select</option><option value="Any">Any</option><option>Double Sharing</option><option>Triple Sharing</option><option>Four+ Sharing</option></select>
             </div>
             <div class="fg"><label>Furnishing Preference</label>
               <select id="t-bed-furnishing"><option value="">Select</option><option value="Any">Any</option><option value="Fully furnished">Fully furnished</option><option value="Semi-furnished">Semi-furnished</option><option value="Unfurnished">Unfurnished</option></select>
@@ -2278,7 +2288,7 @@ input[type=date]:focus{border-color:var(--blue)}
             </div>
           </div>
           <div class="fg"><label>Your Gender</label>
-            <select id="t-bed-gender"><option value="">Select</option><option>Male</option><option>Female</option></select>
+            <select id="t-bed-gender"><option value="">Select</option><option>Only Men</option><option>Only Women</option></select>
           </div>
           <div class="fg"><label>About You</label><textarea id="t-bed-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
         </div>
@@ -2978,16 +2988,41 @@ function updateMessagesBadge() {
 }
 
 function isGenderMatch(ownerGender, tenantGender) {
+  // If owner accepts any, always match
   if (!ownerGender || ownerGender === 'Any') return true;
-  const maleValues = ['Male', 'Male only', 'Only Men', 'Men'];
-  const femaleValues = ['Female', 'Female only', 'Only Women', 'Women'];
-  if (ownerGender === 'Male only' || ownerGender === 'Male') {
-    return maleValues.includes(tenantGender);
+  if (!tenantGender) return false;
+  
+  // Now both owner and tenant use the same values:
+  // Only Men, Only Women, Family, Couple (Unmarried), Mixed Group (Friends)
+  // Direct match
+  if (ownerGender === tenantGender) return true;
+  
+  // Owner says "Only Men" - tenant must be "Only Men"
+  if (ownerGender === 'Only Men') {
+    return tenantGender === 'Only Men';
   }
-  if (ownerGender === 'Female only' || ownerGender === 'Female') {
-    return femaleValues.includes(tenantGender);
+  
+  // Owner says "Only Women" - tenant must be "Only Women"
+  if (ownerGender === 'Only Women') {
+    return tenantGender === 'Only Women';
   }
-  return true;
+  
+  // Owner says "Family" - tenant must be "Family"
+  if (ownerGender === 'Family') {
+    return tenantGender === 'Family';
+  }
+  
+  // Owner says "Couple (Unmarried)" - tenant must be "Couple (Unmarried)"
+  if (ownerGender === 'Couple (Unmarried)') {
+    return tenantGender === 'Couple (Unmarried)';
+  }
+  
+  // Owner says "Mixed Group (Friends)" - tenant must be "Mixed Group (Friends)"
+  if (ownerGender === 'Mixed Group (Friends)') {
+    return tenantGender === 'Mixed Group (Friends)';
+  }
+  
+  return false;
 }
 
 // Helper: parse a numeric people/capacity count from various string formats
@@ -2995,9 +3030,8 @@ function parseHeadcount(val) {
   if (!val) return 0;
   if (typeof val === 'number') return val;
   const s = String(val).trim();
-  // "Just me (1 person)" -> 1, "2 (Couple/Friends)" -> 2, "3 (Group/Friends)" -> 3
-  // "1 (Single)" -> 1, "Bachelors (Max 3)" -> 3, "1 (Single Occupancy)" -> 1
-  // "Me + Partner/Friend (2 people)" -> 2
+  // Now simpler: "1", "2", "3", or custom number
+  // Also handles legacy formats like "Just me (1 person)", "1 (Single)", etc.
   const numMatch = s.match(/(\d+)/);
   if (numMatch) return parseInt(numMatch[1]);
   return 0;
@@ -3029,12 +3063,10 @@ function isBuddyFurnishingCompatible(f1, f2) {
 // Helper: check if two tenants are the exact same gender for buddy matching
 function isSameGenderForBuddy(g1, g2) {
   if (!g1 || !g2) return false;
-  const maleGroup = ['Male', 'Only Men'];
-  const femaleGroup = ['Female', 'Only Women'];
-  if (maleGroup.includes(g1) && maleGroup.includes(g2)) return true;
-  if (femaleGroup.includes(g1) && femaleGroup.includes(g2)) return true;
-  if (g1 === 'Couple / Mixed' && g2 === 'Couple / Mixed') return true;
-  return false;
+  // Now all tenants use: Only Men, Only Women, Family, Couple (Unmarried), Mixed Group (Friends)
+  // For buddy matching (room/bed), we require EXACT match for all categories
+  // Family only matches Family, Couple only matches Couple, Mixed Group only matches Mixed Group
+  return g1 === g2;
 }
 
 // Full property matching: tenant looking for owner's property
@@ -3053,8 +3085,9 @@ function isPropertyMatch(tenant, owner) {
   const budget = tenant.budget || 0;
   if (rent > budget) return { isMatch: false, score: 0 };
 
-  // --- Type-specific hard rules (unchanged) ---
+  // --- Type-specific hard rules ---
   if (tenant.propType === 'entire') {
+    // BHK matching - skip if tenant wants "Any"
     if (tenant.bhk && tenant.bhk !== 'Any' && owner.bhk) {
       if (tenant.bhk !== owner.bhk) return { isMatch: false, score: 0 };
     }
@@ -3065,7 +3098,8 @@ function isPropertyMatch(tenant, owner) {
     }
     if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
   } else if (tenant.propType === 'room') {
-    if (tenant.bhk && owner.bhk) {
+    // BHK matching - skip if tenant wants "Any"
+    if (tenant.bhk && tenant.bhk !== 'Any' && owner.bhk) {
       if (tenant.bhk !== owner.bhk) return { isMatch: false, score: 0 };
     }
     const tenantPeople = parseHeadcount(tenant.people);
@@ -3075,7 +3109,8 @@ function isPropertyMatch(tenant, owner) {
     }
     if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
   } else if (tenant.propType === 'bed') {
-    if (tenant.bedType && owner.bedType) {
+    // Bed type matching - skip if tenant wants "Any"
+    if (tenant.bedType && tenant.bedType !== 'Any' && owner.bedType) {
       if (tenant.bedType !== owner.bedType) return { isMatch: false, score: 0 };
     }
     if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
@@ -3084,19 +3119,19 @@ function isPropertyMatch(tenant, owner) {
   // ═══ SOFT FILTERS (determine score out of 100) ═══
   let score = 0;
 
-  // Distance (30 pts): 30 if 0, scales to 0 at maxRadius
-  score += maxRadius > 0 ? 30 * (1 - dist / maxRadius) : 30;
+  // Distance (25 pts): 25 if 0, scales to 0 at maxRadius
+  score += maxRadius > 0 ? 25 * (1 - dist / maxRadius) : 25;
 
-  // Budget (30 pts): 30 if rent <= 85% of budget, 15 if rent == budget, proportional in between
+  // Budget (25 pts): 25 if rent <= 85% of budget, 12.5 if rent == budget, proportional in between
   if (budget > 0) {
     const threshold85 = budget * 0.85;
     if (rent <= threshold85) {
-      score += 30;
+      score += 25;
     } else if (rent >= budget) {
-      score += 15;
+      score += 12.5;
     } else {
-      // rent is between 85% and 100% of budget — scale 30 down to 15
-      score += 30 - 15 * ((rent - threshold85) / (budget - threshold85));
+      // rent is between 85% and 100% of budget — scale 25 down to 12.5
+      score += 25 - 12.5 * ((rent - threshold85) / (budget - threshold85));
     }
   }
 
@@ -3133,6 +3168,10 @@ function isPropertyMatch(tenant, owner) {
   // Furnishing (10 pts): 10 exact, 5 partial (one is Any or Semi matches either), 0 clash
   score += scoreFurnishingProperty(tenant.furnishing, owner.furnishing);
 
+  // Brokerage (10 pts): 10 if no brokerage, 0 if brokerage required
+  const ownerBrokerage = owner.brokerage || 'No';
+  score += (ownerBrokerage === 'No') ? 10 : 0;
+
   return { isMatch: true, score: Math.round(score) };
 }
 
@@ -3154,9 +3193,16 @@ function isBuddyMatch(myListing, other) {
   // 1. Same goal: both want the same type
   if (myListing.propType !== other.propType) return { isMatch: false, score: 0 };
 
-  // 2. BHK ignored — except for beds, sharing type must match
+  // 2. For beds: sharing type matching is flexible
+  // - If either has "Any", they match
+  // - Otherwise, both should be looking for shared beds (any sharing type matches)
+  // This allows Double, Triple, Four+ sharing tenants to buddy up
   if (myListing.propType === 'bed') {
-    if (myListing.bedType && other.bedType && myListing.bedType !== other.bedType) return { isMatch: false, score: 0 };
+    // Both must have bed type (unless Any is selected)
+    const myBedType = myListing.bedType || 'Any';
+    const otherBedType = other.bedType || 'Any';
+    // If neither is "Any" and they're different, still allow match since they're all looking for shared beds
+    // No hard filter on bed type for buddy matching - they can team up regardless of sharing preference
   }
 
   // 3. Location: search circles must overlap
@@ -3405,15 +3451,18 @@ function applyFilters() {
     if (l.rent > rentMax) return false;
     if (furnishingFilter !== 'Any' && l.furnishing !== furnishingFilter) return false;
     if (genderFilter !== 'Any') {
-      const maleValues = ['Male only', 'Male', 'Only Men', 'Men'];
-      const femaleValues = ['Female only', 'Female', 'Only Women', 'Women'];
-      const coupleValues = ['Couple (Unmarried)', 'Mixed Group (Friends)', 'Couple / Mixed'];
+      // Gender filter values: Any, Male Only, Female Only, Couple / Mixed, Family
+      // Owner gender values: Any, Only Men, Only Women, Family, Couple (Unmarried), Mixed Group (Friends)
+      const maleValues = ['Only Men'];
+      const femaleValues = ['Only Women'];
+      const coupleValues = ['Couple (Unmarried)', 'Mixed Group (Friends)', 'Family'];
       if (genderFilter === 'Male Only') {
         if (!maleValues.includes(l.gender) && l.gender !== 'Any') return false;
       } else if (genderFilter === 'Female Only') {
         if (!femaleValues.includes(l.gender) && l.gender !== 'Any') return false;
       } else if (genderFilter === 'Couple / Mixed') {
-        if (!coupleValues.includes(l.gender) && l.gender !== 'Any') return false;
+        // Show listings that accept couples or mixed groups
+        if (!['Couple (Unmarried)', 'Mixed Group (Friends)'].includes(l.gender) && l.gender !== 'Any') return false;
       } else if (genderFilter === 'Family') {
         if (l.gender !== 'Family' && l.gender !== 'Any') return false;
       }
@@ -4927,6 +4976,7 @@ function toggleChip(btn, group) {
   if (group === 'gender')   genderFilter   = chipVal;
   if (group === 'brokerage') {
     brokerageFilter = chipVal;
+    // Update desktop slider
     const sliderSection = document.getElementById('brokerage-slider-section');
     if (sliderSection) {
       sliderSection.style.display = brokerageFilter === 'Yes' ? 'block' : 'none';
@@ -4935,6 +4985,21 @@ function toggleChip(btn, group) {
         document.getElementById('brokerage-max-val').textContent = '1,00,000';
       }
     }
+    // Sync to mobile brokerage slider
+    const mobileSliderSection = document.getElementById('brokerage-slider-section-mobile');
+    if (mobileSliderSection) {
+      mobileSliderSection.style.display = brokerageFilter === 'Yes' ? 'block' : 'none';
+      if (brokerageFilter !== 'Yes') {
+        const brokerageMaxMob = document.getElementById('brokerage-max-mobile');
+        const brokerageMaxValMob = document.getElementById('brokerage-max-val-mobile');
+        if (brokerageMaxMob) brokerageMaxMob.value = 100000;
+        if (brokerageMaxValMob) brokerageMaxValMob.textContent = '1,00,000';
+      }
+    }
+    // Sync mobile dropdown option styling
+    document.querySelectorAll('#dropdown-brokerage .dropdown-option').forEach(opt => {
+      opt.classList.toggle('active', opt.getAttribute('data-value') === chipVal);
+    });
   }
   applyFilters();
   updateMobileFilterButtons();
@@ -4942,19 +5007,103 @@ function toggleChip(btn, group) {
 
 function updateRentFilter(val) {
   document.getElementById('rent-max-val').textContent = parseInt(val).toLocaleString();
+  // Sync to mobile slider
+  const mobileSlider = document.getElementById('rent-max-mobile');
+  const mobileVal = document.getElementById('rent-max-val-mobile');
+  if (mobileSlider) mobileSlider.value = val;
+  if (mobileVal) mobileVal.textContent = parseInt(val).toLocaleString();
+  applyFilters();
+  updateMobileFilterButtons();
+}
+
+function updateRentFilterMobile(val) {
+  document.getElementById('rent-max-val-mobile').textContent = parseInt(val).toLocaleString();
+  // Sync to desktop slider
+  document.getElementById('rent-max').value = val;
+  document.getElementById('rent-max-val').textContent = parseInt(val).toLocaleString();
   applyFilters();
   updateMobileFilterButtons();
 }
 
 function updateBrokerageFilter(val) {
   document.getElementById('brokerage-max-val').textContent = parseInt(val).toLocaleString();
+  // Sync to mobile slider
+  const mobileSlider = document.getElementById('brokerage-max-mobile');
+  const mobileVal = document.getElementById('brokerage-max-val-mobile');
+  if (mobileSlider) mobileSlider.value = val;
+  if (mobileVal) mobileVal.textContent = parseInt(val).toLocaleString();
   applyFilters();
   updateMobileFilterButtons();
 }
 
+function updateBrokerageFilterMobile(val) {
+  document.getElementById('brokerage-max-val-mobile').textContent = parseInt(val).toLocaleString();
+  // Sync to desktop slider
+  document.getElementById('brokerage-max').value = val;
+  document.getElementById('brokerage-max-val').textContent = parseInt(val).toLocaleString();
+  applyFilters();
+  updateMobileFilterButtons();
+}
+
+function selectBrokerageOptionMobile(value) {
+  // Update brokerage filter value
+  brokerageFilter = value;
+  
+  // Update mobile dropdown option styling
+  document.querySelectorAll('#dropdown-brokerage .dropdown-option').forEach(opt => {
+    opt.classList.toggle('active', opt.getAttribute('data-value') === value);
+  });
+  
+  // Show/hide mobile brokerage slider
+  const mobileSliderSection = document.getElementById('brokerage-slider-section-mobile');
+  if (mobileSliderSection) {
+    mobileSliderSection.style.display = value === 'Yes' ? 'block' : 'none';
+    if (value !== 'Yes') {
+      document.getElementById('brokerage-max-mobile').value = 100000;
+      document.getElementById('brokerage-max-val-mobile').textContent = '1,00,000';
+    }
+  }
+  
+  // Sync to desktop chips
+  document.querySelectorAll('.filter-chips').forEach(g => {
+    g.querySelectorAll('.chip').forEach(c => {
+      if (g.closest('.filter-section')?.querySelector('.filter-label')?.textContent?.trim() === 'Brokerage') {
+        c.classList.toggle('active', c.textContent.trim() === value);
+      }
+    });
+  });
+  
+  // Show/hide desktop brokerage slider
+  const sliderSection = document.getElementById('brokerage-slider-section');
+  if (sliderSection) {
+    sliderSection.style.display = value === 'Yes' ? 'block' : 'none';
+    if (value !== 'Yes') {
+      document.getElementById('brokerage-max').value = 100000;
+      document.getElementById('brokerage-max-val').textContent = '1,00,000';
+    }
+  }
+  
+  // Apply filters and update UI
+  applyFilters();
+  updateMobileFilterButtons();
+  updateActiveFiltersBar();
+  
+  // Don't close dropdown if "Yes" is selected - let user adjust slider
+  if (value !== 'Yes') {
+    closeAllDropdowns();
+  }
+}
+
+
 function resetFilters() {
   document.getElementById('rent-max').value = 100000;
   document.getElementById('rent-max-val').textContent = '1,00,000';
+  // Reset mobile budget slider
+  const rentMaxMobile = document.getElementById('rent-max-mobile');
+  const rentMaxValMobile = document.getElementById('rent-max-val-mobile');
+  if (rentMaxMobile) rentMaxMobile.value = 100000;
+  if (rentMaxValMobile) rentMaxValMobile.textContent = '1,00,000';
+  
   document.getElementById('movein-filter').value = '';
   document.getElementById('movein-filter').disabled = false;
   const moveinImmReset = document.getElementById('movein-immediate-filter');
@@ -4965,6 +5114,14 @@ function resetFilters() {
   if (moveinMobileR) { moveinMobileR.value = ''; moveinMobileR.disabled = false; }
   document.getElementById('brokerage-max').value = 100000;
   document.getElementById('brokerage-max-val').textContent = '1,00,000';
+  // Reset mobile brokerage slider
+  const brokerageMaxMobile = document.getElementById('brokerage-max-mobile');
+  const brokerageMaxValMobile = document.getElementById('brokerage-max-val-mobile');
+  if (brokerageMaxMobile) brokerageMaxMobile.value = 100000;
+  if (brokerageMaxValMobile) brokerageMaxValMobile.textContent = '1,00,000';
+  const brokerageSliderMobile = document.getElementById('brokerage-slider-section-mobile');
+  if (brokerageSliderMobile) brokerageSliderMobile.style.display = 'none';
+  
   const brokerageSlider = document.getElementById('brokerage-slider-section');
   if (brokerageSlider) brokerageSlider.style.display = 'none';
   proptypeFilter = 'Any'; bhkFilter = 'Any'; furnishingFilter = 'Any'; genderFilter = 'Any'; brokerageFilter = 'Any';
@@ -5108,6 +5265,12 @@ function resetAllFilters() {
   currentSortOrder = 'default';
   document.getElementById('rent-max').value = 100000;
   document.getElementById('rent-max-val').textContent = '1,00,000';
+  // Reset mobile budget slider
+  const rentMaxMobileReset = document.getElementById('rent-max-mobile');
+  const rentMaxValMobileReset = document.getElementById('rent-max-val-mobile');
+  if (rentMaxMobileReset) rentMaxMobileReset.value = 100000;
+  if (rentMaxValMobileReset) rentMaxValMobileReset.textContent = '1,00,000';
+  
   document.getElementById('movein-filter').value = '';
   document.getElementById('movein-filter').disabled = false;
   const moveinImmResetAll = document.getElementById('movein-immediate-filter');
@@ -5118,6 +5281,14 @@ function resetAllFilters() {
   if (moveinMobileReset) { moveinMobileReset.value = ''; moveinMobileReset.disabled = false; }
   document.getElementById('brokerage-max').value = 100000;
   document.getElementById('brokerage-max-val').textContent = '1,00,000';
+  // Reset mobile brokerage slider
+  const brokerageMaxMobileReset = document.getElementById('brokerage-max-mobile');
+  const brokerageMaxValMobileReset = document.getElementById('brokerage-max-val-mobile');
+  if (brokerageMaxMobileReset) brokerageMaxMobileReset.value = 100000;
+  if (brokerageMaxValMobileReset) brokerageMaxValMobileReset.textContent = '1,00,000';
+  const brokerageSliderMobileReset = document.getElementById('brokerage-slider-section-mobile');
+  if (brokerageSliderMobileReset) brokerageSliderMobileReset.style.display = 'none';
+  
   const brokerageSliderReset = document.getElementById('brokerage-slider-section');
   if (brokerageSliderReset) brokerageSliderReset.style.display = 'none';
   
@@ -5597,6 +5768,11 @@ function validateListingFields() {
       const rent = parseInt(document.getElementById('o-room-rent').value);
       if (!rent || rent <= 0) missing.push('Rent per Room');
       if (!isImmediate('o-room-immediate') && !document.getElementById('o-room-movein').value) missing.push('Available From date');
+      const capacityVal = document.getElementById('o-room-capacity').value;
+      if (capacityVal === 'Others') {
+        const customVal = parseInt(document.getElementById('o-room-capacity-custom').value);
+        if (!customVal || customVal <= 0) missing.push('Exact Number of People Allowed');
+      }
       if (document.getElementById('o-room-brokerage').value === 'Yes') {
         const brokerageAmt = parseInt(document.getElementById('o-room-brokerage-amt').value);
         if (!brokerageAmt || brokerageAmt <= 0) missing.push('Brokerage Amount');
@@ -5625,6 +5801,11 @@ function validateListingFields() {
       const budget = parseInt(document.getElementById('t-room-budget').value);
       if (!budget || budget <= 0) missing.push('Max Budget');
       if (!isImmediate('t-room-immediate') && !document.getElementById('t-room-movein').value) missing.push('Move-in Date');
+      const peopleVal = document.getElementById('t-room-people').value;
+      if (peopleVal === 'Others') {
+        const customVal = parseInt(document.getElementById('t-room-people-custom').value);
+        if (!customVal || customVal <= 0) missing.push('Exact Number of People');
+      }
     } else {
       const budget = parseInt(document.getElementById('t-bed-budget').value);
       if (!budget || budget <= 0) missing.push('Max Budget');
@@ -5665,9 +5846,12 @@ async function submitListing() {
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-entire-movein').value;
       listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, capacity: finalPeople, brokerage: document.getElementById('o-entire-brokerage').value, brokerageAmt: document.getElementById('o-entire-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-entire-brokerage-amt').value) || 0 : null, gender: document.getElementById('o-entire-gender').value, rent: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein: moveinVal, furnishing: document.getElementById('o-entire-furnishing').value, desc: document.getElementById('o-entire-desc').value };
     } else if (selectedPropType === 'room') {
+      const capacityVal = document.getElementById('o-room-capacity').value;
+      const capacityCustom = document.getElementById('o-room-capacity-custom').value;
+      const finalCapacity = capacityVal === 'Others' && capacityCustom ? capacityCustom : capacityVal;
       const immChk = document.getElementById('o-room-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-room-movein').value;
-      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, peopleInFlat: document.getElementById('o-room-people').value, capacity: document.getElementById('o-room-capacity').value, brokerage: document.getElementById('o-room-brokerage').value, brokerageAmt: document.getElementById('o-room-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-room-brokerage-amt').value) || 0 : null, washroom: document.getElementById('o-room-washroom').value, rent: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-room-gender').value, furnishing: document.getElementById('o-room-furnishing').value, desc: document.getElementById('o-room-desc').value };
+      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, peopleInFlat: document.getElementById('o-room-people').value, capacity: finalCapacity, brokerage: document.getElementById('o-room-brokerage').value, brokerageAmt: document.getElementById('o-room-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-room-brokerage-amt').value) || 0 : null, washroom: document.getElementById('o-room-washroom').value, rent: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-room-gender').value, furnishing: document.getElementById('o-room-furnishing').value, desc: document.getElementById('o-room-desc').value };
     } else {
       const immChk = document.getElementById('o-bed-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-bed-movein').value;
@@ -5690,9 +5874,12 @@ async function submitListing() {
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-entire-movein').value;
       listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, people: finalPeople, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: moveinVal, gender: document.getElementById('t-entire-gender').value, furnishing: document.getElementById('t-entire-furnishing').value, desc: document.getElementById('t-entire-desc').value };
     } else if (selectedTenantLooking === 'room') {
+      const peopleVal = document.getElementById('t-room-people').value;
+      const peopleCustom = document.getElementById('t-room-people-custom').value;
+      const finalPeople = peopleVal === 'Others' && peopleCustom ? peopleCustom : peopleVal;
       const immChk = document.getElementById('t-room-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-room-movein').value;
-      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, people: document.getElementById('t-room-people').value, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: moveinVal, gender: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, washroom: document.getElementById('t-room-washroom').value, desc: document.getElementById('t-room-desc').value };
+      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, people: finalPeople, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: moveinVal, gender: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, washroom: document.getElementById('t-room-washroom').value, desc: document.getElementById('t-room-desc').value };
     } else {
       const immChk = document.getElementById('t-bed-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-bed-movein').value;
@@ -5806,10 +5993,10 @@ function resetBtn(btn) {
 function resetCreateForm() {
   const formIds = [
     'o-entire-bhk','o-entire-rent','o-entire-deposit','o-entire-movein','o-entire-furnishing','o-entire-people','o-entire-people-custom','o-entire-brokerage','o-entire-brokerage-amt','o-entire-gender','o-entire-desc',
-    'o-room-bhk','o-room-people','o-room-rent','o-room-deposit','o-room-movein','o-room-gender','o-room-furnishing','o-room-capacity','o-room-brokerage','o-room-brokerage-amt','o-room-washroom','o-room-desc',
+    'o-room-bhk','o-room-people','o-room-rent','o-room-deposit','o-room-movein','o-room-gender','o-room-furnishing','o-room-capacity','o-room-capacity-custom','o-room-brokerage','o-room-brokerage-amt','o-room-washroom','o-room-desc',
     'o-bed-type','o-bed-people','o-bed-rent','o-bed-deposit','o-bed-movein','o-bed-gender','o-bed-furnishing','o-bed-brokerage','o-bed-brokerage-amt','o-bed-desc',
     't-entire-bhk','t-entire-people','t-entire-people-custom','t-entire-budget','t-entire-movein','t-entire-gender','t-entire-furnishing','t-entire-desc',
-    't-room-bhk','t-room-people','t-room-budget','t-room-movein','t-room-gender','t-room-furnishing','t-room-washroom','t-room-desc',
+    't-room-bhk','t-room-people','t-room-people-custom','t-room-budget','t-room-movein','t-room-gender','t-room-furnishing','t-room-washroom','t-room-desc',
     't-bed-type','t-bed-budget','t-bed-movein','t-bed-gender','t-bed-furnishing','t-bed-desc'
   ];
   formIds.forEach(id => {
@@ -5830,7 +6017,7 @@ function resetCreateForm() {
   });
 
   // Reset Others custom input visibility
-  ['o-entire-people-custom','t-entire-people-custom'].forEach(id => {
+  ['o-entire-people-custom','t-entire-people-custom','o-room-capacity-custom','t-room-people-custom'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.style.display = 'none';
   });
@@ -5865,8 +6052,6 @@ function resetCreateForm() {
   
   const searchInput = document.getElementById('map-search-input');
   if (searchInput) searchInput.value = '';
-
-  updateTenantRoomGender();
 }
 
 function goToExploreAfterPost() {
@@ -6602,45 +6787,8 @@ function toggleBrokerageAmount(selectId, inputId) {
   }
 }
 
-function updateTenantRoomGender() {
-  const peopleVal = document.getElementById('t-room-people').value;
-  const label = document.getElementById('t-room-gender-label');
-  const select = document.getElementById('t-room-gender');
-  if (!label || !select) return;
-  if (peopleVal === 'Just me (1 person)') {
-    label.textContent = 'Your Gender';
-    select.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
-  } else if (peopleVal === 'Me + Partner/Friend (2 people)' || peopleVal === '3 (Group/Friends)') {
-    label.textContent = 'Group Composition';
-    select.innerHTML = '<option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Couple / Mixed</option>';
-  } else {
-    label.textContent = 'Your Gender';
-    select.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
-  }
-}
-
-function updateEditTenantRoomGender() {
-  const peopleEl = document.getElementById('edit-people');
-  const genderEl = document.getElementById('edit-gender');
-  if (!peopleEl || !genderEl) return;
-  const peopleVal = peopleEl.value;
-  const currentGender = genderEl.value;
-  // Find the label element for gender
-  const genderLabel = genderEl.closest('.fg')?.querySelector('label');
-  if (peopleVal === 'Just me (1 person)') {
-    if (genderLabel) genderLabel.textContent = 'Your Gender';
-    genderEl.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
-  } else if (peopleVal === 'Me + Partner/Friend (2 people)' || peopleVal === '3 (Group/Friends)') {
-    if (genderLabel) genderLabel.textContent = 'Group Composition';
-    genderEl.innerHTML = '<option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Couple / Mixed</option>';
-  } else {
-    if (genderLabel) genderLabel.textContent = 'Your Gender';
-    genderEl.innerHTML = '<option value="">Select</option><option>Male</option><option>Female</option>';
-  }
-  // Try to re-select the previous value if it exists in new options
-  const opts = Array.from(genderEl.options).map(o => o.value);
-  if (opts.includes(currentGender)) genderEl.value = currentGender;
-}
+// Note: updateTenantRoomGender and updateEditTenantRoomGender removed 
+// since tenant room form now uses same structure as entire place
 
 let selectedPropertyPhotos = [];
 
