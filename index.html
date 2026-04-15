@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RoomPin — Hinjewadi, Pune</title>
+<title>RoomPin — Starting in Hinjewadi, Expanding Across Pune</title>
 
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
@@ -23,7 +23,7 @@
 
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#1a2e4a;--blue-mid:#2563a8;--blue-light:#e8f0fa;--green:#2d7a4f;--green-light:#e6f4ec;--green-pin:#22c55e;--blue-pin:#3b82f6;--orange-pin:#f97316;--purple-pin:#a855f7;--white:#fff;--gray-50:#f8f9fb;--gray-100:#f1f3f7;--gray-200:#e2e6ee;--gray-400:#94a3b8;--gray-600:#475569;--text:#0f1923;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-md:0 4px 24px rgba(0,0,0,.13);}
+:root{--blue:#1a2e4a;--blue-mid:#2563a8;--blue-light:#e8f0fa;--green:#2d7a4f;--green-light:#e6f4ec;--green-pin:#22c55e;--blue-pin:#3b82f6;--orange-pin:#f97316;--purple-pin:#a855f7;--white:#fff;--gray-50:#f8f9fb;--gray-100:#f1f3f7;--gray-200:#e2e6ee;--gray-300:#cbd5e1;--gray-400:#94a3b8;--gray-500:#64748b;--gray-600:#475569;--text:#0f1923;--shadow:0 2px 12px rgba(0,0,0,.08);--shadow-md:0 4px 24px rgba(0,0,0,.13);}
 html{scroll-behavior:smooth}
 body{font-family:'DM Sans',sans-serif;color:var(--text);background:var(--white);overflow-x:hidden; display:flex; flex-direction:column; min-height:100vh;}
 nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255,.97);backdrop-filter:blur(8px);border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;padding:0 28px;height:72px;}
@@ -44,7 +44,6 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .profile-icon{width:34px;height:34px;border-radius:50%;background:var(--blue);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer;border:none;font-family:inherit;flex-shrink:0}
 .page{display:none; flex:1;}
 .page.active{display:block}
-#page-explore.active{display:block}
 #page-setup{background:var(--gray-50);display:none;flex-direction:column;align-items:center;justify-content:center;padding:92px 20px 40px;flex:1;}
 #page-setup.active{display:flex}
 .setup-card{max-width:440px;width:100%;margin:20px;padding:40px 36px;background:white;border-radius:16px;border:1px solid var(--gray-200);box-shadow:var(--shadow-md)}
@@ -109,8 +108,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
 .footer-links a{font-size:13px;font-weight:500;color:var(--gray-600);text-decoration:none;cursor:pointer;transition:color .15s}
 .footer-links a:hover{color:var(--blue)}
 
-/* ════════ EXPLORE ════════ */
-#page-explore.active { display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding-top: 72px; overflow: hidden; box-sizing: border-box; }
+#page-explore.active { display: flex; flex-direction: column; height: 100vh; height: 100dvh; padding-top: 72px; overflow: hidden; }
 .map-area { flex: 1; position: relative; width: 100%; height: 100%; z-index: 1; isolation: isolate; }
 #map { width: 100%; height: 100%; }
 
@@ -121,7 +119,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(255,255,255
   box-shadow: var(--shadow-md); z-index: 500; display: flex; flex-direction: column;
 }
 /* Hide mobile filter bar on desktop */
-.mobile-filter-bar, .mobile-filter-dropdown, .mobile-filter-backdrop { display: none; }
+.mobile-filter-bar, .mobile-filter-backdrop { display: none; }
 /* Dropdowns are hidden by default — shown via .open class on mobile */
 #page-explore > .filter-inline-dropdown { display: none; }
 
@@ -194,10 +192,6 @@ input[type=date]:focus{border-color:var(--blue)}
 
 .my-search-boundary{opacity:.6}
 
-/* Match section tabs */
-.match-tabs{display:flex;background:var(--gray-100);border-radius:8px;padding:3px;margin-bottom:20px}
-.match-tab{flex:1;padding:9px 8px;font-size:13px;font-weight:600;text-align:center;cursor:pointer;border-radius:6px;color:var(--gray-600);transition:all .15s;border:none;background:none;font-family:inherit}
-.match-tab.active{background:white;color:var(--blue);box-shadow:0 1px 4px rgba(0,0,0,.1)}
 .buddy-card{background:white;border:1.5px solid var(--blue-light);border-radius:11px;padding:20px;margin-bottom:12px}
 .buddy-card .buddy-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
 .buddy-card .buddy-name{font-size:16px;font-weight:600;color:var(--blue)}
@@ -205,8 +199,13 @@ input[type=date]:focus{border-color:var(--blue)}
 .buddy-card .buddy-meta{font-size:12px;color:var(--gray-600);margin-bottom:8px}
 .buddy-overlap{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:100px;background:#dbeafe;color:#1d4ed8}
 
-.star-btn { cursor:pointer; font-size:24px; color:var(--gray-300); transition:transform .1s, color .15s; background:none; border:none; padding:0 2px; }
-.star-btn:hover { transform:scale(1.2); color:#fbbf24; }
+/* Trust Factor metric — replaces legacy star-rating */
+.trust-factor{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:100px}
+.trust-factor.high{background:#dcfce7;color:#15803d}
+.trust-factor.medium{background:#fef3c7;color:#b45309}
+.trust-factor.low{background:#fee2e2;color:#dc2626}
+.trust-factor .tf-icon{font-size:13px}
+.trust-factor .tf-label{letter-spacing:.3px}
 
 /* Detail panel */
 .detail-panel {
@@ -366,7 +365,6 @@ input[type=date]:focus{border-color:var(--blue)}
 .success-card p{font-size:13px;color:var(--gray-600);line-height:1.6;margin-bottom:18px}
 .success-btns{display:flex;flex-direction:column;gap:7px}
 
-/* ════════ PROFILE MODAL ════════ */
 .profile-modal-overlay {
   display: none;
   position: fixed;
@@ -430,6 +428,89 @@ input[type=date]:focus{border-color:var(--blue)}
   padding: 20px;
 }
 
+.area-request-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+  z-index: 2600;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.area-request-overlay.show { display: flex; }
+.area-request-modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 380px;
+  width: 100%;
+  padding: 32px 28px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
+  position: relative;
+  text-align: center;
+}
+.area-request-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  background: white;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--gray-600);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.area-request-close:hover {
+  background: var(--gray-100);
+  color: var(--text);
+}
+.area-request-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+.area-request-title {
+  font-family: 'Instrument Serif', serif;
+  font-size: 22px;
+  font-weight: 400;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+.area-request-text {
+  font-size: 14px;
+  color: var(--gray-600);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.area-request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.area-request-input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: 9px;
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.area-request-input:focus {
+  border-color: var(--blue);
+}
+.area-request-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+}
+
 /* Clickable name styles */
 .clickable-name {
   cursor: pointer;
@@ -465,13 +546,32 @@ input[type=date]:focus{border-color:var(--blue)}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:4px}
 
+.flex-col-gap8{display:flex;flex-direction:column;gap:8px}
+.flex-gap8{display:flex;gap:8px}
+.flex-center{display:flex;align-items:center}
+.w-full{width:100%}
+.w-full-center{width:100%;justify-content:center}
+.text-center{text-align:center}
+.mt-4{margin-top:4px}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.mb-16{margin-bottom:16px}
+.emoji-lg{font-size:36px;margin-bottom:10px}
+.span-2{grid-column:span 2}
+.connected-status{text-align:center;font-size:12px;color:var(--green);margin-top:8px}
+.connect-prompt{text-align:center;margin-bottom:12px;font-size:13px;color:var(--gray-600)}
+.owner-only-msg{text-align:center;padding:12px;background:var(--gray-50);border-radius:8px;font-size:13px;color:var(--gray-600)}
+.carousel-img{width:100%;height:100%;object-fit:cover;flex-shrink:0;scroll-snap-align:start}
+.carousel-wrap{display:flex;overflow-x:auto;width:100%;height:100%;scroll-snap-type:x mandatory;position:relative}
+.photo-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:white;padding:3px 8px;border-radius:10px;font-size:11px}
+.hidden-input{display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none}
+
 .autocomplete-wrapper { position: relative; display: flex; flex: 1; width: 100%; }
 .autocomplete-results { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--gray-200); border-radius: 6px; box-shadow: var(--shadow-md); max-height: 200px; overflow-y: auto; z-index: 2000; display: none; margin-top: 4px; text-align: left; }
 .autocomplete-item { padding: 10px 12px; font-size: 13px; cursor: pointer; border-bottom: 1px solid var(--gray-100); color: var(--text); }
 .autocomplete-item:last-child { border-bottom: none; }
 .autocomplete-item:hover { background: var(--blue-light); color: var(--blue); }
 
-/* Fix Issue 8: Mobile keyboard handling for autocomplete on Create page */
 @media(max-width: 768px) {
   /* Make map picker card scroll into view properly */
   .map-picker-card {
@@ -507,7 +607,6 @@ input[type=date]:focus{border-color:var(--blue)}
 .two-col-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 .match-card-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:12px; }
 
-/* ════════ BOTTOM NAVIGATION BAR ════════ */
 .bottom-nav {
   display: none;
   position: fixed;
@@ -648,7 +747,6 @@ input[type=date]:focus{border-color:var(--blue)}
   transform: translateX(18px);
 }
 
-/* ════════ MESSAGES PAGE ════════ */
 #page-messages {
   background: var(--gray-50);
   padding-top: 72px;
@@ -1134,7 +1232,6 @@ input[type=date]:focus{border-color:var(--blue)}
   .messages-inner { padding: 16px 12px 90px; }
   .messages-hd h1 { font-size: 24px; }
   
-  /* Fix Issue 2: Chat container with proper height accounting for nav bars */
   .chat-container { 
     height: calc(100vh - 56px - 64px); /* viewport minus top nav minus bottom nav */
     height: calc(100dvh - 56px - 64px); /* dvh fallback for mobile browsers */
@@ -1220,7 +1317,6 @@ input[type=date]:focus{border-color:var(--blue)}
   .form-card, .map-picker-card, .profile-card, .setup-card { box-shadow: 0 4px 20px rgba(0,0,0,0.04); padding: 32px; margin-bottom: 24px; }
 }
 
-/* ════════ MOBILE BREAKPOINTS ════════ */
 @media(max-width: 768px) {
   /* Top nav - logo only */
   nav:not(.bottom-nav) { padding: 0 16px; height: 56px; }
@@ -1257,7 +1353,6 @@ input[type=date]:focus{border-color:var(--blue)}
   #page-explore .leaflet-pane { z-index: auto !important; }
   #page-explore .leaflet-top, #page-explore .leaflet-bottom { z-index: 500 !important; }
   
-  /* Fix Issue 4: Move Leaflet attribution above bottom nav */
   #page-explore .leaflet-control-attribution {
     margin-bottom: 70px !important;
     font-size: 9px;
@@ -1352,7 +1447,6 @@ input[type=date]:focus{border-color:var(--blue)}
     transform: rotate(180deg);
   }
   
-  /* THE DROPDOWN - positioned fixed to viewport */
   #page-explore > .filter-inline-dropdown {
     display: none;
     position: fixed;
@@ -1413,7 +1507,7 @@ input[type=date]:focus{border-color:var(--blue)}
     transition: background 0.1s;
     border-bottom: 1px solid var(--gray-100);
   }
-  .dropdown-option:last-child {
+  .dropdown-option:last-of-type {
     border-bottom: none;
   }
   .dropdown-option:active {
@@ -1446,10 +1540,27 @@ input[type=date]:focus{border-color:var(--blue)}
     color: white;
   }
   
-
+  .dropdown-hint {
+    padding: 8px 16px;
+    font-size: 12px;
+    color: var(--gray-500);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  
+  .dropdown-apply-btn {
+    padding: 12px 16px;
+    border-top: 1px solid var(--gray-100);
+    background: white;
+    position: sticky;
+    bottom: 0;
+  }
+  .dropdown-apply-btn .btn {
+    width: 100%;
+    justify-content: center;
+  }
   
   /* Backdrop - covers entire screen when dropdown is open */
-  /* Fix Issue 5: Z-index below filter bar (1500) so buttons remain tappable */
   .mobile-filter-backdrop {
     display: none;
     position: fixed;
@@ -1506,10 +1617,8 @@ input[type=date]:focus{border-color:var(--blue)}
     opacity: 1;
   }
   
-  /* Hide old bottom sheet dropdown - no longer needed */
-  .mobile-filter-dropdown { display: none !important; }
+
   
-  /* Fix Issue 1: Show mobile search bar below filter bar */
   .explore-search { 
     display: flex !important;
     position: absolute;
@@ -1525,10 +1634,7 @@ input[type=date]:focus{border-color:var(--blue)}
     border-radius: 8px;
   }
 
-  /* Hide the old mobile filter button */
-  .mobile-filter-btn { display: none !important; }
 
-  /* Fix Issue 4: Move Leaflet zoom controls below search bar to avoid overlap */
   #page-explore .leaflet-control-zoom { margin-left: 10px !important; margin-top: 104px !important; }
 
   .detail-panel {
@@ -1541,7 +1647,6 @@ input[type=date]:focus{border-color:var(--blue)}
     touch-action: pan-y;
   }
   .detail-panel.open { transform: translateY(0); }
-  /* Fix Issue 6: Enhanced swipe handle with better visual affordance */
   .detail-panel::before {
     content: ''; position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
     width: 40px; height: 5px; background: var(--gray-300); border-radius: 3px; z-index: 10;
@@ -1664,7 +1769,6 @@ input[type=date]:focus{border-color:var(--blue)}
   
   .explore-search { left: 54px; right: 10px; }
   .explore-search input { font-size: 12px; height: 36px; }
-  .mobile-filter-btn { width: 36px; height: 36px; }
   
   .dp-rent { font-size: 20px; }
   .dp-name { font-size: 14px; }
@@ -1724,7 +1828,7 @@ input[type=date]:focus{border-color:var(--blue)}
 <div id="page-setup">
   <div class="setup-card">
     <div class="setup-logo">Room<span>Pin</span></div>
-    <div class="setup-sub">Find rooms &amp; flatmates in Hinjewadi — on a map.</div>
+    <div class="setup-sub">Find rooms &amp; roommates — starting in Hinjewadi, expanding soon.</div>
 
     <div class="setup-step active" id="setup-step-1">
       <div class="setup-label">Sign In / Sign Up</div>
@@ -1757,7 +1861,7 @@ input[type=date]:focus{border-color:var(--blue)}
         <div class="role-card" id="rc-tenant" onclick="selectRole('tenant')">
           <div class="icon">🔍</div>
           <h3>I'm looking for a room</h3>
-          <p>I want to find a room or flatmate in Hinjewadi</p>
+          <p>I want to find a room or roommate in Hinjewadi</p>
         </div>
       </div>
       <button class="setup-btn" id="step2-btn" onclick="finishSetup()" disabled>Complete Setup →</button>
@@ -1778,8 +1882,8 @@ input[type=date]:focus{border-color:var(--blue)}
 
 <div id="page-landing" class="page active">
   <div class="hero">
-    <div class="hero-badge">Hinjewadi, Pune — Phase 1, 2 &amp; 3</div>
-    <h1>Find Rooms &amp; Flatmates —<br><em>On a Map</em></h1>
+    <div class="hero-badge">Currently live in Hinjewadi (expanding soon)</div>
+    <h1>Find Rooms &amp; Roommates —<br><em>On a Map</em></h1>
     <p>Find rooms, explore transparent listings, and match with roommates to buddy up. All on a map.</p>
     <div class="hero-cta">
       <button class="btn btn-primary" onclick="showPage('explore')">Explore Listings →</button>
@@ -1818,11 +1922,11 @@ input[type=date]:focus{border-color:var(--blue)}
   <div class="why">
     <div class="why-inner">
       <div class="section-label">Why this exists</div>
-      <div class="section-title">Flat searching is broken.</div>
+      <div class="section-title">Apartment searching is broken.</div>
       <p class="why-p">WhatsApp groups. Telegram channels. Random posts on housing forums. Scattered listings everywhere. Finding a room near your Hinjewadi office is chaos. RoomPin brings everything into one structured, map-based experience.</p>
       <div class="why-stats">
         <div class="why-stat"><div class="num">Transparent</div><div class="lbl">All details upfront</div></div>
-        <div class="why-stat"><div class="num">Buddy Up</div><div class="lbl">Match with future flatmates</div></div>
+        <div class="why-stat"><div class="num">Buddy Up</div><div class="lbl">Match with future roommates</div></div>
         <div class="why-stat"><div class="num">1 pin</div><div class="lbl">Per listing, on the map</div></div>
       </div>
     </div>
@@ -1837,6 +1941,7 @@ input[type=date]:focus{border-color:var(--blue)}
       <h3>Property Type</h3>
       <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
     </div>
+    <div class="dropdown-hint">Select one or more options</div>
     <div class="dropdown-option active" data-value="Any" onclick="selectDropdownOption('proptype', 'Any')">
       <span class="check">✓</span> Any
     </div>
@@ -1849,6 +1954,7 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="dropdown-option" data-value="Shared Bed" onclick="selectDropdownOption('proptype', 'Shared Bed')">
       <span class="check">✓</span> Shared Bed
     </div>
+    <div class="dropdown-apply-btn"><button class="btn btn-primary" onclick="closeAllDropdowns()">Apply</button></div>
   </div>
 
   <div class="filter-inline-dropdown" id="dropdown-bhk">
@@ -1856,6 +1962,7 @@ input[type=date]:focus{border-color:var(--blue)}
       <h3>BHK / Size</h3>
       <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
     </div>
+    <div class="dropdown-hint">Select one or more options</div>
     <div class="dropdown-option active" data-value="Any" onclick="selectDropdownOption('bhk', 'Any')">
       <span class="check">✓</span> Any
     </div>
@@ -1874,6 +1981,7 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="dropdown-option" data-value="4 BHK" onclick="selectDropdownOption('bhk', '4 BHK')">
       <span class="check">✓</span> 4 BHK
     </div>
+    <div class="dropdown-apply-btn"><button class="btn btn-primary" onclick="closeAllDropdowns()">Apply</button></div>
   </div>
 
   <div class="filter-inline-dropdown" id="dropdown-budget">
@@ -1887,7 +1995,7 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
       <input type="range" id="rent-max-mobile" min="3000" max="100000" step="500" value="100000" 
         style="width:100%;accent-color:var(--blue);"
-        oninput="updateRentFilterMobile(this.value)">
+        oninput="updateRentFilter(this.value)">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:4px;">
         <span>₹3,000</span>
         <span>₹1,00,000</span>
@@ -1901,6 +2009,7 @@ input[type=date]:focus{border-color:var(--blue)}
       <h3>Furnishing</h3>
       <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
     </div>
+    <div class="dropdown-hint">Select one or more options</div>
     <div class="dropdown-option active" data-value="Any" onclick="selectDropdownOption('furnishing', 'Any')">
       <span class="check">✓</span> Any
     </div>
@@ -1913,6 +2022,7 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="dropdown-option" data-value="Unfurnished" onclick="selectDropdownOption('furnishing', 'Unfurnished')">
       <span class="check">✓</span> Unfurnished
     </div>
+    <div class="dropdown-apply-btn"><button class="btn btn-primary" onclick="closeAllDropdowns()">Apply</button></div>
   </div>
 
   <div class="filter-inline-dropdown" id="dropdown-gender">
@@ -1920,6 +2030,7 @@ input[type=date]:focus{border-color:var(--blue)}
       <h3>Gender Preference</h3>
       <button class="dropdown-close" onclick="closeAllDropdowns()">×</button>
     </div>
+    <div class="dropdown-hint">Select one or more options</div>
     <div class="dropdown-option active" data-value="Any" onclick="selectDropdownOption('gender', 'Any')">
       <span class="check">✓</span> Any
     </div>
@@ -1938,6 +2049,7 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="dropdown-option" data-value="Family" onclick="selectDropdownOption('gender', 'Family')">
       <span class="check">✓</span> Family
     </div>
+    <div class="dropdown-apply-btn"><button class="btn btn-primary" onclick="closeAllDropdowns()">Apply</button></div>
   </div>
 
   <div class="filter-inline-dropdown" id="dropdown-brokerage">
@@ -1960,7 +2072,7 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
       <input type="range" id="brokerage-max-mobile" min="1000" max="100000" step="1000" value="100000" 
         style="width:100%;accent-color:var(--blue);"
-        oninput="updateBrokerageFilterMobile(this.value)">
+        oninput="updateBrokerageFilter(this.value)">
       <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray-400);margin-top:4px;">
         <span>₹1,000</span>
         <span>₹1,00,000</span>
@@ -2056,7 +2168,7 @@ input[type=date]:focus{border-color:var(--blue)}
     </div>
     
     <!-- Active filters bar - shows selected filters as tags -->
-    <div class="active-filters-bar" id="active-filters-bar"></div>
+    <!-- Active filters bar removed - not needed with multi-select chips -->
     
     <div class="explore-search">
       <div class="autocomplete-wrapper">
@@ -2152,7 +2264,6 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </div>
 
-<!-- ════════ MESSAGES PAGE ════════ -->
 <div id="page-messages" class="page">
   <div class="messages-inner">
     <div class="messages-hd">
@@ -2196,7 +2307,7 @@ input[type=date]:focus{border-color:var(--blue)}
 
     <div id="already-listed" style="display:none">
       <div class="already-listed-card">
-        <div style="font-size:36px;margin-bottom:10px">📋</div>
+        <div class="emoji-lg">📋</div>
         <h3>You already have an active listing</h3>
         <p>Tenants can only have one active listing at a time. Delete your current listing to post a new one.</p>
         <div class="btn-row">
@@ -2269,7 +2380,7 @@ input[type=date]:focus{border-color:var(--blue)}
                 <option value="3">3</option>
                 <option value="Others">Others</option>
               </select>
-              <input type="number" id="o-entire-people-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+              <input type="number" id="o-entire-people-custom" placeholder="Enter exact number" class="hidden-input">
             </div>
             <div class="fg"><label>Tenant Type Preference</label>
               <select id="o-entire-gender"><option value="">Select</option><option>Any</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
@@ -2285,7 +2396,7 @@ input[type=date]:focus{border-color:var(--blue)}
             </div>
             <div class="fg"><label>Brokerage Applicable</label>
               <select id="o-entire-brokerage" onchange="toggleBrokerageAmount('o-entire-brokerage','o-entire-brokerage-amt')"><option value="">Select</option><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
-              <input type="number" id="o-entire-brokerage-amt" placeholder="Brokerage Amount (₹)" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+              <input type="number" id="o-entire-brokerage-amt" placeholder="Brokerage Amount (₹)" class="hidden-input">
             </div>
           </div>
           <div class="fg"><label>Description</label><textarea id="o-entire-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
@@ -2317,7 +2428,7 @@ input[type=date]:focus{border-color:var(--blue)}
                 <option value="3">3</option>
                 <option value="Others">Others</option>
               </select>
-              <input type="number" id="o-room-capacity-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+              <input type="number" id="o-room-capacity-custom" placeholder="Enter exact number" class="hidden-input">
             </div>
             <div class="fg"><label>Tenant Type Preference</label>
               <select id="o-room-gender"><option value="">Select</option><option>Any</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
@@ -2333,7 +2444,7 @@ input[type=date]:focus{border-color:var(--blue)}
             </div>
             <div class="fg"><label>Brokerage Applicable</label>
               <select id="o-room-brokerage" onchange="toggleBrokerageAmount('o-room-brokerage','o-room-brokerage-amt')"><option value="">Select</option><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
-              <input type="number" id="o-room-brokerage-amt" placeholder="Brokerage Amount (₹)" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+              <input type="number" id="o-room-brokerage-amt" placeholder="Brokerage Amount (₹)" class="hidden-input">
             </div>
           </div>
           <div class="fg"><label>Description</label><textarea id="o-room-desc" placeholder="Mention things like WiFi, parking, power backup, balcony, or specific rules..."></textarea></div>
@@ -2368,7 +2479,7 @@ input[type=date]:focus{border-color:var(--blue)}
           <div class="form-row">
             <div class="fg"><label>Brokerage Applicable</label>
               <select id="o-bed-brokerage" onchange="toggleBrokerageAmount('o-bed-brokerage','o-bed-brokerage-amt')"><option value="">Select</option><option value="No">No (I am the owner/current tenant)</option><option value="Yes">Yes (I am a broker/agent)</option></select>
-              <input type="number" id="o-bed-brokerage-amt" placeholder="Brokerage Amount (₹)" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+              <input type="number" id="o-bed-brokerage-amt" placeholder="Brokerage Amount (₹)" class="hidden-input">
             </div>
             <div class="fg"></div>
           </div>
@@ -2404,7 +2515,7 @@ input[type=date]:focus{border-color:var(--blue)}
                 <option value="3">3</option>
                 <option value="Others">Others</option>
               </select>
-              <input type="number" id="t-entire-people-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+              <input type="number" id="t-entire-people-custom" placeholder="Enter exact number" class="hidden-input">
             </div>
             <div class="fg"><label>People Living</label>
               <select id="t-entire-gender"><option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
@@ -2442,7 +2553,7 @@ input[type=date]:focus{border-color:var(--blue)}
                 <option value="3">3</option>
                 <option value="Others">Others</option>
               </select>
-              <input type="number" id="t-room-people-custom" placeholder="Enter exact number" style="display:none;margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+              <input type="number" id="t-room-people-custom" placeholder="Enter exact number" class="hidden-input">
             </div>
             <div class="fg"><label>People Living</label>
               <select id="t-room-gender"><option value="">Select</option><option>Only Men</option><option>Only Women</option><option>Family</option><option>Couple (Unmarried)</option><option>Mixed Group (Friends)</option></select>
@@ -2586,7 +2697,7 @@ input[type=date]:focus{border-color:var(--blue)}
       </div>
     </div>
 
-    <div id="profile-account-actions" style="display:flex; flex-direction:column; gap:8px;">
+    <div id="profile-account-actions" class="flex-col-gap8">
       <button class="btn btn-secondary" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="logoutUser()">Log Out</button>
       <button class="btn btn-danger" style="width:100%;justify-content:center;padding:12px;font-size:13px" onclick="resetProfile()">Delete Account &amp; Start Over</button>
     </div>
@@ -2597,7 +2708,7 @@ input[type=date]:focus{border-color:var(--blue)}
   <div class="footer-inner">
     <div>
       <div class="footer-logo">Room<span>Pin</span></div>
-      <div class="footer-sub">Currently serving Pune — Hinjewadi only</div>
+      <div class="footer-sub">📍 Currently live in Hinjewadi • Expanding to Wakad, Baner &amp; more soon.</div>
     </div>
     <div class="footer-links"><a>About</a><a>Contact</a><a>Privacy</a></div>
   </div>
@@ -2666,86 +2777,36 @@ input[type=date]:focus{border-color:var(--blue)}
   </div>
 </div>
 
+<!-- Area Request Modal (Out of Bounds) -->
+<div class="area-request-overlay" id="area-request-overlay" onclick="closeAreaRequestModal(event)">
+  <div class="area-request-modal" onclick="event.stopPropagation()">
+    <button class="area-request-close" onclick="closeAreaRequestModal()">✕</button>
+    <div class="area-request-icon">🚀</div>
+    <h3 class="area-request-title">We aren't in that area yet!</h3>
+    <p class="area-request-text">RoomPin is currently live in Hinjewadi. Want us to launch in your area next?</p>
+    <div class="area-request-form">
+      <input type="text" class="area-request-input" id="area-request-location" placeholder="Your requested area (e.g., Wakad, Baner)">
+      <input type="text" class="area-request-input" id="area-request-contact" placeholder="Phone or Email (optional)">
+      <div class="area-request-actions">
+        <button class="btn btn-primary" style="flex:1;justify-content:center;" onclick="submitAreaRequest()">Submit Request</button>
+        <button class="btn btn-secondary" style="flex:1;justify-content:center;" onclick="closeAreaRequestModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const { createClient } = supabase;
 const supabaseUrl = 'https://gtgahphxuzvotrheyyaw.supabase.co';
-// ⚠️ IMPORTANT: This key looks like a non-standard format.
-// Supabase anon keys are usually JWTs starting with 'eyJ'.
-// Go to Supabase Dashboard → Settings → API → Copy the "anon public" key.
-// Replace the value below with your actual anon key.
 const supabaseKey = 'sb_publishable_1L8tasN-T01VDqU8L2y6bQ_r1dDG_I5';
 const _supabase = createClient(supabaseUrl, supabaseKey);
-
-/*
-═══════════════════════════════════════════════════════════════════════════════
-SUPABASE TABLES REQUIRED FOR CONNECTIONS & MESSAGES:
-═══════════════════════════════════════════════════════════════════════════════
-
--- Run this in Supabase SQL Editor:
-
-CREATE TABLE IF NOT EXISTS connections (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  requester_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  receiver_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  listing_id UUID REFERENCES listings(id) ON DELETE CASCADE,
-  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'declined')),
-  message TEXT,
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  declined_at TIMESTAMPTZ DEFAULT NULL,
-  UNIQUE(requester_id, receiver_id, listing_id)
-);
-
-CREATE TABLE IF NOT EXISTS messages (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  connection_id UUID REFERENCES connections(id) ON DELETE CASCADE,
-  sender_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
-  content TEXT NOT NULL,
-  read_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- Enable RLS
-ALTER TABLE connections ENABLE ROW LEVEL SECURITY;
-ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
-
--- Policies for connections
-CREATE POLICY "Users can view their own connections" ON connections
-  FOR SELECT USING (auth.uid() = requester_id OR auth.uid() = receiver_id);
-
-CREATE POLICY "Users can create connection requests" ON connections
-  FOR INSERT WITH CHECK (auth.uid() = requester_id);
-
-CREATE POLICY "Receivers can update connection status" ON connections
-  FOR UPDATE USING (auth.uid() = receiver_id);
-
--- Policies for messages
-CREATE POLICY "Users can view messages in their connections" ON messages
-  FOR SELECT USING (
-    EXISTS (
-      SELECT 1 FROM connections 
-      WHERE connections.id = messages.connection_id 
-      AND (connections.requester_id = auth.uid() OR connections.receiver_id = auth.uid())
-    )
-  );
-
-CREATE POLICY "Users can send messages in accepted connections" ON messages
-  FOR INSERT WITH CHECK (
-    EXISTS (
-      SELECT 1 FROM connections 
-      WHERE connections.id = connection_id 
-      AND connections.status = 'accepted'
-      AND (connections.requester_id = auth.uid() OR connections.receiver_id = auth.uid())
-    )
-  );
-
-═══════════════════════════════════════════════════════════════════════════════
-*/
 
 const OPERATING_CENTER = [18.5924, 73.7360]; 
 const OPERATING_RADIUS_KM = 25; 
 
+// App State
 let profile = null;
+let verifiedAuthData = null;
 let myListings = []; 
 let lastPostedListing = null;
 
@@ -2764,7 +2825,12 @@ let markerLayer = null, circleLayer = null;
 let pickerMarker = null, pickerCircle = null;
 let drawControl = null, drawnItems = null;
 
-let proptypeFilter = 'Any', genderFilter = 'Any', brokerageFilter = 'Any', bhkFilter = 'Any', furnishingFilter = 'Any';
+// Multi-select filter arrays - empty array means "Any" (no filter)
+let proptypeFilter = [];
+let genderFilter = [];
+let brokerageFilter = 'Any'; // Brokerage stays single-select (Any/Yes/No)
+let bhkFilter = [];
+let furnishingFilter = [];
 let selectedPropType = null, selectedTenantLooking = null;
 let pinLat = null, pinLng = null, circleCenter = null, circleRadiusKm = null;
 let searchTimeout = null;
@@ -2772,6 +2838,70 @@ let searchTimeout = null;
 function escHTML(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+}
+
+// Escape for injection into JS string literals inside HTML attributes (onclick, etc.)
+function escAttr(str) {
+  if (!str) return '';
+  return String(str).replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Helper: map a database row to a listing object
+function mapRowToListing(row, profileData) {
+  const isOwner = row.role === 'owner';
+  let listing = {
+    id: row.id, role: row.role, name: profileData.name, phone: profileData.phone, ismine: true,
+    lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type,
+    movein: row.movein_date, gender: row.gender_pref || 'Any',
+    furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
+    bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
+    photo_urls: row.photo_urls,
+    radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
+    bedType: row.bed_type, capacity: row.capacity_allowed,
+    peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
+    people: row.tenant_people_count, washroom: row.washroom || null,
+    brokerageAmt: row.brokerage_amt || null,
+    status: row.status || 'active',
+    created_at: row.created_at
+  };
+  if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
+  else { listing.budget = parseFloat(row.price); }
+  return listing;
+}
+
+// Trust Factor: calculates a user's reliability score based on activity and response time
+function calcTrustFactor(listing) {
+  let score = 0;
+  // Has photos uploaded (+30)
+  if (listing.photo_urls && listing.photo_urls.length > 0) score += 30;
+  // Has a description (+20)
+  if (listing.desc && listing.desc.trim().length > 20) score += 20;
+  // Account age: older accounts get more trust (+20 max)
+  if (listing.created_at) {
+    const ageMs = Date.now() - new Date(listing.created_at).getTime();
+    const ageDays = ageMs / (1000 * 60 * 60 * 24);
+    score += Math.min(20, Math.floor(ageDays));
+  }
+  // Has move-in date set (+10)
+  if (listing.movein) score += 10;
+  // Has gender preference set (+10)
+  if (listing.gender && listing.gender !== 'Any') score += 10;
+  // Has furnishing info (+10)
+  if (listing.furnishing && listing.furnishing !== 'Any') score += 10;
+
+  return Math.min(100, score);
+}
+
+function getTrustLevel(score) {
+  if (score >= 70) return { level: 'high', label: 'High Trust', icon: '🛡️' };
+  if (score >= 40) return { level: 'medium', label: 'Moderate', icon: '🔶' };
+  return { level: 'low', label: 'New User', icon: '🔹' };
+}
+
+function renderTrustBadge(listing) {
+  const score = calcTrustFactor(listing);
+  const trust = getTrustLevel(score);
+  return `<span class="trust-factor ${trust.level}"><span class="tf-icon">${trust.icon}</span><span class="tf-label">${trust.label}</span></span>`;
 }
 
 function checkStep1() {
@@ -2842,7 +2972,7 @@ async function goStep2() {
     return;
   }
 
-  window._verifiedAuthData = authData;
+  verifiedAuthData = authData;
   btn.textContent = "Checking account...";
 
   // Check if they already exist in the database
@@ -2862,31 +2992,9 @@ async function goStep2() {
       .select('*')
       .eq('user_id', profile.id);
     
-    if (userListings && userListings.length > 0) {
-      myListings = userListings.map(row => {
-        const isOwner = row.role === 'owner';
-        let listing = {
-          id: row.id, role: row.role, name: profile.name, phone: profile.phone, ismine: true,
-          lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type,
-          movein: row.movein_date, gender: row.gender_pref || 'Any',
-          furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
-          bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
-          photo_urls: row.photo_urls,
-          radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
-          bedType: row.bed_type, capacity: row.capacity_allowed,
-          peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-          people: row.tenant_people_count, washroom: row.washroom || null,
-          brokerageAmt: row.brokerage_amt || null,
-          status: row.status || 'active',
-          created_at: row.created_at
-        };
-        if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
-        else { listing.budget = parseFloat(row.price); }
-        return listing;
-      });
-    } else {
-      myListings = [];
-    }
+    myListings = userListings && userListings.length > 0 
+      ? userListings.map(row => mapRowToListing(row, profile)) 
+      : [];
     
     saveProfile();
     applyProfileToUI();
@@ -2925,7 +3033,7 @@ async function finishSetup() {
   btn.textContent = "Setting up...";
 
   // Use the auth data already verified in goStep2()
-  const authData = window._verifiedAuthData;
+  const authData = verifiedAuthData;
   if (!authData || !authData.user) {
     alert("Session expired. Please start over.");
     btn.disabled = false;
@@ -2949,9 +3057,12 @@ async function finishSetup() {
     .select();
 
   if (dbError) {
-  console.error("Database Error:", dbError);
-  alert("Profile save failed, but you are logged in.");
-} else {
+    console.error("Database Error:", dbError);
+    alert("Profile save failed. Please check your connection and try again.");
+    btn.disabled = false;
+    btn.textContent = "Complete Setup →";
+    return; // Hard stop — do NOT proceed into the app with missing profile data
+  } else {
   profile = profileData[0];
   
   // FETCH USER'S LISTINGS FROM DATABASE
@@ -2960,31 +3071,9 @@ async function finishSetup() {
     .select('*')
     .eq('user_id', profile.id);
   
-  if (userListings && userListings.length > 0) {
-    myListings = userListings.map(row => {
-      const isOwner = row.role === 'owner';
-      let listing = {
-        id: row.id, role: row.role, name: profile.name, phone: profile.phone, ismine: true,
-        lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type,
-        movein: row.movein_date, gender: row.gender_pref || 'Any',
-        furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
-        bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
-        photo_urls: row.photo_urls,
-        radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
-        bedType: row.bed_type, capacity: row.capacity_allowed,
-        peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-        people: row.tenant_people_count, washroom: row.washroom || null,
-        brokerageAmt: row.brokerage_amt || null,
-        status: row.status || 'active',
-        created_at: row.created_at
-      };
-      if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
-      else { listing.budget = parseFloat(row.price); }
-      return listing;
-    });
-  } else {
-    myListings = [];
-  }
+  myListings = userListings && userListings.length > 0 
+    ? userListings.map(row => mapRowToListing(row, profile)) 
+    : [];
   
   saveProfile();
   await fetchConnections();
@@ -3079,16 +3168,15 @@ async function resetProfile() {
   
   try {
     if (profile && profile.id) {
-      // Delete all photos from storage for all user's listings
+      // Save photo URLs before deletion for cleanup
+      const allPhotoUrls = [];
       for (const listing of myListings) {
         if (listing.photo_urls && listing.photo_urls.length > 0) {
-          const fileNames = listing.photo_urls.map(url => url.split('/').pop());
-          const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
-          if (storageErr) console.error("Error deleting photos from storage:", storageErr);
+          allPhotoUrls.push(...listing.photo_urls);
         }
       }
 
-      // Delete all user's listings from Supabase
+      // Delete all user's listings from Supabase first
       const { error: listErr } = await _supabase
         .from('listings')
         .delete()
@@ -3101,6 +3189,13 @@ async function resetProfile() {
         .delete()
         .eq('id', profile.id);
       if (profErr) console.error("Error deleting profile:", profErr);
+
+      // Clean up photos from storage after successful DB deletion
+      if (allPhotoUrls.length > 0) {
+        const fileNames = allPhotoUrls.map(url => url.split('/').pop());
+        const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
+        if (storageErr) console.error("Error deleting photos from storage:", storageErr);
+      }
     }
   } catch(e) {
     console.error("Account deletion error:", e);
@@ -3135,15 +3230,19 @@ if (page === 'explore') {
     if (!exploreMap) {
       setTimeout(initExploreMap, 150);
     } else { 
-      setTimeout(() => {
-        exploreMap.invalidateSize(); 
-        setTimeout(() => exploreMap.invalidateSize(), 300);
-        refreshExplore();
-      }, 50);
+      // ResizeObserver handles invalidateSize automatically now
+      exploreMap.invalidateSize();
+      fetchLiveListings();
     }
   }
   if (page === 'create') { 
     checkTenantAlreadyListed(); 
+    // Reset stale photo state when entering create page
+    selectedPropertyPhotos = [];
+    const photoInput = document.getElementById('prop-photo-input');
+    if (photoInput) photoInput.value = '';
+    const photoPreview = document.getElementById('prop-photo-preview');
+    if (photoPreview) photoPreview.innerHTML = '<span style="font-size:32px; color:var(--gray-300);" id="photo-placeholder-icon">📷</span>';
     if (pickerMap) {
       setTimeout(() => pickerMap.invalidateSize(), 50);
     }
@@ -3202,37 +3301,10 @@ function isGenderMatch(ownerGender, tenantGender) {
   if (!ownerGender || ownerGender === 'Any') return true;
   if (!tenantGender) return false;
   
-  // Now both owner and tenant use the same values:
+  // Both owner and tenant use the same values:
   // Only Men, Only Women, Family, Couple (Unmarried), Mixed Group (Friends)
-  // Direct match
-  if (ownerGender === tenantGender) return true;
-  
-  // Owner says "Only Men" - tenant must be "Only Men"
-  if (ownerGender === 'Only Men') {
-    return tenantGender === 'Only Men';
-  }
-  
-  // Owner says "Only Women" - tenant must be "Only Women"
-  if (ownerGender === 'Only Women') {
-    return tenantGender === 'Only Women';
-  }
-  
-  // Owner says "Family" - tenant must be "Family"
-  if (ownerGender === 'Family') {
-    return tenantGender === 'Family';
-  }
-  
-  // Owner says "Couple (Unmarried)" - tenant must be "Couple (Unmarried)"
-  if (ownerGender === 'Couple (Unmarried)') {
-    return tenantGender === 'Couple (Unmarried)';
-  }
-  
-  // Owner says "Mixed Group (Friends)" - tenant must be "Mixed Group (Friends)"
-  if (ownerGender === 'Mixed Group (Friends)') {
-    return tenantGender === 'Mixed Group (Friends)';
-  }
-  
-  return false;
+  // Require exact match
+  return ownerGender === tenantGender;
 }
 
 // Helper: parse a numeric people/capacity count from various string formats
@@ -3283,7 +3355,6 @@ function isSameGenderForBuddy(g1, g2) {
 
 // Full property matching: tenant looking for owner's property
 function isPropertyMatch(tenant, owner) {
-  // ═══ HARD FILTERS (determine isMatch) ═══
   // 1. Same property type
   if (tenant.propType !== owner.propType) return { isMatch: false, score: 0 };
 
@@ -3328,7 +3399,6 @@ function isPropertyMatch(tenant, owner) {
     if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
   }
 
-  // ═══ SOFT FILTERS (determine score out of 100) ═══
   let score = 0;
 
   // Distance (25 pts): 25 if 0, scales to 0 at maxRadius
@@ -3398,7 +3468,6 @@ function scoreFurnishingProperty(tenantF, ownerF) {
 
 // Full buddy matching: tenant finding another tenant
 function isBuddyMatch(myListing, other) {
-  // ═══ HARD FILTERS (determine isMatch) ═══
   // Only for room and bed types
   if (myListing.propType === 'entire' || other.propType === 'entire') return { isMatch: false, score: 0 };
 
@@ -3445,9 +3514,6 @@ function isBuddyMatch(myListing, other) {
     return { isMatch: false, score: 0 };
   }
 
-  // NOTE: Furnishing is NO LONGER a hard filter (Objective 2)
-
-  // ═══ SOFT FILTERS (determine score out of 100) ═══
   let score = 0;
 
   // Location Overlap (30 pts): 30 if centers coincide, 0 at sumRadii
@@ -3578,9 +3644,7 @@ function makePriceIcon(rent, isMine) {
 const ownerIcon = makeIcon('#22c55e'), tenantIcon = makeIcon('#3b82f6'), myOwnerIcon = makeIcon('#f97316', 30), myTenantIcon = makeIcon('#a855f7', 30), pickerIconFn = () => makeIcon('#1a2e4a');
 function osmTiles() { return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap contributors', maxZoom:19 }); }
 
-// ══════════════════════════════════════
 // LISTING EXPIRATION LOGIC
-// ══════════════════════════════════════
 
 /**
  * Filters out stale listings that are older than 30 days.
@@ -3687,7 +3751,10 @@ function initPreviewMap() {
   }).addTo(previewMap);
 }
 
+let _fetchVersion = 0; // Guard against race conditions in concurrent fetches
+
 async function fetchLiveListings() {
+  const thisVersion = ++_fetchVersion;
   const countEl = document.getElementById('listing-count');
   if (countEl) countEl.textContent = 'Loading...';
 
@@ -3698,6 +3765,9 @@ async function fetchLiveListings() {
       .from('listings')
       .select(`*, profiles(name, phone)`)
       .or(`status.is.null,status.eq.active${profile ? `,user_id.eq.${profile.id}` : ''}`);
+
+    // Discard stale results if a newer fetch was initiated
+    if (thisVersion !== _fetchVersion) return;
 
     if (error) { 
       console.error("Error fetching map data:", error); 
@@ -3733,6 +3803,9 @@ async function fetchLiveListings() {
       await fetchConnections();
     }
 
+    // Final staleness check after awaiting connections
+    if (thisVersion !== _fetchVersion) return;
+
     if (document.getElementById('page-explore').classList.contains('active')) applyFilters();
     if (document.getElementById('page-matches') && document.getElementById('page-matches').classList.contains('active')) renderMatchesContent();
     
@@ -3747,12 +3820,14 @@ async function fetchLiveListings() {
     }
   } catch(e) {
     console.error("Failed to fetch listings:", e);
-    const countEl = document.getElementById('listing-count');
-    if (countEl) countEl.textContent = 'Error loading';
+    if (thisVersion === _fetchVersion) {
+      const countEl = document.getElementById('listing-count');
+      if (countEl) countEl.textContent = 'Error loading';
+    }
   }
 }
 
-function refreshExplore() { fetchLiveListings(); }
+
 
 function initExploreMap() {
   exploreMap = L.map('map', { center:OPERATING_CENTER, zoom:14 });
@@ -3767,22 +3842,24 @@ function initExploreMap() {
   exploreMap.addLayer(markerLayer);
   circleLayer = L.layerGroup().addTo(exploreMap);
 
-   // Fix map sizing issue - tell Leaflet to recalculate
-  setTimeout(() => {
-    exploreMap.invalidateSize();
-  }, 100);
-  
-  // Additional resize on window load to ensure tiles load
-  setTimeout(() => {
-    exploreMap.invalidateSize();
-  }, 500);
+  const mapContainer = document.getElementById('map');
+  if (mapContainer && typeof ResizeObserver !== 'undefined') {
+    const resizeObserver = new ResizeObserver(() => {
+      if (exploreMap) exploreMap.invalidateSize();
+    });
+    resizeObserver.observe(mapContainer);
+  } else {
+    // Fallback for very old browsers
+    setTimeout(() => { if (exploreMap) exploreMap.invalidateSize(); }, 100);
+    setTimeout(() => { if (exploreMap) exploreMap.invalidateSize(); }, 500);
+  }
 
   // Initialize mobile filter buttons state
   if (window.innerWidth <= 768) {
     updateMobileFilterButtons();
   }
   
-  refreshExplore();
+  fetchLiveListings();
 }
 
 function applyFilters() {
@@ -3794,30 +3871,28 @@ function applyFilters() {
   const movein   = moveinImmediate ? '' : document.getElementById('movein-filter').value;
 
   let filteredOwners = ownerListings.filter(l => {
-    if (proptypeFilter !== 'Any') {
+    // Property Type filter (multi-select)
+    if (proptypeFilter.length > 0) {
       const map = { 'Entire Place':'entire', 'Private Room':'room', 'Shared Bed':'bed' };
-      if (l.propType !== map[proptypeFilter]) return false;
+      const matchesPropType = proptypeFilter.some(pt => l.propType === map[pt]);
+      if (!matchesPropType) return false;
     }
-    if (bhkFilter !== 'Any') {
+    // BHK filter (multi-select)
+    if (bhkFilter.length > 0) {
       if (!l.bhk) return false;
-      if (l.bhk !== bhkFilter) return false;
+      if (!bhkFilter.includes(l.bhk)) return false;
     }
     if (l.rent > rentMax) return false;
-    if (furnishingFilter !== 'Any' && l.furnishing !== furnishingFilter) return false;
-    if (genderFilter !== 'Any') {
-      // Gender filter values match owner form values exactly:
-      // Filter options: Any, Only Men, Only Women, Couple (Unmarried), Mixed Group (Friends), Family
-      // Owner gender values: Any, Only Men, Only Women, Family, Couple (Unmarried), Mixed Group (Friends)
-      if (genderFilter === 'Only Men') {
-        if (l.gender !== 'Only Men' && l.gender !== 'Any') return false;
-      } else if (genderFilter === 'Only Women') {
-        if (l.gender !== 'Only Women' && l.gender !== 'Any') return false;
-      } else if (genderFilter === 'Couple (Unmarried)') {
-        if (l.gender !== 'Couple (Unmarried)' && l.gender !== 'Any') return false;
-      } else if (genderFilter === 'Mixed Group (Friends)') {
-        if (l.gender !== 'Mixed Group (Friends)' && l.gender !== 'Any') return false;
-      } else if (genderFilter === 'Family') {
-        if (l.gender !== 'Family' && l.gender !== 'Any') return false;
+    // Furnishing filter (multi-select)
+    if (furnishingFilter.length > 0) {
+      if (!furnishingFilter.includes(l.furnishing)) return false;
+    }
+    // Gender filter (multi-select)
+    if (genderFilter.length > 0) {
+      // If the listing accepts 'Any', it matches all gender filters
+      if (l.gender !== 'Any') {
+        // Check if listing's gender is in the selected filters
+        if (!genderFilter.includes(l.gender)) return false;
       }
     }
     if (brokerageFilter !== 'Any' && l.brokerage !== brokerageFilter) return false;
@@ -3894,9 +3969,7 @@ function propTypeLabel(pt) {
   return pt === 'entire' ? 'Entire Place' : pt === 'room' ? 'Private Room' : 'Shared Bed';
 }
 
-// ══════════════════════════════════════
 // DYNAMIC RIGHT SIDEBAR LOGIC
-// ══════════════════════════════════════
 function showLocationDetails(lat, lng) {
   const matches = currentFilteredListings.filter(x => x.lat === lat && x.lng === lng);
   if (matches.length === 0) return;
@@ -3954,12 +4027,12 @@ function renderSingleDetail(l, showBackBtn = false) {
   if (l.photo_urls && l.photo_urls.length > 0) {
     // Maps every URL into an image, placing them in a horizontally scrolling row
     let imgsHtml = l.photo_urls.map((url, idx) => `
-      <img src="${url}" style="width:100%;height:100%;object-fit:cover;flex-shrink:0;scroll-snap-align:start;">
+      <img src="${url}" class="carousel-img">
     `).join('');
     document.getElementById('dp-photo').innerHTML = `
-      <div style="display:flex; overflow-x:auto; width:100%; height:100%; scroll-snap-type: x mandatory; position:relative;">
+      <div class="carousel-wrap">
         ${imgsHtml}
-        ${l.photo_urls.length > 1 ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:white;padding:3px 8px;border-radius:10px;font-size:11px;">${l.photo_urls.length} photos</div>` : ''}
+        ${l.photo_urls.length > 1 ? `<div class="photo-count">${l.photo_urls.length} photos</div>` : ''}
       </div>`;
   } else {
     document.getElementById('dp-photo').innerHTML = isOwner ? '🏠' : '🔍';
@@ -3980,11 +4053,11 @@ function renderSingleDetail(l, showBackBtn = false) {
   let fields = '';
   const brokerageDisplay = l.brokerage === 'Yes' && l.brokerageAmt ? `Yes (₹${parseInt(l.brokerageAmt).toLocaleString()})` : (l.brokerage || 'No');
   if (isOwner) {
-    if (l.propType === 'entire') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div><div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${l.capacity||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; } 
-    else if (l.propType === 'room') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div><div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${l.bhk||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${l.capacity||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${l.washroom||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`; } 
-    else { fields = `<div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${l.bedType||'Shared Bed'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; }
+    if (l.propType === 'entire') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div><div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${escHTML(l.capacity)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; } 
+    else if (l.propType === 'room') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div><div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${escHTML(l.capacity)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${escHTML(l.washroom)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`; } 
+    else { fields = `<div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${escHTML(l.bedType)||'Shared Bed'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; }
   } else {
-    fields = `<div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div><div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${l.people||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>`;
+    fields = `<div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div><div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${escHTML(l.people)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div>`;
   }
 
   // Build contact section based on connection status
@@ -4004,7 +4077,7 @@ function renderSingleDetail(l, showBackBtn = false) {
   document.getElementById('dp-body').innerHTML = `
     ${backHtml}
     <div class="dp-role ${l.ismine?'mine':l.role}">${l.ismine?(isOwner?'🟠 YOUR LISTING':'🟣 YOUR SEARCH AREA'):(isOwner?'🏠 OWNER':'🔍 TENANT')}</div>
-    <div class="dp-name">${escHTML(l.name)}</div>
+    <div class="dp-name">${escHTML(l.name)} ${!l.ismine ? renderTrustBadge(l) : ''}</div>
     <div class="dp-rent">₹${(isOwner?l.rent:l.budget).toLocaleString()}<small>${isOwner?'/month':'/mo budget'}</small></div>
     ${matchBanner}
     ${ownBanner}
@@ -4025,7 +4098,7 @@ function buildConnectionButton(l) {
 
   // Owners cannot connect with other owners
   if (profile.role === 'owner' && l.role === 'owner') {
-    return `<div style="text-align:center; padding:12px; background:var(--gray-50); border-radius:8px; font-size:13px; color:var(--gray-600);">
+    return `<div class="owner-only-msg">
       <span style="font-size:18px;">🏠</span><br>
       You're both property owners.<br>
       <span style="font-size:12px; color:var(--gray-400);">Only tenants can send interest to owners.</span>
@@ -4049,10 +4122,10 @@ function buildConnectionButton(l) {
             💬 Message
           </button>
         </div>
-        <div style="text-align:center; font-size:12px; color:var(--green); margin-top:8px;">✓ Connected</div>`;
+        <div class="connected-status">✓ Connected</div>`;
     } else if (existingConnection.status === 'pending') {
       if (existingConnection.requester_id === profile.id) {
-        return `<div style="display:flex; flex-direction:column; gap:8px;">
+        return `<div class="flex-col-gap8">
           <button class="interested-btn sent">
             <span>⏳</span> Request Sent — Waiting for response
           </button>
@@ -4061,7 +4134,7 @@ function buildConnectionButton(l) {
       } else {
         // They sent us a request - show accept/decline
         return `
-          <div style="text-align:center; margin-bottom:12px; font-size:13px; color:var(--gray-600);">
+          <div class="connect-prompt">
             ${escHTML(l.name)} wants to connect with you!
           </div>
           <div class="connection-actions">
@@ -4075,7 +4148,7 @@ function buildConnectionButton(l) {
       
       if (wasDeclinedByMe) {
         // We declined - show undo option
-        return `<div style="display:flex; flex-direction:column; gap:8px;">
+        return `<div class="flex-col-gap8">
           <button class="interested-btn sent" style="background:#fee2e2;color:#dc2626;">
             You Declined This Request
           </button>
@@ -4086,7 +4159,7 @@ function buildConnectionButton(l) {
       } else {
         // They declined us - check if we can re-request
         if (canReRequest(existingConnection)) {
-          return `<div style="display:flex; flex-direction:column; gap:8px;">
+          return `<div class="flex-col-gap8">
             <div style="text-align:center; font-size:13px; color:var(--gray-600); margin-bottom:4px;">
               Your previous request was declined.
             </div>
@@ -4121,7 +4194,7 @@ function buildMatchConnectionButton(m) {
   if (existingConnection) {
     if (existingConnection.status === 'accepted') {
       return `
-        <div class="connected-actions" style="display:flex; gap:8px;">
+        <div class="connected-actions flex-gap8">
           <a href="tel:${escHTML(m.phone)}" class="btn btn-secondary" style="flex:1; justify-content:center; text-decoration:none;">
             📞 Call
           </a>
@@ -4129,10 +4202,10 @@ function buildMatchConnectionButton(m) {
             💬 Message
           </button>
         </div>
-        <div style="text-align:center; font-size:12px; color:var(--green); margin-top:8px;">✓ Connected</div>`;
+        <div class="connected-status">✓ Connected</div>`;
     } else if (existingConnection.status === 'pending') {
       if (existingConnection.requester_id === profile.id) {
-        return `<div style="display:flex; flex-direction:column; gap:8px;">
+        return `<div class="flex-col-gap8">
           <button class="interested-btn sent" style="width:100%;">
             <span>⏳</span> Request Sent — Waiting for response
           </button>
@@ -4143,7 +4216,7 @@ function buildMatchConnectionButton(m) {
           <div style="text-align:center; margin-bottom:8px; font-size:13px; color:var(--gray-600);">
             ${escHTML(m.name)} wants to connect with you!
           </div>
-          <div class="connection-actions" style="display:flex; gap:8px;">
+          <div class="connection-actions flex-gap8">
             <button class="btn btn-primary" style="flex:1;" onclick="acceptConnectionAndRefresh('${existingConnection.id}')">✓ Accept</button>
             <button class="btn btn-secondary" style="flex:1;" onclick="declineConnectionAndRefresh('${existingConnection.id}')">✕ Decline</button>
           </div>`;
@@ -4154,7 +4227,7 @@ function buildMatchConnectionButton(m) {
       
       if (wasDeclinedByMe) {
         // We declined - show undo option
-        return `<div style="display:flex; flex-direction:column; gap:8px;">
+        return `<div class="flex-col-gap8">
           <button class="interested-btn sent" style="width:100%; background:#fee2e2;color:#dc2626;">
             You Declined This Request
           </button>
@@ -4165,7 +4238,7 @@ function buildMatchConnectionButton(m) {
       } else {
         // They declined us - check if we can re-request
         if (canReRequest(existingConnection)) {
-          return `<div style="display:flex; flex-direction:column; gap:8px;">
+          return `<div class="flex-col-gap8">
             <div style="text-align:center; font-size:13px; color:var(--gray-600); margin-bottom:4px;">
               Your previous request was declined.
             </div>
@@ -4395,9 +4468,7 @@ function fmtDate(d) {
   return new Date(d).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
 }
 
-// ══════════════════════════════════════
 // DEDICATED MATCHES PAGE LOGIC
-// ══════════════════════════════════════
 let activeMatchTab = 'properties';
 
 function switchMatchTab(tab, btn) {
@@ -4416,7 +4487,7 @@ function renderMatchesContent() {
     if (tabsEl) tabsEl.style.display = 'none'; 
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
-        <div style="font-size:36px;margin-bottom:10px">✨</div>
+        <div class="emoji-lg">✨</div>
         <h3>Log in to unlock your Matches</h3>
         <p>Owners see potential tenants. Tenants see matching rooms and can find potential roommates to buddy up with.</p>
         <button class="btn btn-primary" onclick="showPage('profile')" style="margin-top:12px; justify-content:center;">Sign In / Sign Up →</button>
@@ -4430,7 +4501,7 @@ function renderMatchesContent() {
     if (tabsEl) tabsEl.style.display = 'none';
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
-        <div style="font-size:36px;margin-bottom:10px">✨</div>
+        <div class="emoji-lg">✨</div>
         <h3>No Active Listing</h3>
         <p>Post a listing first to see your matches — both property matches and potential roommates.</p>
         <button class="btn btn-primary" onclick="showPage('create')" style="margin-top:12px; justify-content:center;">Post a Listing →</button>
@@ -4496,7 +4567,7 @@ function renderPropertyMatches(container) {
   if (matches.length === 0) {
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
-        <div style="font-size:36px;margin-bottom:10px">🏜️</div>
+        <div class="emoji-lg">🏜️</div>
         <h3>No property matches yet</h3>
         <p>No one matches your exact location and budget right now. Try exploring the map to discover rooms outside your area!</p>
         <button class="btn btn-secondary" onclick="showPage('explore')" style="margin-top:12px;">Explore Map →</button>
@@ -4541,8 +4612,8 @@ function renderPropertyMatches(container) {
         
         <div class="dp-grid" style="margin-bottom:16px;">
           <div class="dp-field"><div class="dp-field-lbl">${mIsOwner ? 'Offering' : 'Looking For'}</div><div class="dp-field-val">${propTypeLabel(m.propType)}</div></div>
-          <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${m.gender || 'Any'}</div></div>
-          <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${m.furnishing || 'Any'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(m.gender) || 'Any'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(m.furnishing) || 'Any'}</div></div>
           <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(m.movein)}</div></div>
         </div>
         
@@ -4560,7 +4631,7 @@ function renderBuddyUp(container) {
   if (profile.role !== 'tenant') {
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
-        <div style="font-size:36px;margin-bottom:10px">🏠</div>
+        <div class="emoji-lg">🏠</div>
         <h3>Buddy Up is for tenants</h3>
         <p>This section helps tenants find each other to share a room. As an owner, check your Property Matches instead.</p>
       </div>
@@ -4577,7 +4648,7 @@ function renderBuddyUp(container) {
   if (myListing.propType === 'entire') {
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
-        <div style="font-size:36px;margin-bottom:10px">🏠</div>
+        <div class="emoji-lg">🏠</div>
         <h3>Buddy Up isn't available for apartments</h3>
         <p>Since you're looking for an entire apartment, you won't need a roommate. Check your Property Matches to find available apartments instead!</p>
         <button class="btn btn-secondary" onclick="switchMatchTab('properties', document.querySelector('.match-tab'))" style="margin-top:12px;">View Property Matches →</button>
@@ -4604,7 +4675,7 @@ function renderBuddyUp(container) {
     const typeLabel = myListing.propType === 'room' ? 'private room' : 'shared bed';
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
-        <div style="font-size:36px;margin-bottom:10px">👋</div>
+        <div class="emoji-lg">👋</div>
         <h3>No roommate buddies yet</h3>
         <p>We're looking for other tenants searching for a ${typeLabel} in your area, with a similar budget and move-in date. Check back as more people join!</p>
       </div>
@@ -4634,7 +4705,7 @@ function renderBuddyUp(container) {
         <div class="buddy-header">
           <div>
             <div class="buddy-name clickable-name" onclick="openProfileModal('${b.id}')">${escHTML(b.name)}</div>
-            <div class="buddy-meta">${propTypeLabel(b.propType)} · ${b.gender || '—'} · Move-in ${fmtDate(b.movein)}</div>
+            <div class="buddy-meta">${propTypeLabel(b.propType)} · ${escHTML(b.gender) || '—'} · Move-in ${fmtDate(b.movein)}</div>
           </div>
           <div style="text-align:right;">
             <div style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:100px;background:${scoreBg};color:${scoreColor};margin-bottom:4px;">💫 Compatibility: ${b.compatScore}%</div>
@@ -4655,9 +4726,7 @@ function renderBuddyUp(container) {
   container.innerHTML = html;
 }
 
-// ══════════════════════════════════════
 // MESSAGES PAGE LOGIC
-// ══════════════════════════════════════
 
 function switchMessageTab(tab, btn) {
   activeMessageTab = tab;
@@ -4707,7 +4776,7 @@ function renderMessagesPage() {
   }
 }
 
-function renderConnectionsList(container) {
+async function renderConnectionsList(container) {
   // Get all connections where user is involved
   const myConnections = connections.filter(c => 
     c.requester_id === profile.id || c.receiver_id === profile.id
@@ -4733,6 +4802,12 @@ function renderConnectionsList(container) {
     `;
     return;
   }
+
+  // Pre-fetch all needed profiles so cards render with real names
+  const userIds = new Set();
+  myConnections.forEach(c => { userIds.add(c.requester_id); userIds.add(c.receiver_id); });
+  userIds.delete(profile.id);
+  await Promise.all([...userIds].map(id => getProfileInfoAsync(id)));
 
   let html = '';
 
@@ -4845,7 +4920,7 @@ function renderConnectionsList(container) {
   container.innerHTML = html;
 }
 
-function renderChatsList(container) {
+async function renderChatsList(container) {
   const acceptedConnections = connections.filter(c => c.status === 'accepted');
   
   if (acceptedConnections.length === 0) {
@@ -4858,6 +4933,14 @@ function renderChatsList(container) {
     `;
     return;
   }
+
+  // Pre-fetch all needed profiles
+  const userIds = new Set();
+  acceptedConnections.forEach(c => {
+    const otherId = c.requester_id === profile.id ? c.receiver_id : c.requester_id;
+    userIds.add(otherId);
+  });
+  await Promise.all([...userIds].map(id => getProfileInfoAsync(id)));
 
   let html = '';
   acceptedConnections.forEach(c => {
@@ -4885,11 +4968,40 @@ function renderChatsList(container) {
 }
 
 // Helper to get profile info from listing user_id
+// Cache for profile lookups from the database (users without listings)
+const _profileCache = {};
+
+async function getProfileInfoAsync(userId) {
+  // 1. Check liveListings first (fastest)
+  const listing = liveListings.find(l => l.user_id === userId);
+  if (listing) {
+    return { name: listing.name, phone: listing.phone, listingId: listing.id };
+  }
+  // 2. Check cache
+  if (_profileCache[userId]) return _profileCache[userId];
+  // 3. Fetch from profiles table
+  try {
+    const { data, error } = await _supabase
+      .from('profiles')
+      .select('name, phone')
+      .eq('id', userId)
+      .single();
+    if (!error && data) {
+      const info = { name: data.name || 'User', phone: data.phone || 'No phone', listingId: null };
+      _profileCache[userId] = info;
+      return info;
+    }
+  } catch (e) { console.error('Profile lookup failed:', e); }
+  return { name: 'User', phone: 'No phone', listingId: null };
+}
+
+// Synchronous fallback — checks listings + cache only (no network)
 function getProfileInfo(userId) {
   const listing = liveListings.find(l => l.user_id === userId);
   if (listing) {
     return { name: listing.name, phone: listing.phone, listingId: listing.id };
   }
+  if (_profileCache[userId]) return _profileCache[userId];
   return null;
 }
 
@@ -5173,13 +5285,20 @@ async function withdrawConnection(connectionId) {
     renderMessagesPage();
     updateMessagesBadge();
     
-    // Also refresh detail panel if open
+    // Refresh the detail panel if it's open so the button resets correctly
     const detailPanel = document.getElementById('detail-panel');
     if (detailPanel && detailPanel.classList.contains('open')) {
-      // Re-render any open detail to update button state
       const dpBody = document.getElementById('dp-body');
       if (dpBody) {
-        const listingId = connections.length > 0 ? null : null; // will just close
+        // Find which listing the panel is showing and re-render it
+        const openListingEl = dpBody.querySelector('.dp-role');
+        const visibleListing = currentFilteredListings.find(l => {
+          const btn = dpBody.querySelector(`#ibtn-${l.id}`);
+          return !!btn;
+        });
+        if (visibleListing) {
+          renderSingleDetailById(visibleListing.id);
+        }
       }
     }
   } catch (err) {
@@ -5212,7 +5331,7 @@ async function openChat(connectionId) {
 
   const container = document.getElementById('messages-container');
   const otherId = currentChat.requester_id === profile.id ? currentChat.receiver_id : currentChat.requester_id;
-  const other = getProfileInfo(otherId);
+  const other = await getProfileInfoAsync(otherId);
   const listing = liveListings.find(l => l.id === currentChat.listing_id);
   const otherListingId = other?.listingId || listing?.id;
 
@@ -5303,7 +5422,7 @@ function renderChatUI(container, other, otherListingId) {
           <div class="chat-user-name clickable-name">${escHTML(other?.name || 'User')}</div>
           <div class="chat-user-meta">Connected · <span style="color:var(--blue-mid);">View profile</span></div>
         </div>
-        <button class="chat-phone-btn" onclick="callPhone('${escHTML(other?.phone || '')}')">📞</button>
+        <button class="chat-phone-btn" onclick="callPhone('${escAttr(other?.phone || '')}')">📞</button>
       </div>
       <div class="chat-messages" id="chat-messages-area">
         ${loadMoreBtn}
@@ -5334,7 +5453,7 @@ async function loadOlderMessages() {
   // Re-render and maintain scroll position
   const container = document.getElementById('messages-container');
   const otherId = currentChat.requester_id === profile.id ? currentChat.receiver_id : currentChat.requester_id;
-  const other = getProfileInfo(otherId);
+  const other = await getProfileInfoAsync(otherId);
   const listing = liveListings.find(l => l.id === currentChat.listing_id);
   const otherListingId = other?.listingId || listing?.id;
   
@@ -5490,15 +5609,13 @@ async function fetchConnections() {
   }
 }
 
-// ══════════════════════════════════════
 // FILTER CONTROLS
-// ══════════════════════════════════════
 
 // BHK options that are invalid for room/bed property types
 const bhkInvalidForRoomBed = ['1 RK', 'Studio', '1 BHK'];
 
 function resetBhkToAny() {
-  bhkFilter = 'Any';
+  bhkFilter.length = 0; // Clear array
   // Reset desktop chips
   document.querySelectorAll('#bhk-chips .chip').forEach(c => {
     c.classList.toggle('active', c.textContent.trim() === 'Any');
@@ -5513,7 +5630,7 @@ function resetBhkToAny() {
 }
 
 function resetGenderToAny() {
-  genderFilter = 'Any';
+  genderFilter.length = 0; // Clear array
   // Reset desktop chips
   document.querySelectorAll('#gender-chips .chip').forEach(c => {
     c.classList.toggle('active', c.textContent.trim() === 'Any');
@@ -5536,74 +5653,89 @@ function updateBhkOptionsForPropType() {
   const genderDropdown = document.getElementById('dropdown-gender');
   const genderHiddenValues = ['Couple (Unmarried)', 'Mixed Group (Friends)', 'Family'];
 
-  if (proptypeFilter === 'Shared Bed') {
-    // --- SHARED BED: smoothly hide entire BHK section ---
+  // Check if ONLY Shared Bed is selected (no other property types)
+  const onlySharedBed = proptypeFilter.length === 1 && proptypeFilter.includes('Shared Bed');
+  // Check if Private Room is selected (among others or alone)
+  const hasPrivateRoom = proptypeFilter.includes('Private Room');
+  // Check if Shared Bed is selected (among others)
+  const hasSharedBed = proptypeFilter.includes('Shared Bed');
+
+  if (onlySharedBed) {
+    // --- ONLY SHARED BED: hide entire BHK section (BHK is irrelevant) ---
     if (bhkSection) bhkSection.classList.add('hide-smooth');
     if (mfBhkWrapper) { mfBhkWrapper.classList.add('hide-collapse'); mfBhkWrapper.classList.remove('hide-smooth'); }
     resetBhkToAny();
 
-    // Hide "Couple / Mixed" and "Family" from gender filter
-    if (genderHiddenValues.includes(genderFilter)) {
+    // Disable incompatible gender options for Shared Bed
+    const hasIncompatibleGender = genderFilter.some(g => genderHiddenValues.includes(g));
+    if (hasIncompatibleGender) {
       resetGenderToAny();
     }
     genderChips.forEach(chip => {
       const val = chip.textContent.trim();
       if (genderHiddenValues.includes(val)) {
-        chip.classList.add('hide-smooth');
+        chip.classList.add('disabled');
       } else {
-        chip.classList.remove('hide-smooth');
+        chip.classList.remove('disabled');
       }
     });
     if (genderDropdown) {
       genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
         const val = (opt.dataset.value || '').trim();
         if (genderHiddenValues.includes(val)) {
-          opt.classList.add('hide-smooth');
+          opt.classList.add('disabled');
         } else {
-          opt.classList.remove('hide-smooth');
+          opt.classList.remove('disabled');
         }
       });
     }
 
-  } else if (proptypeFilter === 'Private Room') {
-    // --- PRIVATE ROOM: show section, but smoothly hide invalid individual BHK options ---
+  } else if (hasPrivateRoom && !hasSharedBed) {
+    // --- ONLY PRIVATE ROOM (no Shared Bed): show BHK section but disable incompatible BHK options ---
     if (bhkSection) bhkSection.classList.remove('hide-smooth');
     if (mfBhkWrapper) { mfBhkWrapper.classList.remove('hide-collapse'); mfBhkWrapper.classList.remove('hide-smooth'); }
 
-    if (bhkInvalidForRoomBed.includes(bhkFilter)) {
-      resetBhkToAny();
+    // If any current BHK selection is incompatible, remove it
+    const incompatibleBhks = bhkFilter.filter(b => bhkInvalidForRoomBed.includes(b));
+    if (incompatibleBhks.length > 0) {
+      incompatibleBhks.forEach(b => {
+        const idx = bhkFilter.indexOf(b);
+        if (idx > -1) bhkFilter.splice(idx, 1);
+      });
+      syncMobileToDesktopChips('bhk');
+      syncDesktopToMobileDropdown('bhk');
     }
 
     bhkChips.forEach(chip => {
       const val = chip.textContent.trim();
-      chip.classList.remove('disabled');
       if (bhkInvalidForRoomBed.includes(val)) {
-        chip.classList.add('hide-smooth');
+        chip.classList.add('disabled');
+        chip.classList.remove('active');
       } else {
-        chip.classList.remove('hide-smooth');
+        chip.classList.remove('disabled');
       }
     });
 
     if (bhkDropdown) {
       bhkDropdown.querySelectorAll('.dropdown-option').forEach(opt => {
         const val = (opt.dataset.value || '').trim();
-        opt.classList.remove('disabled');
         if (bhkInvalidForRoomBed.includes(val)) {
-          opt.classList.add('hide-smooth');
+          opt.classList.add('disabled');
+          opt.classList.remove('active');
         } else {
-          opt.classList.remove('hide-smooth');
+          opt.classList.remove('disabled');
         }
       });
     }
 
     // Show all gender options for Private Room
-    genderChips.forEach(chip => chip.classList.remove('hide-smooth'));
+    genderChips.forEach(chip => { chip.classList.remove('disabled'); chip.classList.remove('hide-smooth'); });
     if (genderDropdown) {
-      genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('hide-smooth'));
+      genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => { opt.classList.remove('disabled'); opt.classList.remove('hide-smooth'); });
     }
 
   } else {
-    // --- ENTIRE PLACE / ANY: smoothly show everything ---
+    // --- ENTIRE PLACE / ANY / MIXED: enable everything ---
     if (bhkSection) bhkSection.classList.remove('hide-smooth');
     if (mfBhkWrapper) { mfBhkWrapper.classList.remove('hide-collapse'); mfBhkWrapper.classList.remove('hide-smooth'); }
 
@@ -5620,22 +5752,23 @@ function updateBhkOptionsForPropType() {
     }
 
     // Show all gender options
-    genderChips.forEach(chip => chip.classList.remove('hide-smooth'));
+    genderChips.forEach(chip => { chip.classList.remove('disabled'); chip.classList.remove('hide-smooth'); });
     if (genderDropdown) {
-      genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => opt.classList.remove('hide-smooth'));
+      genderDropdown.querySelectorAll('.dropdown-option').forEach(opt => { opt.classList.remove('disabled'); opt.classList.remove('hide-smooth'); });
     }
   }
 }
 
 function toggleChip(btn, group) {
-  btn.closest('.filter-chips').querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
   const chipVal = btn.textContent.trim();
-  if (group === 'proptype') { proptypeFilter = chipVal; updateBhkOptionsForPropType(); }
-  if (group === 'bhk')      bhkFilter = chipVal;
-  if (group === 'furnishing') furnishingFilter = chipVal;
-  if (group === 'gender')   genderFilter   = chipVal;
+  const chipsContainer = btn.closest('.filter-chips');
+  const allChips = chipsContainer.querySelectorAll('.chip');
+  const anyChip = Array.from(allChips).find(c => c.textContent.trim() === 'Any');
+  
+  // Brokerage stays single-select
   if (group === 'brokerage') {
+    allChips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
     brokerageFilter = chipVal;
     // Update desktop slider
     const sliderSection = document.getElementById('brokerage-slider-section');
@@ -5661,50 +5794,119 @@ function toggleChip(btn, group) {
     document.querySelectorAll('#dropdown-brokerage .dropdown-option').forEach(opt => {
       opt.classList.toggle('active', opt.getAttribute('data-value') === chipVal);
     });
+    applyFilters();
+    updateMobileFilterButtons();
+    updateActiveFiltersBar();
+    return;
   }
+  
+  // Multi-select logic for other filters
+  let filterArray;
+  if (group === 'proptype') filterArray = proptypeFilter;
+  else if (group === 'bhk') filterArray = bhkFilter;
+  else if (group === 'furnishing') filterArray = furnishingFilter;
+  else if (group === 'gender') filterArray = genderFilter;
+  
+  if (chipVal === 'Any') {
+    // Clicking "Any" clears all selections
+    allChips.forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    filterArray.length = 0; // Clear array
+  } else {
+    // Remove "Any" active state
+    if (anyChip) anyChip.classList.remove('active');
+    
+    // Toggle this chip
+    if (btn.classList.contains('active')) {
+      btn.classList.remove('active');
+      const idx = filterArray.indexOf(chipVal);
+      if (idx > -1) filterArray.splice(idx, 1);
+    } else {
+      btn.classList.add('active');
+      if (!filterArray.includes(chipVal)) filterArray.push(chipVal);
+    }
+    
+    // If no chips selected, activate "Any"
+    const activeCount = Array.from(allChips).filter(c => c.classList.contains('active')).length;
+    if (activeCount === 0 && anyChip) {
+      anyChip.classList.add('active');
+      filterArray.length = 0;
+    }
+  }
+  
+  // Sync changes to mobile dropdowns
+  syncDesktopToMobileDropdown(group);
+  
+  if (group === 'proptype') { updateBhkOptionsForPropType(); }
   applyFilters();
   updateMobileFilterButtons();
+  updateActiveFiltersBar();
+}
+
+// Helper to sync desktop chip state to mobile dropdown
+function syncDesktopToMobileDropdown(group) {
+  const dropdownId = 'dropdown-' + group;
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+  
+  let filterArray;
+  if (group === 'proptype') filterArray = proptypeFilter;
+  else if (group === 'bhk') filterArray = bhkFilter;
+  else if (group === 'furnishing') filterArray = furnishingFilter;
+  else if (group === 'gender') filterArray = genderFilter;
+  else return;
+  
+  dropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+    const val = opt.dataset.value;
+    if (val === 'Any') {
+      opt.classList.toggle('active', filterArray.length === 0);
+    } else {
+      opt.classList.toggle('active', filterArray.includes(val));
+    }
+  });
+}
+
+// Debounce helper for range sliders
+let _filterDebounceTimer = null;
+function debouncedApplyFilters() {
+  clearTimeout(_filterDebounceTimer);
+  _filterDebounceTimer = setTimeout(() => {
+    applyFilters();
+    updateMobileFilterButtons();
+  }, 150);
 }
 
 function updateRentFilter(val) {
-  document.getElementById('rent-max-val').textContent = parseInt(val).toLocaleString();
-  // Sync to mobile slider
+  const formatted = parseInt(val).toLocaleString();
+  // Sync all rent DOM elements from single source of truth
+  const desktopSlider = document.getElementById('rent-max');
+  const desktopVal = document.getElementById('rent-max-val');
   const mobileSlider = document.getElementById('rent-max-mobile');
   const mobileVal = document.getElementById('rent-max-val-mobile');
+  if (desktopSlider) desktopSlider.value = val;
+  if (desktopVal) desktopVal.textContent = formatted;
   if (mobileSlider) mobileSlider.value = val;
-  if (mobileVal) mobileVal.textContent = parseInt(val).toLocaleString();
-  applyFilters();
-  updateMobileFilterButtons();
+  if (mobileVal) mobileVal.textContent = formatted;
+  debouncedApplyFilters();
 }
 
-function updateRentFilterMobile(val) {
-  document.getElementById('rent-max-val-mobile').textContent = parseInt(val).toLocaleString();
-  // Sync to desktop slider
-  document.getElementById('rent-max').value = val;
-  document.getElementById('rent-max-val').textContent = parseInt(val).toLocaleString();
-  applyFilters();
-  updateMobileFilterButtons();
-}
+
 
 function updateBrokerageFilter(val) {
-  document.getElementById('brokerage-max-val').textContent = parseInt(val).toLocaleString();
-  // Sync to mobile slider
+  const formatted = parseInt(val).toLocaleString();
+  // Sync all brokerage DOM elements from single source of truth
+  const desktopSlider = document.getElementById('brokerage-max');
+  const desktopVal = document.getElementById('brokerage-max-val');
   const mobileSlider = document.getElementById('brokerage-max-mobile');
   const mobileVal = document.getElementById('brokerage-max-val-mobile');
+  if (desktopSlider) desktopSlider.value = val;
+  if (desktopVal) desktopVal.textContent = formatted;
   if (mobileSlider) mobileSlider.value = val;
-  if (mobileVal) mobileVal.textContent = parseInt(val).toLocaleString();
-  applyFilters();
-  updateMobileFilterButtons();
+  if (mobileVal) mobileVal.textContent = formatted;
+  debouncedApplyFilters();
 }
 
-function updateBrokerageFilterMobile(val) {
-  document.getElementById('brokerage-max-val-mobile').textContent = parseInt(val).toLocaleString();
-  // Sync to desktop slider
-  document.getElementById('brokerage-max').value = val;
-  document.getElementById('brokerage-max-val').textContent = parseInt(val).toLocaleString();
-  applyFilters();
-  updateMobileFilterButtons();
-}
+
 
 function selectBrokerageOptionMobile(value) {
   // Update brokerage filter value
@@ -5785,10 +5987,27 @@ function resetFilters() {
   
   const brokerageSlider = document.getElementById('brokerage-slider-section');
   if (brokerageSlider) brokerageSlider.style.display = 'none';
-  proptypeFilter = 'Any'; bhkFilter = 'Any'; furnishingFilter = 'Any'; genderFilter = 'Any'; brokerageFilter = 'Any';
+  
+  // Reset array filters
+  proptypeFilter.length = 0;
+  bhkFilter.length = 0;
+  furnishingFilter.length = 0;
+  genderFilter.length = 0;
+  brokerageFilter = 'Any';
+  
   document.querySelectorAll('.filter-chips').forEach(g => g.querySelectorAll('.chip').forEach((c,i) => { c.classList.toggle('active', i===0); c.classList.remove('disabled'); c.classList.remove('hide-smooth'); }));
   document.querySelectorAll('#dropdown-bhk .dropdown-option').forEach(o => { o.classList.remove('disabled'); o.classList.remove('hide-smooth'); });
   document.querySelectorAll('#dropdown-gender .dropdown-option').forEach(o => { o.classList.remove('disabled'); o.classList.remove('hide-smooth'); });
+  
+  // Reset mobile dropdowns - set only "Any" as active
+  document.querySelectorAll('.filter-inline-dropdown').forEach(dropdown => {
+    dropdown.querySelectorAll('.dropdown-option').forEach((opt, idx) => {
+      opt.classList.toggle('active', opt.dataset.value === 'Any' || idx === 0);
+      opt.classList.remove('disabled');
+      opt.classList.remove('hide-smooth');
+    });
+  });
+  
   const bhkSec = document.getElementById('bhk-filter-section');
   const mfBhkW = document.getElementById('mf-bhk-wrapper');
   if (bhkSec) bhkSec.classList.remove('hide-smooth');
@@ -5799,9 +6018,7 @@ function resetFilters() {
   closeAllDropdowns();
 }
 
-// ══════════════════════════════════════
 // MOBILE FILTER DROPDOWN FUNCTIONS (NEW)
-// ══════════════════════════════════════
 let currentOpenDropdown = null;
 
 // Toggle a dropdown open/closed
@@ -5841,83 +6058,134 @@ function closeAllDropdowns() {
   currentOpenDropdown = null;
 }
 
-// Handle option selection from dropdown
+// Handle option selection from dropdown (mobile)
 function selectDropdownOption(filterType, value) {
-  // Update the dropdown visual state
   const dropdown = document.getElementById('dropdown-' + filterType);
-  dropdown.querySelectorAll('.dropdown-option').forEach(opt => {
-    opt.classList.toggle('active', opt.dataset.value === value);
-  });
   
-  // Apply the filter based on type
-  switch(filterType) {
-    case 'proptype':
-      proptypeFilter = value;
-      document.querySelectorAll('#proptype-chips .chip').forEach(c => 
-        c.classList.toggle('active', c.textContent.trim() === value)
-      );
-      updateBhkOptionsForPropType();
-      break;
-    case 'bhk':
-      bhkFilter = value;
-      document.querySelectorAll('#bhk-chips .chip').forEach(c => 
-        c.classList.toggle('active', c.textContent.trim() === value)
-      );
-      break;
-    case 'budget':
-      document.getElementById('rent-max').value = value;
-      updateRentFilter(value);
-      break;
-    case 'furnishing':
-      furnishingFilter = value;
-      document.querySelectorAll('#furnishing-chips .chip').forEach(c => 
-        c.classList.toggle('active', c.textContent.trim() === value)
-      );
-      break;
-    case 'gender':
-      genderFilter = value;
-      document.querySelectorAll('#gender-chips .chip').forEach(c => 
-        c.classList.toggle('active', c.textContent.trim() === value)
-      );
-      break;
-    case 'brokerage':
-      brokerageFilter = value;
-      document.querySelectorAll('.filter-chips').forEach(g => {
-        // Find the brokerage chips (check parent section)
-        g.querySelectorAll('.chip').forEach(c => {
-          if (g.closest('.filter-section')?.querySelector('.filter-label')?.textContent?.trim() === 'Brokerage') {
-            c.classList.toggle('active', c.textContent.trim() === value);
-          }
-        });
-      });
-      const sliderSection = document.getElementById('brokerage-slider-section');
-      if (sliderSection) {
-        sliderSection.style.display = value === 'Yes' ? 'block' : 'none';
-        if (value !== 'Yes') {
-          document.getElementById('brokerage-max').value = 100000;
-          document.getElementById('brokerage-max-val').textContent = '1,00,000';
+  // Brokerage stays single-select
+  if (filterType === 'brokerage') {
+    dropdown.querySelectorAll('.dropdown-option').forEach(opt => {
+      opt.classList.toggle('active', opt.dataset.value === value);
+    });
+    brokerageFilter = value;
+    document.querySelectorAll('.filter-chips').forEach(g => {
+      g.querySelectorAll('.chip').forEach(c => {
+        if (g.closest('.filter-section')?.querySelector('.filter-label')?.textContent?.trim() === 'Brokerage') {
+          c.classList.toggle('active', c.textContent.trim() === value);
         }
+      });
+    });
+    const sliderSection = document.getElementById('brokerage-slider-section');
+    if (sliderSection) {
+      sliderSection.style.display = value === 'Yes' ? 'block' : 'none';
+      if (value !== 'Yes') {
+        document.getElementById('brokerage-max').value = 100000;
+        document.getElementById('brokerage-max-val').textContent = '1,00,000';
       }
-      break;
+    }
+    applyFilters();
+    updateMobileFilterButtons();
+    updateActiveFiltersBar();
+    closeAllDropdowns();
+    return;
   }
   
-  // Apply filters and update UI
+  // Budget and Move-in stay single-select (they're sliders/date pickers)
+  if (filterType === 'budget' || filterType === 'movein') {
+    applyFilters();
+    updateMobileFilterButtons();
+    updateActiveFiltersBar();
+    closeAllDropdowns();
+    return;
+  }
+  
+  // Multi-select logic for proptype, bhk, furnishing, gender
+  let filterArray;
+  if (filterType === 'proptype') filterArray = proptypeFilter;
+  else if (filterType === 'bhk') filterArray = bhkFilter;
+  else if (filterType === 'furnishing') filterArray = furnishingFilter;
+  else if (filterType === 'gender') filterArray = genderFilter;
+  else return;
+  
+  const allOptions = dropdown.querySelectorAll('.dropdown-option');
+  const anyOption = Array.from(allOptions).find(o => o.dataset.value === 'Any');
+  const clickedOption = Array.from(allOptions).find(o => o.dataset.value === value);
+  
+  if (value === 'Any') {
+    // Clicking "Any" clears all selections
+    allOptions.forEach(opt => opt.classList.remove('active'));
+    if (anyOption) anyOption.classList.add('active');
+    filterArray.length = 0;
+  } else {
+    // Remove "Any" active state
+    if (anyOption) anyOption.classList.remove('active');
+    
+    // Toggle the clicked option
+    if (clickedOption.classList.contains('active')) {
+      clickedOption.classList.remove('active');
+      const idx = filterArray.indexOf(value);
+      if (idx > -1) filterArray.splice(idx, 1);
+    } else {
+      clickedOption.classList.add('active');
+      if (!filterArray.includes(value)) filterArray.push(value);
+    }
+    
+    // If no options selected, activate "Any"
+    const activeCount = Array.from(allOptions).filter(o => o.classList.contains('active')).length;
+    if (activeCount === 0 && anyOption) {
+      anyOption.classList.add('active');
+      filterArray.length = 0;
+    }
+  }
+  
+  // Sync to desktop chips
+  syncMobileToDesktopChips(filterType);
+  
+  if (filterType === 'proptype') { updateBhkOptionsForPropType(); }
+  
   applyFilters();
   updateMobileFilterButtons();
   updateActiveFiltersBar();
   
-  // Close dropdown after selection
-  closeAllDropdowns();
+  // Don't close dropdown for multi-select - let user select multiple options
+  // Only close if "Any" was clicked
+  if (value === 'Any') {
+    closeAllDropdowns();
+  }
+}
+
+// Helper to sync mobile dropdown state to desktop chips
+function syncMobileToDesktopChips(filterType) {
+  let filterArray;
+  let chipsId;
+  if (filterType === 'proptype') { filterArray = proptypeFilter; chipsId = 'proptype-chips'; }
+  else if (filterType === 'bhk') { filterArray = bhkFilter; chipsId = 'bhk-chips'; }
+  else if (filterType === 'furnishing') { filterArray = furnishingFilter; chipsId = 'furnishing-chips'; }
+  else if (filterType === 'gender') { filterArray = genderFilter; chipsId = 'gender-chips'; }
+  else return;
+  
+  const chipsContainer = document.getElementById(chipsId);
+  if (!chipsContainer) return;
+  
+  chipsContainer.querySelectorAll('.chip').forEach(chip => {
+    const val = chip.textContent.trim();
+    if (val === 'Any') {
+      chip.classList.toggle('active', filterArray.length === 0);
+    } else {
+      chip.classList.toggle('active', filterArray.includes(val));
+    }
+  });
 }
 
 // Reset all filters (new function)
 function resetAllFilters() {
-  // Reset all filter values
-  proptypeFilter = 'Any';
-  bhkFilter = 'Any';
-  furnishingFilter = 'Any';
-  genderFilter = 'Any';
+  // Reset array filters
+  proptypeFilter.length = 0;
+  bhkFilter.length = 0;
+  furnishingFilter.length = 0;
+  genderFilter.length = 0;
   brokerageFilter = 'Any';
+  
   document.getElementById('rent-max').value = 100000;
   document.getElementById('rent-max-val').textContent = '1,00,000';
   // Reset mobile budget slider
@@ -5947,15 +6215,15 @@ function resetAllFilters() {
   const brokerageSliderReset = document.getElementById('brokerage-slider-section');
   if (brokerageSliderReset) brokerageSliderReset.style.display = 'none';
   
-  // Reset desktop filter chips
+  // Reset desktop filter chips - only "Any" should be active
   document.querySelectorAll('.filter-chips').forEach(g => 
     g.querySelectorAll('.chip').forEach((c,i) => { c.classList.toggle('active', i===0); c.classList.remove('disabled'); c.classList.remove('hide-smooth'); })
   );
   
-  // Reset all dropdowns to show first option as active
+  // Reset all dropdowns to show first option (Any) as active
   document.querySelectorAll('.filter-inline-dropdown').forEach(dropdown => {
     dropdown.querySelectorAll('.dropdown-option').forEach((opt, idx) => {
-      opt.classList.toggle('active', idx === 0);
+      opt.classList.toggle('active', opt.dataset.value === 'Any' || idx === 0);
       opt.classList.remove('disabled');
       opt.classList.remove('hide-smooth');
     });
@@ -5990,17 +6258,28 @@ function updateMobileFilterButtons() {
   const mfGender = document.getElementById('mf-gender');
   
   if (mfProptype) {
-    const hasValue = proptypeFilter !== 'Any';
+    const hasValue = proptypeFilter.length > 0;
     mfProptype.classList.toggle('has-value', hasValue);
-    const label = proptypeFilter === 'Any' ? 'Type' : proptypeFilter.replace('Entire ','').replace('Private ','').replace('Shared ','');
+    let label = 'Type';
+    if (proptypeFilter.length === 1) {
+      label = proptypeFilter[0].replace('Entire ','').replace('Private ','').replace('Shared ','');
+    } else if (proptypeFilter.length > 1) {
+      label = proptypeFilter.length + ' types';
+    }
     const labelSpan = mfProptype.querySelectorAll('span:not(.arrow)');
     if (labelSpan.length > 0) labelSpan[0].textContent = label;
   }
   if (mfBhk) {
-    const hasValue = bhkFilter !== 'Any';
+    const hasValue = bhkFilter.length > 0;
     mfBhk.classList.toggle('has-value', hasValue);
+    let label = 'BHK';
+    if (bhkFilter.length === 1) {
+      label = bhkFilter[0];
+    } else if (bhkFilter.length > 1) {
+      label = bhkFilter.length + ' BHKs';
+    }
     const labelSpan = mfBhk.querySelectorAll('span:not(.arrow)');
-    if (labelSpan.length > 0) labelSpan[0].textContent = bhkFilter === 'Any' ? 'BHK' : bhkFilter;
+    if (labelSpan.length > 0) labelSpan[0].textContent = label;
   }
   if (mfBudget) {
     const rentVal = parseInt(document.getElementById('rent-max')?.value || 100000);
@@ -6010,17 +6289,28 @@ function updateMobileFilterButtons() {
     if (labelSpan.length > 0) labelSpan[0].textContent = hasValue ? '₹' + (rentVal/1000) + 'K' : 'Budget';
   }
   if (mfFurnishing) {
-    const hasValue = furnishingFilter !== 'Any';
+    const hasValue = furnishingFilter.length > 0;
     mfFurnishing.classList.toggle('has-value', hasValue);
-    const label = furnishingFilter === 'Any' ? 'Furnishing' : furnishingFilter.replace(' furnished','').replace('-furnished','');
+    let label = 'Furnishing';
+    if (furnishingFilter.length === 1) {
+      label = furnishingFilter[0].replace(' furnished','').replace('-furnished','');
+    } else if (furnishingFilter.length > 1) {
+      label = furnishingFilter.length + ' options';
+    }
     const labelSpan = mfFurnishing.querySelectorAll('span:not(.arrow)');
     if (labelSpan.length > 0) labelSpan[0].textContent = label;
   }
   if (mfGender) {
-    const hasValue = genderFilter !== 'Any';
+    const hasValue = genderFilter.length > 0;
     mfGender.classList.toggle('has-value', hasValue);
+    let label = 'Gender';
+    if (genderFilter.length === 1) {
+      label = genderFilter[0];
+    } else if (genderFilter.length > 1) {
+      label = genderFilter.length + ' prefs';
+    }
     const labelSpan = mfGender.querySelectorAll('span:not(.arrow)');
-    if (labelSpan.length > 0) labelSpan[0].textContent = genderFilter === 'Any' ? 'Gender' : genderFilter;
+    if (labelSpan.length > 0) labelSpan[0].textContent = label;
   }
   const mfBrokerage = document.getElementById('mf-brokerage');
   if (mfBrokerage) {
@@ -6046,76 +6336,70 @@ function updateMobileFilterButtons() {
   }
 }
 
-// Update the active filters bar below the filter chips
+// Update the active filters bar - disabled (no longer showing filter tags)
 function updateActiveFiltersBar() {
-  const bar = document.getElementById('active-filters-bar');
-  if (!bar) return;
-  
-  const tags = [];
-  
-  if (proptypeFilter !== 'Any') {
-    tags.push(createFilterTag('proptype', proptypeFilter.replace('Entire ','').replace('Private ','').replace('Shared ','')));
-  }
-  if (bhkFilter !== 'Any') {
-    tags.push(createFilterTag('bhk', bhkFilter));
-  }
-  const rentVal = parseInt(document.getElementById('rent-max')?.value || 100000);
-  if (rentVal < 100000) {
-    tags.push(createFilterTag('budget', '≤₹' + (rentVal/1000) + 'K'));
-  }
-  if (furnishingFilter !== 'Any') {
-    tags.push(createFilterTag('furnishing', furnishingFilter.replace(' furnished','').replace('-furnished','')));
-  }
-  if (genderFilter !== 'Any') {
-    tags.push(createFilterTag('gender', genderFilter));
-  }
-  if (brokerageFilter !== 'Any') {
-    tags.push(createFilterTag('brokerage', brokerageFilter === 'No' ? 'No Brokerage' : 'Has Brokerage'));
-  }
-  const moveinFilterVal = document.getElementById('movein-filter')?.value || '';
-  const moveinImmVal = document.getElementById('movein-immediate-filter')?.checked || false;
-  if (moveinFilterVal || moveinImmVal) {
-    const label = moveinImmVal ? 'Immediate' : new Date(moveinFilterVal).toLocaleDateString('en-IN', { day:'numeric', month:'short' });
-    tags.push(createFilterTag('movein', label));
-  }
-  
-  bar.innerHTML = tags.join('');
-  bar.classList.toggle('has-filters', tags.length > 0);
-  
-  // Add click handlers to remove tags
-  bar.querySelectorAll('.remove-tag').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      removeFilterTag(e.target.dataset.filter);
-    });
-  });
+  // Active filters bar has been removed from UI
+  return;
 }
 
 // Create HTML for a filter tag
-function createFilterTag(filterKey, label) {
-  return `<span class="active-filter-tag">${label}<span class="remove-tag" data-filter="${filterKey}">×</span></span>`;
+function createFilterTag(filterKey, label, value) {
+  return `<span class="active-filter-tag">${escHTML(label)}<span class="remove-tag" data-filter="${filterKey}" data-value="${escHTML(value)}">×</span></span>`;
 }
 
 // Remove a filter by clicking its tag
-function removeFilterTag(filterKey) {
+function removeFilterTag(filterKey, value) {
   switch(filterKey) {
     case 'proptype':
-      selectDropdownOption('proptype', 'Any');
+      // Remove specific value from array
+      const ptIdx = proptypeFilter.indexOf(value);
+      if (ptIdx > -1) proptypeFilter.splice(ptIdx, 1);
+      syncMobileToDesktopChips('proptype');
+      syncDesktopToMobileDropdown('proptype');
+      updateBhkOptionsForPropType();
       break;
     case 'bhk':
-      selectDropdownOption('bhk', 'Any');
+      const bhkIdx = bhkFilter.indexOf(value);
+      if (bhkIdx > -1) bhkFilter.splice(bhkIdx, 1);
+      syncMobileToDesktopChips('bhk');
+      syncDesktopToMobileDropdown('bhk');
       break;
     case 'budget':
-      selectDropdownOption('budget', '100000');
+      document.getElementById('rent-max').value = 100000;
+      document.getElementById('rent-max-val').textContent = '1,00,000';
+      const rmMob = document.getElementById('rent-max-mobile');
+      const rmvMob = document.getElementById('rent-max-val-mobile');
+      if (rmMob) rmMob.value = 100000;
+      if (rmvMob) rmvMob.textContent = '1,00,000';
       break;
     case 'furnishing':
-      selectDropdownOption('furnishing', 'Any');
+      const fIdx = furnishingFilter.indexOf(value);
+      if (fIdx > -1) furnishingFilter.splice(fIdx, 1);
+      syncMobileToDesktopChips('furnishing');
+      syncDesktopToMobileDropdown('furnishing');
       break;
     case 'gender':
-      selectDropdownOption('gender', 'Any');
+      const gIdx = genderFilter.indexOf(value);
+      if (gIdx > -1) genderFilter.splice(gIdx, 1);
+      syncMobileToDesktopChips('gender');
+      syncDesktopToMobileDropdown('gender');
       break;
     case 'brokerage':
-      selectDropdownOption('brokerage', 'Any');
+      brokerageFilter = 'Any';
+      document.querySelectorAll('.filter-chips').forEach(g => {
+        g.querySelectorAll('.chip').forEach(c => {
+          if (g.closest('.filter-section')?.querySelector('.filter-label')?.textContent?.trim() === 'Brokerage') {
+            c.classList.toggle('active', c.textContent.trim() === 'Any');
+          }
+        });
+      });
+      document.querySelectorAll('#dropdown-brokerage .dropdown-option').forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.value === 'Any');
+      });
+      const bsSlider = document.getElementById('brokerage-slider-section');
+      if (bsSlider) bsSlider.style.display = 'none';
+      const bsSliderMob = document.getElementById('brokerage-slider-section-mobile');
+      if (bsSliderMob) bsSliderMob.style.display = 'none';
       break;
     case 'movein':
       document.getElementById('movein-filter').value = '';
@@ -6126,11 +6410,11 @@ function removeFilterTag(filterKey) {
       if (mifChkMobile) mifChkMobile.checked = false;
       const mifDtMobile = document.getElementById('movein-filter-mobile');
       if (mifDtMobile) { mifDtMobile.value = ''; mifDtMobile.disabled = false; }
-      applyFilters();
-      updateMobileFilterButtons();
-      updateActiveFiltersBar();
       break;
   }
+  applyFilters();
+  updateMobileFilterButtons();
+  updateActiveFiltersBar();
 }
 
 // Close dropdowns when clicking outside (already handled by backdrop, but add keyboard support)
@@ -6140,9 +6424,7 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
-// ══════════════════════════════════════
 // CREATE LISTING & MAP SEARCH
-// ══════════════════════════════════════
 function checkTenantAlreadyListed() {
   const alreadyDiv = document.getElementById('already-listed');
   const formDiv    = document.getElementById('listing-form');
@@ -6150,7 +6432,7 @@ function checkTenantAlreadyListed() {
   if (!profile) {
     alreadyDiv.innerHTML = `
       <div class="already-listed-card">
-        <div style="font-size:36px;margin-bottom:10px">👋</div>
+        <div class="emoji-lg">👋</div>
         <h3>Log in to post a listing</h3>
         <p>You need an account to drop a pin on the map and let others contact you.</p>
         <button class="btn btn-primary" onclick="showPage('profile')" style="margin-top:12px; justify-content:center;">Sign In / Sign Up →</button>
@@ -6163,7 +6445,7 @@ function checkTenantAlreadyListed() {
 
   alreadyDiv.innerHTML = `
     <div class="already-listed-card">
-      <div style="font-size:36px;margin-bottom:10px">📋</div>
+      <div class="emoji-lg">📋</div>
       <h3>You already have an active listing</h3>
       <p>Tenants can only have one active listing at a time. Delete your current listing to post a new one.</p>
       <div class="btn-row">
@@ -6186,12 +6468,8 @@ async function deleteTenantListing() {
   if (!confirm('Delete your current search area? It will be removed from the map.')) return;
 
   if (myListings.length > 0 && myListings[0].id) {
-    // Delete photos from storage bucket first
-    if (myListings[0].photo_urls && myListings[0].photo_urls.length > 0) {
-      const fileNames = myListings[0].photo_urls.map(url => url.split('/').pop());
-      const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
-      if (storageErr) console.error("Error deleting photos from storage:", storageErr);
-    }
+    // Delete DB row first to avoid orphaned files if DB delete fails
+    const photoUrls = myListings[0].photo_urls ? [...myListings[0].photo_urls] : [];
 
     const { error } = await _supabase
       .from('listings')
@@ -6202,6 +6480,13 @@ async function deleteTenantListing() {
       console.error("Error deleting:", error);
       alert("Could not delete listing from the database.");
       return;
+    }
+
+    // Clean up photos from storage after successful DB deletion
+    if (photoUrls.length > 0) {
+      const fileNames = photoUrls.map(url => url.split('/').pop());
+      const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
+      if (storageErr) console.error("Error deleting photos from storage:", storageErr);
     }
   }
 
@@ -6217,7 +6502,7 @@ async function deleteTenantListing() {
     drawControl = null; 
   }
 
-  if (exploreMap) refreshExplore();
+  if (exploreMap) fetchLiveListings();
 }
 
 function revealCreateMap() {
@@ -6298,7 +6583,7 @@ function selectLocation(item, resultsId, targetMapName, isCreate) {
   const lon = parseFloat(item.lon);
 
   if (haversineKm(OPERATING_CENTER[0], OPERATING_CENTER[1], lat, lon) > OPERATING_RADIUS_KM) {
-    alert(`We are currently only operating within ${OPERATING_RADIUS_KM}km of Hinjewadi. Please select a closer location.`);
+    handleOutOfBoundsSelection();
     return;
   }
 
@@ -6339,7 +6624,7 @@ async function initPickerMap() {
     pickerMap.on('click', (e) => {
       const { lat, lng } = e.latlng;
       if (haversineKm(OPERATING_CENTER[0], OPERATING_CENTER[1], lat, lng) > OPERATING_RADIUS_KM) {
-        alert(`We are currently only operating within ${OPERATING_RADIUS_KM}km of Hinjewadi.`);
+        handleOutOfBoundsSelection();
         return;
       }
       if (pickerMarker) pickerMap.removeLayer(pickerMarker);
@@ -6362,7 +6647,7 @@ async function initPickerMap() {
     pickerMap.on(L.Draw.Event.CREATED, (e) => {
       const center = e.layer.getLatLng();
       if (haversineKm(OPERATING_CENTER[0], OPERATING_CENTER[1], center.lat, center.lng) > OPERATING_RADIUS_KM) {
-        alert(`We are currently only operating within ${OPERATING_RADIUS_KM}km of Hinjewadi.`);
+        handleOutOfBoundsSelection();
         return;
       }
       drawnItems.clearLayers();
@@ -6713,9 +6998,7 @@ function closeSuccess() {
   document.getElementById('success-overlay').classList.remove('show');
 }
 
-// ══════════════════════════════════════
 // PROFILE MODAL (View profiles from Matches/Messages)
-// ══════════════════════════════════════
 
 function openProfileModal(listingId) {
   const listing = liveListings.find(l => l.id === listingId);
@@ -6745,12 +7028,12 @@ function renderProfileModal(l) {
   // Render photos
   if (l.photo_urls && l.photo_urls.length > 0) {
     let imgsHtml = l.photo_urls.map((url, idx) => `
-      <img src="${url}" style="width:100%;height:100%;object-fit:cover;flex-shrink:0;scroll-snap-align:start;">
+      <img src="${url}" class="carousel-img">
     `).join('');
     photoEl.innerHTML = `
-      <div style="display:flex; overflow-x:auto; width:100%; height:100%; scroll-snap-type: x mandatory; position:relative;">
+      <div class="carousel-wrap">
         ${imgsHtml}
-        ${l.photo_urls.length > 1 ? `<div style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,0.6);color:white;padding:3px 8px;border-radius:10px;font-size:11px;">${l.photo_urls.length} photos</div>` : ''}
+        ${l.photo_urls.length > 1 ? `<div class="photo-count">${l.photo_urls.length} photos</div>` : ''}
       </div>`;
   } else {
     photoEl.innerHTML = isOwner ? '🏠' : '🔍';
@@ -6764,40 +7047,40 @@ function renderProfileModal(l) {
     if (l.propType === 'entire') {
       fields = `
         <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${l.bhk||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${l.capacity||'Any'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${escHTML(l.capacity)||'Any'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-        <div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
+        <div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
     } else if (l.propType === 'room') {
       fields = `
         <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${l.bhk||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${l.capacity||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${l.washroom||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${escHTML(l.capacity)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${escHTML(l.washroom)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
     } else {
       fields = `
-        <div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${l.bedType||'Shared Bed'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender||'Any'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${brokerageDisplay}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${escHTML(l.bedType)||'Shared Bed'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-        <div class="dp-field" style="grid-column: span 2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
+        <div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
     }
   } else {
     // Tenant
     fields = `
       <div class="dp-field"><div class="dp-field-lbl">Looking For</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${l.gender || 'Any'}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${l.furnishing || 'Any'}</div></div>
+      <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender) || 'Any'}</div></div>
+      <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing) || 'Any'}</div></div>
       <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-      ${l.people ? `<div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${l.people}</div></div>` : ''}
+      ${l.people ? `<div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${escHTML(l.people)}</div></div>` : ''}
       ${l.radiusKm ? `<div class="dp-field"><div class="dp-field-lbl">Search Radius</div><div class="dp-field-val">${l.radiusKm} km</div></div>` : ''}`;
   }
   
@@ -6811,7 +7094,7 @@ function renderProfileModal(l) {
     <div class="dp-role ${l.ismine ? 'mine' : l.role}" style="margin-bottom:10px;">
       ${l.ismine ? (isOwner ? '🟠 YOUR LISTING' : '🟣 YOUR SEARCH') : (isOwner ? '🏠 OWNER' : '🔍 TENANT')}
     </div>
-    <div class="dp-name" style="font-size:18px; margin-bottom:4px;">${escHTML(l.name)}</div>
+    <div class="dp-name" style="font-size:18px; margin-bottom:4px;">${escHTML(l.name)} ${!l.ismine ? renderTrustBadge(l) : ''}</div>
     <div class="dp-rent" style="margin-bottom:16px;">
       ₹${(isOwner ? l.rent : l.budget).toLocaleString()}<small>${isOwner ? '/month' : '/mo budget'}</small>
     </div>
@@ -6831,7 +7114,7 @@ function buildProfileModalConnectionButton(l) {
 
   // Owners cannot connect with other owners
   if (profile.role === 'owner' && l.role === 'owner') {
-    return `<div style="text-align:center; padding:12px; background:var(--gray-50); border-radius:8px; font-size:13px; color:var(--gray-600);">
+    return `<div class="owner-only-msg">
       <span style="font-size:18px;">🏠</span><br>
       You're both property owners.<br>
       <span style="font-size:12px; color:var(--gray-400);">Only tenants can send interest to owners.</span>
@@ -6847,7 +7130,7 @@ function buildProfileModalConnectionButton(l) {
   if (existingConnection) {
     if (existingConnection.status === 'accepted') {
       return `
-        <div class="connected-actions" style="display:flex; gap:8px;">
+        <div class="connected-actions flex-gap8">
           <a href="tel:${escHTML(l.phone)}" class="btn btn-secondary" style="flex:1; justify-content:center; text-decoration:none;">
             📞 Call
           </a>
@@ -6855,10 +7138,10 @@ function buildProfileModalConnectionButton(l) {
             💬 Message
           </button>
         </div>
-        <div style="text-align:center; font-size:12px; color:var(--green); margin-top:8px;">✓ Connected</div>`;
+        <div class="connected-status">✓ Connected</div>`;
     } else if (existingConnection.status === 'pending') {
       if (existingConnection.requester_id === profile.id) {
-        return `<div style="display:flex; flex-direction:column; gap:8px;">
+        return `<div class="flex-col-gap8">
           <button class="interested-btn sent">
             <span>⏳</span> Request Sent — Waiting for response
           </button>
@@ -6866,10 +7149,10 @@ function buildProfileModalConnectionButton(l) {
         </div>`;
       } else {
         return `
-          <div style="text-align:center; margin-bottom:12px; font-size:13px; color:var(--gray-600);">
+          <div class="connect-prompt">
             ${escHTML(l.name)} wants to connect with you!
           </div>
-          <div class="connection-actions" style="display:flex; gap:8px;">
+          <div class="connection-actions flex-gap8">
             <button class="btn btn-primary" style="flex:1;" onclick="acceptFromModal('${existingConnection.id}', '${l.id}')">✓ Accept</button>
             <button class="btn btn-secondary" style="flex:1;" onclick="declineFromModal('${existingConnection.id}', '${l.id}')">✕ Decline</button>
           </div>`;
@@ -6989,9 +7272,7 @@ async function declineFromModal(connectionId, listingId) {
   }
 }
 
-// ══════════════════════════════════════
 // PROFILE PAGE
-// ══════════════════════════════════════
 let currentEditingListingIdx = null;
 
 function renderProfilePage() {
@@ -7059,7 +7340,7 @@ if (avatarUrl) {
         <span class="lc-badge ${statusBadgeClass}">${statusText}</span>
       </div>
       <div class="listing-item-rent">${isOwner ? `₹${l.rent.toLocaleString()}/mo` : `Budget ₹${l.budget.toLocaleString()}/mo`}</div>
-      <div class="listing-item-meta">${isOwner ? `${l.bhk||l.bedType||''} · ${l.gender||'Any'}` : `Search radius: ${l.radiusKm} km`}</div>
+      <div class="listing-item-meta">${isOwner ? `${escHTML(l.bhk||l.bedType||'')} · ${escHTML(l.gender||'Any')}` : `Search radius: ${l.radiusKm} km`}</div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
         <span class="listing-item-hint">Tap to view details & edit →</span>
         <button class="btn ${isPaused ? 'btn-primary' : 'btn-secondary'}" 
@@ -7120,7 +7401,13 @@ function openListingDetail(idx) {
 }
 
 function buildOwnerEditableFields(l) {
-  const genderOptions = ['Any', 'Male only', 'Female only'].map(g => 
+  let genderOptionsList;
+  if (l.propType === 'bed') {
+    genderOptionsList = ['Only Men', 'Only Women'];
+  } else {
+    genderOptionsList = ['Any', 'Only Men', 'Only Women', 'Family', 'Couple (Unmarried)', 'Mixed Group (Friends)'];
+  }
+  const genderOptions = genderOptionsList.map(g => 
     `<option value="${g}" ${l.gender === g ? 'selected' : ''}>${g}</option>`
   ).join('');
   
@@ -7147,7 +7434,7 @@ function buildOwnerEditableFields(l) {
         <div class="fg">
           <label>Brokerage</label>
           <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
-          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
         </div>
         <div class="fg">
           <label>Max People Allowed</label>
@@ -7167,7 +7454,7 @@ function buildOwnerEditableFields(l) {
         <div class="fg">
           <label>Brokerage</label>
           <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
-          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
         </div>
         <div class="fg">
           <label>Room Capacity</label>
@@ -7187,7 +7474,7 @@ function buildOwnerEditableFields(l) {
         <div class="fg">
           <label>Brokerage</label>
           <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
-          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
         </div>
         <div class="fg"></div>
       </div>`;
@@ -7223,16 +7510,13 @@ function buildTenantEditableFields(l) {
   let genderLabel = 'Your Gender';
   let genderOptionsList;
   
-  if (l.propType === 'entire') {
+  if (l.propType === 'entire' || l.propType === 'room') {
     genderLabel = 'People Living';
     genderOptionsList = ['Only Men', 'Only Women', 'Family', 'Couple (Unmarried)', 'Mixed Group (Friends)'];
-  } else if (l.propType === 'room' && l.people && l.people !== 'Just me (1 person)') {
-    genderLabel = 'Group Composition';
-    genderOptionsList = ['Only Men', 'Only Women', 'Couple / Mixed'];
   } else if (l.propType === 'bed') {
     genderOptionsList = ['Men', 'Women'];
   } else {
-    genderOptionsList = ['Male', 'Female'];
+    genderOptionsList = ['Only Men', 'Only Women'];
   }
   
   const genderOptions = genderOptionsList.map(g => 
@@ -7488,7 +7772,7 @@ async function saveListingChanges() {
     }, 1500);
     
     // Refresh explore if map is loaded
-    if (exploreMap) refreshExplore();
+    if (exploreMap) fetchLiveListings();
     
   } catch (err) {
     console.error('Error saving listing:', err);
@@ -7534,7 +7818,7 @@ async function toggleListingStatus(idx) {
     renderProfilePage();
     
     // Refresh explore map to reflect changes
-    if (exploreMap) refreshExplore();
+    if (exploreMap) fetchLiveListings();
     
   } catch (err) {
     console.error(`Failed to ${actionText} listing:`, err);
@@ -7548,15 +7832,10 @@ async function deleteMyListing(idx) {
   const listingToDelete = myListings[idx];
 
   if (listingToDelete.id) {
-    // Delete photos from storage bucket first using safe URL parsing
-    if (listingToDelete.photo_urls && listingToDelete.photo_urls.length > 0) {
-      const fileNames = listingToDelete.photo_urls.map(url => extractFilenameFromSupabaseUrl(url)).filter(Boolean);
-      if (fileNames.length > 0) {
-        const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
-        if (storageErr) console.error("Error deleting photos from storage:", storageErr);
-      }
-    }
+    // Save photo URLs before deletion for cleanup
+    const photoUrls = listingToDelete.photo_urls ? [...listingToDelete.photo_urls] : [];
 
+    // Delete DB row first to avoid orphaned files if DB delete fails
     const { error } = await _supabase
       .from('listings')
       .delete()
@@ -7567,13 +7846,22 @@ async function deleteMyListing(idx) {
       alert("Could not delete listing from the database.");
       return;
     }
+
+    // Clean up photos from storage after successful DB deletion
+    if (photoUrls.length > 0) {
+      const fileNames = photoUrls.map(url => extractFilenameFromSupabaseUrl(url)).filter(Boolean);
+      if (fileNames.length > 0) {
+        const { error: storageErr } = await _supabase.storage.from('property_photos').remove(fileNames);
+        if (storageErr) console.error("Error deleting photos from storage:", storageErr);
+      }
+    }
   }
 
   myListings.splice(idx, 1);
   saveProfile();
   renderProfilePage();
   
-  if (exploreMap) refreshExplore(); 
+  if (exploreMap) fetchLiveListings(); 
 }
 
 /**
@@ -7706,7 +7994,6 @@ window.addEventListener('load', async () => {
     updateBottomNav('landing');
   }
   
-  // ════════ FIX ISSUE 2 & 8: Keyboard Detection ════════
   // Detect virtual keyboard open/close on mobile
   if (window.visualViewport) {
     let initialViewportHeight = window.visualViewport.height;
@@ -7729,28 +8016,35 @@ window.addEventListener('load', async () => {
         initialViewportHeight = window.visualViewport.height;
       }, 100);
     });
+  } else {
+    // Fallback keyboard detection using focus/blur on inputs
+    // Only used when visualViewport API is unavailable to avoid conflicts
+    document.addEventListener('focusin', (e) => {
+      if (e.target.matches('input, textarea, select') && window.innerWidth <= 768) {
+        setTimeout(() => {
+          document.body.classList.add('keyboard-open');
+        }, 300);
+      }
+    });
+    
+    document.addEventListener('focusout', (e) => {
+      if (e.target.matches('input, textarea, select') && window.innerWidth <= 768) {
+        setTimeout(() => {
+          document.body.classList.remove('keyboard-open');
+        }, 100);
+      }
+    });
   }
-  
-  // Fallback keyboard detection using focus/blur on inputs
+
+  // Scroll focused input into view on mobile (always, regardless of detection method)
   document.addEventListener('focusin', (e) => {
-    if (e.target.matches('input, textarea, select') && window.innerWidth <= 768) {
+    if (e.target.matches('input, textarea') && window.innerWidth <= 768) {
       setTimeout(() => {
-        document.body.classList.add('keyboard-open');
-        // Scroll input into view
         e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 300);
     }
   });
   
-  document.addEventListener('focusout', (e) => {
-    if (e.target.matches('input, textarea, select') && window.innerWidth <= 768) {
-      setTimeout(() => {
-        document.body.classList.remove('keyboard-open');
-      }, 100);
-    }
-  });
-  
-  // ════════ FIX ISSUE 6: Swipe-to-close Detail Panel ════════
   initDetailPanelSwipe();
 });
 
@@ -7848,37 +8142,32 @@ function handleMoveinImmediateFilter() {
   updateMobileFilterButtons();
 }
 
-// Sync move-in date between mobile and desktop
+// Sync move-in date between mobile and desktop — single source of truth
 function syncMoveinFilter(source) {
   const desktopDt = document.getElementById('movein-filter');
   const mobileDt = document.getElementById('movein-filter-mobile');
-  if (source === 'mobile') {
-    if (desktopDt && mobileDt) desktopDt.value = mobileDt.value;
-  } else {
-    if (desktopDt && mobileDt) mobileDt.value = desktopDt.value;
-  }
+  const sourceVal = source === 'mobile' ? mobileDt?.value : desktopDt?.value;
+  if (desktopDt) desktopDt.value = sourceVal || '';
+  if (mobileDt) mobileDt.value = sourceVal || '';
   applyFilters();
   updateMobileFilterButtons();
 }
 
-// Sync move-in immediate between mobile and desktop
+// Sync move-in immediate between mobile and desktop — single source of truth
 function syncMoveinImmediateFilter(source) {
   const desktopChk = document.getElementById('movein-immediate-filter');
   const desktopDt = document.getElementById('movein-filter');
   const mobileChk = document.getElementById('movein-immediate-filter-mobile');
   const mobileDt = document.getElementById('movein-filter-mobile');
   
-  if (source === 'mobile') {
-    const checked = mobileChk?.checked || false;
-    if (desktopChk) desktopChk.checked = checked;
-    if (desktopDt) { desktopDt.disabled = checked; if (checked) desktopDt.value = ''; }
-    if (mobileDt) { mobileDt.disabled = checked; if (checked) mobileDt.value = ''; }
-  } else {
-    const checked = desktopChk?.checked || false;
-    if (mobileChk) mobileChk.checked = checked;
-    if (mobileDt) { mobileDt.disabled = checked; if (checked) mobileDt.value = ''; }
-    if (desktopDt) { desktopDt.disabled = checked; if (checked) desktopDt.value = ''; }
-  }
+  const checked = source === 'mobile' ? (mobileChk?.checked || false) : (desktopChk?.checked || false);
+  
+  // Update all DOM elements from single source of truth
+  if (desktopChk) desktopChk.checked = checked;
+  if (mobileChk) mobileChk.checked = checked;
+  if (desktopDt) { desktopDt.disabled = checked; if (checked) desktopDt.value = ''; }
+  if (mobileDt) { mobileDt.disabled = checked; if (checked) mobileDt.value = ''; }
+  
   applyFilters();
   updateMobileFilterButtons();
 }
@@ -7900,8 +8189,6 @@ function toggleBrokerageAmount(selectId, inputId) {
     if (sel.value !== 'Yes') inp.value = '';
   }
 }
-
-// Note: tenant room gender is now set directly in the form — no dynamic update needed
 
 let selectedPropertyPhotos = [];
 const MAX_FILE_SIZE_MB = 2;
@@ -7957,6 +8244,91 @@ function previewPropertyPhotos(e) {
     };
     reader.readAsDataURL(file);
   });
+}
+
+// AREA REQUEST MODAL (OUT OF BOUNDS)
+
+/**
+ * Handle out-of-bounds location selection.
+ * Shows the Area Request modal once (tracked via localStorage),
+ * then falls back to a standard alert on subsequent attempts.
+ */
+function handleOutOfBoundsSelection() {
+  const hasSeenModal = localStorage.getItem('areaRequestShown');
+  
+  if (!hasSeenModal) {
+    // First time: show the modal and set the flag
+    showAreaRequestModal();
+    localStorage.setItem('areaRequestShown', 'true');
+  } else {
+    // Already shown before: just show an alert with updated messaging
+    alert('We are currently live in Hinjewadi, but expanding soon. Please select a closer location.');
+  }
+}
+
+/**
+ * Show the Area Request modal
+ */
+function showAreaRequestModal() {
+  const overlay = document.getElementById('area-request-overlay');
+  if (overlay) {
+    overlay.classList.add('show');
+    // Clear any previous input
+    document.getElementById('area-request-location').value = '';
+    document.getElementById('area-request-contact').value = '';
+  }
+}
+
+/**
+ * Close the Area Request modal
+ */
+function closeAreaRequestModal(event) {
+  // If called from overlay click, only close if clicking the overlay itself
+  if (event && event.target !== event.currentTarget) return;
+  
+  const overlay = document.getElementById('area-request-overlay');
+  if (overlay) {
+    overlay.classList.remove('show');
+  }
+}
+
+/**
+ * Submit the area request from the modal.
+ * Grabs inputs, hides modal, shows thank you message.
+ * Placeholder for Supabase insert.
+ */
+async function submitAreaRequest() {
+  const locationInput = document.getElementById('area-request-location');
+  const contactInput = document.getElementById('area-request-contact');
+  
+  const requestedArea = locationInput.value.trim();
+  const contactInfo = contactInput.value.trim();
+  
+  if (!requestedArea) {
+    alert('Please enter the area you want us to expand to.');
+    return;
+  }
+  
+  // Save to Supabase database
+  try {
+    const { error } = await _supabase.from('area_requests').insert({
+      requested_area: requestedArea,
+      contact_info: contactInfo || null,
+      user_id: profile?.id || null
+    });
+    
+    if (error) {
+      console.error('Failed to save area request:', error);
+    }
+  } catch (e) {
+    console.error('Error submitting area request:', e);
+  }
+  
+  // Close the modal
+  closeAreaRequestModal();
+  
+  // Show thank you message
+  alert(`Thank you! We've noted your interest in ${requestedArea}. We'll notify you when we expand there!`);
 }
 </script>
 </body>
