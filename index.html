@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>RoomPin — Starting in Hinjewadi, Expanding Across Pune</title>
 
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
@@ -1318,6 +1318,17 @@ input[type=date]:focus{border-color:var(--blue)}
 }
 
 @media(max-width: 768px) {
+  /* iOS auto-zooms the whole page when a focused input has font-size < 16px.
+     Force 16px on every focusable form field on mobile so the page does not
+     zoom on tap. This is the single most important rule for mobile layout
+     stability — without it the fixed bottom nav, map viewport and chat input
+     all get pushed out of place whenever an input receives focus. */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+
   /* Top nav - logo only */
   nav:not(.bottom-nav) { padding: 0 16px; height: 56px; }
   .nav-logo { font-size: 20px; }
@@ -1347,14 +1358,41 @@ input[type=date]:focus{border-color:var(--blue)}
   .role-card h3 { font-size: 12px; }
   .role-card p { font-size: 10px; }
   
-  #page-explore.active { padding-top: 56px; padding-bottom: 0; height: 100vh; height: 100dvh; box-sizing: border-box; overflow: hidden; }
+  /* Pin the explore page into a fixed frame between the top nav (56px) and
+     bottom nav (64px). Using position:fixed with explicit top/bottom anchors
+     means the map area is always exactly the space between the two nav bars,
+     no matter what the browser does with 100vh / 100dvh, URL-bar show/hide,
+     or on-screen keyboard. The map can pan and zoom internally but it can
+     never push the bottom nav off-screen or reveal matches/messages below it. */
+  #page-explore.active {
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    bottom: 64px;
+    padding-top: 0;
+    padding-bottom: 0;
+    height: auto;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
+  /* Safe-area: lift the explore frame above the home-indicator area on notched
+     devices so it aligns with the bottom nav which already honors safe-area. */
+  @supports (padding: max(0px)) {
+    #page-explore.active {
+      bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+  }
   
   /* Flatten Leaflet z-index so it cannot block our filter dropdowns */
   #page-explore .leaflet-pane { z-index: auto !important; }
   #page-explore .leaflet-top, #page-explore .leaflet-bottom { z-index: 500 !important; }
   
   #page-explore .leaflet-control-attribution {
-    margin-bottom: 70px !important;
+    /* Map no longer extends under the bottom nav (#page-explore is bounded
+       by bottom:64px), so no artificial margin is needed here. */
+    margin-bottom: 0 !important;
     font-size: 9px;
     max-width: 50vw;
     text-align: right;
@@ -1673,7 +1711,7 @@ input[type=date]:focus{border-color:var(--blue)}
   .dp-grid { gap: 6px; }
   .dp-field { padding: 6px 8px; }
 
-  .map-legend { bottom: 80px; right: 10px; padding: 6px 8px; }
+  .map-legend { bottom: 10px; right: 10px; padding: 6px 8px; }
   .legend-row { font-size: 10px; }
   .price-marker { font-size: 12px; padding: 4px 8px; min-width: 44px; }
   
@@ -1765,10 +1803,10 @@ input[type=date]:focus{border-color:var(--blue)}
   .map-preview-box { height: 220px; }
   
   .setup-card { padding: 24px 16px; }
-  .setup-input { height: 42px; font-size: 14px; }
+  .setup-input { height: 42px; /* font-size forced to 16px by mobile rule above to prevent iOS auto-zoom */ }
   
   .explore-search { left: 54px; right: 10px; }
-  .explore-search input { font-size: 12px; height: 36px; }
+  .explore-search input { height: 36px; /* font-size forced to 16px by mobile rule above to prevent iOS auto-zoom */ }
   
   .dp-rent { font-size: 20px; }
   .dp-name { font-size: 14px; }
@@ -1855,13 +1893,13 @@ input[type=date]:focus{border-color:var(--blue)}
       <div class="role-cards">
         <div class="role-card" id="rc-owner" onclick="selectRole('owner')">
           <div class="icon">🏠</div>
-          <h3>I have a room</h3>
+          <h3>Listing a Property</h3>
           <p>I want to list my property and find tenants</p>
         </div>
         <div class="role-card" id="rc-tenant" onclick="selectRole('tenant')">
           <div class="icon">🔍</div>
-          <h3>I'm looking for a room</h3>
-          <p>I want to find a room or roommate in Hinjewadi</p>
+          <h3>Searching for a Place</h3>
+          <p>I want to find a place or roommate.</p>
         </div>
       </div>
       <button class="setup-btn" id="step2-btn" onclick="finishSetup()" disabled>Complete Setup →</button>
@@ -1883,7 +1921,7 @@ input[type=date]:focus{border-color:var(--blue)}
 <div id="page-landing" class="page active">
   <div class="hero">
     <div class="hero-badge">Currently live in Hinjewadi (expanding soon)</div>
-    <h1>Find Rooms &amp; Roommates —<br><em>On a Map</em></h1>
+    <h1>Find Apartments, Rooms &amp; Roommates —<br><em>On a Map</em></h1>
     <p>Find rooms, explore transparent listings, and match with roommates to buddy up. All on a map.</p>
     <div class="hero-cta">
       <button class="btn btn-primary" onclick="showPage('explore')">Explore Listings →</button>
@@ -1923,7 +1961,7 @@ input[type=date]:focus{border-color:var(--blue)}
     <div class="why-inner">
       <div class="section-label">Why this exists</div>
       <div class="section-title">Apartment searching is broken.</div>
-      <p class="why-p">WhatsApp groups. Telegram channels. Random posts on housing forums. Scattered listings everywhere. Finding a room near your Hinjewadi office is chaos. RoomPin brings everything into one structured, map-based experience.</p>
+      <p class="why-p">WhatsApp groups. Telegram channels. Random posts on housing forums. Scattered listings everywhere. Finding a place near your office is chaos. RoomPin brings everything into one structured, map-based experience.</p>
       <div class="why-stats">
         <div class="why-stat"><div class="num">Transparent</div><div class="lbl">All details upfront</div></div>
         <div class="why-stat"><div class="num">Buddy Up</div><div class="lbl">Match with future roommates</div></div>
@@ -2181,7 +2219,7 @@ input[type=date]:focus{border-color:var(--blue)}
     
     <div class="filters-panel">
       <div class="filters-header">
-        <h2>Available Rooms</h2>
+        <h2>Available Listings</h2>
         <p>Showing <span class="listing-count" id="listing-count">0 listings</span></p>
       </div>
       <div class="filter-section">
@@ -2758,7 +2796,7 @@ input[type=date]:focus{border-color:var(--blue)}
   <div class="success-card">
     <div class="success-icon">✅</div>
     <h3>Listing Published!</h3>
-    <p>Your listing is now live on the map. People in Hinjewadi can find and contact you directly.</p>
+    <p>Your listing is now live on the map. People in the area can find and contact you directly.</p>
     <div class="success-btns">
       <button class="btn btn-primary" style="justify-content:center" onclick="goToExploreAfterPost()">View on Map →</button>
       <button class="btn btn-secondary" style="justify-content:center;display:none" id="post-another-btn" onclick="closeSuccess()">Post Another Listing</button>
@@ -2783,7 +2821,7 @@ input[type=date]:focus{border-color:var(--blue)}
     <button class="area-request-close" onclick="closeAreaRequestModal()">✕</button>
     <div class="area-request-icon">🚀</div>
     <h3 class="area-request-title">We aren't in that area yet!</h3>
-    <p class="area-request-text">RoomPin is currently live in Hinjewadi. Want us to launch in your area next?</p>
+    <p class="area-request-text">RoomPin is currently live in select starting areas. Want us to launch in your area next?</p>
     <div class="area-request-form">
       <input type="text" class="area-request-input" id="area-request-location" placeholder="Your requested area (e.g., Wakad, Baner)">
       <input type="text" class="area-request-input" id="area-request-contact" placeholder="Phone or Email (optional)">
@@ -2806,17 +2844,17 @@ const OPERATING_RADIUS_KM = 25;
 
 // App State
 let profile = null;
-let verifiedAuthData = null;
-let myListings = []; 
+let verified_auth_data = null;
+let my_listings = []; 
 let lastPostedListing = null;
 
-let liveListings = []; 
+let live_listings = []; 
 let currentFilteredListings = [];
 
 // Connection & Messages State
 let connections = [];
-let currentChat = null;
-let chatMessages = [];
+let current_chat = null;
+let chat_messages = [];
 let activeMessageTab = 'chats';
   
 let exploreMap = null, pickerMap = null, previewMap = null;
@@ -2831,8 +2869,8 @@ let genderFilter = [];
 let brokerageFilter = 'Any'; // Brokerage stays single-select (Any/Yes/No)
 let bhkFilter = [];
 let furnishingFilter = [];
-let selectedPropType = null, selectedTenantLooking = null;
-let pinLat = null, pinLng = null, circleCenter = null, circleRadiusKm = null;
+let selected_prop_type = null, selected_tenant_looking = null;
+let pin_lat = null, pin_lng = null, circle_center = null, circle_radius_km = null;
 let searchTimeout = null;
 
 function escHTML(str) {
@@ -2851,21 +2889,21 @@ function mapRowToListing(row, profileData) {
   const isOwner = row.role === 'owner';
   let listing = {
     id: row.id, role: row.role, name: profileData.name, phone: profileData.phone, ismine: true,
-    lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type,
-    movein: row.movein_date, gender: row.gender_pref || 'Any',
+    lat: parseFloat(row.lat), lng: parseFloat(row.lng), prop_type: row.prop_type,
+    movein_date: row.movein_date, gender_pref: row.gender_pref || 'Any',
     furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
-    bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
+    bhk: row.bhk, description: row.description, photo_url: row.photo_url,
     photo_urls: row.photo_urls,
-    radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
-    bedType: row.bed_type, capacity: row.capacity_allowed,
-    peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-    people: row.tenant_people_count, washroom: row.washroom || null,
-    brokerageAmt: row.brokerage_amt || null,
+    radius_km: row.radius_km ? parseFloat(row.radius_km) : null,
+    bed_type: row.bed_type, capacity_allowed: row.capacity_allowed,
+    people_in_flat: row.people_in_flat, people_in_room: row.people_in_room,
+    tenant_people_count: row.tenant_people_count, washroom: row.washroom || null,
+    brokerage_amt: row.brokerage_amt || null,
     status: row.status || 'active',
     created_at: row.created_at
   };
-  if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
-  else { listing.budget = parseFloat(row.price); }
+  if (isOwner) { listing.price = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
+  else { listing.price = parseFloat(row.price); }
   return listing;
 }
 
@@ -2875,7 +2913,7 @@ function calcTrustFactor(listing) {
   // Has photos uploaded (+30)
   if (listing.photo_urls && listing.photo_urls.length > 0) score += 30;
   // Has a description (+20)
-  if (listing.desc && listing.desc.trim().length > 20) score += 20;
+  if (listing.description && listing.description.trim().length > 20) score += 20;
   // Account age: older accounts get more trust (+20 max)
   if (listing.created_at) {
     const ageMs = Date.now() - new Date(listing.created_at).getTime();
@@ -2883,9 +2921,9 @@ function calcTrustFactor(listing) {
     score += Math.min(20, Math.floor(ageDays));
   }
   // Has move-in date set (+10)
-  if (listing.movein) score += 10;
+  if (listing.movein_date) score += 10;
   // Has gender preference set (+10)
-  if (listing.gender && listing.gender !== 'Any') score += 10;
+  if (listing.gender_pref && listing.gender_pref !== 'Any') score += 10;
   // Has furnishing info (+10)
   if (listing.furnishing && listing.furnishing !== 'Any') score += 10;
 
@@ -2920,7 +2958,7 @@ function checkStep1() {
 function checkStep2() {
   const name = document.getElementById('setup-name').value.trim();
   const btn = document.getElementById('step2-btn');
-  btn.disabled = !(name.length > 0 && selectedRole !== null);
+  btn.disabled = !(name.length > 0 && selected_role !== null);
 }
 
 async function showOTP(e) {
@@ -2972,7 +3010,7 @@ async function goStep2() {
     return;
   }
 
-  verifiedAuthData = authData;
+  verified_auth_data = authData;
   btn.textContent = "Checking account...";
 
   // Check if they already exist in the database
@@ -2992,7 +3030,7 @@ async function goStep2() {
       .select('*')
       .eq('user_id', profile.id);
     
-    myListings = userListings && userListings.length > 0 
+    my_listings = userListings && userListings.length > 0 
       ? userListings.map(row => mapRowToListing(row, profile)) 
       : [];
     
@@ -3019,21 +3057,21 @@ async function goStep2() {
   }
 }
 
-let selectedRole = null;
+let selected_role = null;
 function selectRole(role) {
-  selectedRole = role;
+  selected_role = role;
   document.getElementById('rc-owner').classList.toggle('selected', role === 'owner');
   document.getElementById('rc-tenant').classList.toggle('selected', role === 'tenant');
   checkStep2(); // Re-validate when they click a role
 }
 async function finishSetup() {
-  if (!selectedRole) return;
+  if (!selected_role) return;
   const btn = document.getElementById('step2-btn');
   btn.disabled = true; 
   btn.textContent = "Setting up...";
 
   // Use the auth data already verified in goStep2()
-  const authData = verifiedAuthData;
+  const authData = verified_auth_data;
   if (!authData || !authData.user) {
     alert("Session expired. Please start over.");
     btn.disabled = false;
@@ -3047,7 +3085,7 @@ async function finishSetup() {
     id: user.id, 
     name: document.getElementById('setup-name').value.trim(),
     phone: document.getElementById('setup-phone').value.trim(),
-    role: selectedRole
+    role: selected_role
   };
 
   // Upsert ensures we don't get errors if a test user logs in twice
@@ -3071,7 +3109,7 @@ async function finishSetup() {
     .select('*')
     .eq('user_id', profile.id);
   
-  myListings = userListings && userListings.length > 0 
+  my_listings = userListings && userListings.length > 0 
     ? userListings.map(row => mapRowToListing(row, profile)) 
     : [];
   
@@ -3088,14 +3126,14 @@ async function finishSetup() {
 }
 
 function saveProfile() {
-  localStorage.setItem('roompin_profile', JSON.stringify(profile));
-  localStorage.setItem('roompin_listings', JSON.stringify(myListings));
+  localStorage.setItem('roompin_profile_v2', JSON.stringify(profile));
+  localStorage.setItem('roompin_listings_v2', JSON.stringify(my_listings));
 }
 
 function loadProfile() {
-  const p = localStorage.getItem('roompin_profile');
-  const l = localStorage.getItem('roompin_listings');
-  if (p) { profile = JSON.parse(p); myListings = l ? JSON.parse(l) : []; return true; }
+  const p = localStorage.getItem('roompin_profile_v2');
+  const l = localStorage.getItem('roompin_listings_v2');
+  if (p) { profile = JSON.parse(p); my_listings = l ? JSON.parse(l) : []; return true; }
   return false;
 }
 
@@ -3103,7 +3141,7 @@ function updateMapLegend() {
   const legend = document.getElementById('dynamic-map-legend');
   if (!legend) return;
   legend.innerHTML = `
-    <div class="legend-row"><span class="legend-dot owner"></span> Available room</div>
+    <div class="legend-row"><span class="legend-dot owner"></span> Available property</div>
     ${profile ? '<div class="legend-row"><span class="legend-dot mine"></span> Your listing</div>' : ''}
   `;
 }
@@ -3113,7 +3151,7 @@ function applyProfileToUI() {
   const initial = (profile.name || 'U').charAt(0).toUpperCase();
   document.getElementById('nav-profile-btn').textContent = initial;
   if (profile.role) {
-    document.getElementById('create-title').textContent = profile.role === 'owner' ? 'Post a Room' : 'Post Your Search';
+    document.getElementById('create-title').textContent = profile.role === 'owner' ? 'Post a Listing' : 'Post Your Search';
     document.getElementById('create-sub').textContent = profile.role === 'owner' ? 'List your property. Free. Reach tenants directly.' : 'Tell people what you\'re looking for.';
     document.getElementById('prop-type-card').style.display      = profile.role === 'owner' ? 'block' : 'none';
     document.getElementById('tenant-looking-card').style.display = profile.role === 'tenant' ? 'block' : 'none';
@@ -3159,7 +3197,7 @@ async function logoutUser() {
   await _supabase.auth.signOut();
   localStorage.clear();
   profile = null;
-  myListings = [];
+  my_listings = [];
   location.reload();
 }
 
@@ -3170,7 +3208,7 @@ async function resetProfile() {
     if (profile && profile.id) {
       // Save photo URLs before deletion for cleanup
       const allPhotoUrls = [];
-      for (const listing of myListings) {
+      for (const listing of my_listings) {
         if (listing.photo_urls && listing.photo_urls.length > 0) {
           allPhotoUrls.push(...listing.photo_urls);
         }
@@ -3202,12 +3240,13 @@ async function resetProfile() {
   }
 
   await _supabase.auth.signOut();
-  localStorage.clear(); profile = null; myListings = []; location.reload();
+  localStorage.clear(); profile = null; my_listings = []; location.reload();
 }
 
 function showPage(page) {
-  // Force login for profile and messages pages
-  if ((page === 'profile' || page === 'messages') && !profile) {
+  // Force login for protected pages: profile, messages, matches, and create (post a listing)
+  const protectedPages = ['profile', 'messages', 'matches', 'create'];
+  if (protectedPages.includes(page) && !profile) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('page-setup').classList.add('active'); 
     
@@ -3238,7 +3277,7 @@ if (page === 'explore') {
   if (page === 'create') { 
     checkTenantAlreadyListed(); 
     // Reset stale photo state when entering create page
-    selectedPropertyPhotos = [];
+    selected_property_photos = [];
     const photoInput = document.getElementById('prop-photo-input');
     if (photoInput) photoInput.value = '';
     const photoPreview = document.getElementById('prop-photo-preview');
@@ -3356,47 +3395,47 @@ function isSameGenderForBuddy(g1, g2) {
 // Full property matching: tenant looking for owner's property
 function isPropertyMatch(tenant, owner) {
   // 1. Same property type
-  if (tenant.propType !== owner.propType) return { isMatch: false, score: 0 };
+  if (tenant.prop_type !== owner.prop_type) return { isMatch: false, score: 0 };
 
   // 2. Location: owner's pin must be inside tenant's search circle
   const dist = haversineKm(tenant.lat, tenant.lng, owner.lat, owner.lng);
-  const maxRadius = tenant.radiusKm || 1;
+  const maxRadius = tenant.radius_km || 1;
   if (dist > maxRadius) return { isMatch: false, score: 0 };
 
   // 3. Budget: owner's rent must be at or below tenant's max budget
-  const rent = owner.rent || 0;
-  const budget = tenant.budget || 0;
+  const rent = owner.price || 0;
+  const budget = tenant.price || 0;
   if (rent > budget) return { isMatch: false, score: 0 };
 
   // --- Type-specific hard rules ---
-  if (tenant.propType === 'entire') {
+  if (tenant.prop_type === 'entire') {
     // BHK matching - skip if tenant wants "Any"
     if (tenant.bhk && tenant.bhk !== 'Any' && owner.bhk) {
       if (tenant.bhk !== owner.bhk) return { isMatch: false, score: 0 };
     }
-    const tenantPeople = parseHeadcount(tenant.people);
-    const ownerCapacity = parseHeadcount(owner.capacity);
+    const tenantPeople = parseHeadcount(tenant.tenant_people_count);
+    const ownerCapacity = parseHeadcount(owner.capacity_allowed);
     if (tenantPeople > 0 && ownerCapacity > 0) {
       if (ownerCapacity < tenantPeople) return { isMatch: false, score: 0 };
     }
-    if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
-  } else if (tenant.propType === 'room') {
+    if (!isGenderMatch(owner.gender_pref, tenant.gender_pref)) return { isMatch: false, score: 0 };
+  } else if (tenant.prop_type === 'room') {
     // BHK matching - skip if tenant wants "Any"
     if (tenant.bhk && tenant.bhk !== 'Any' && owner.bhk) {
       if (tenant.bhk !== owner.bhk) return { isMatch: false, score: 0 };
     }
-    const tenantPeople = parseHeadcount(tenant.people);
-    const ownerCapacity = parseHeadcount(owner.capacity);
+    const tenantPeople = parseHeadcount(tenant.tenant_people_count);
+    const ownerCapacity = parseHeadcount(owner.capacity_allowed);
     if (tenantPeople > 0 && ownerCapacity > 0) {
       if (ownerCapacity < tenantPeople) return { isMatch: false, score: 0 };
     }
-    if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
-  } else if (tenant.propType === 'bed') {
+    if (!isGenderMatch(owner.gender_pref, tenant.gender_pref)) return { isMatch: false, score: 0 };
+  } else if (tenant.prop_type === 'bed') {
     // Bed type matching - skip if tenant wants "Any"
-    if (tenant.bedType && tenant.bedType !== 'Any' && owner.bedType) {
-      if (tenant.bedType !== owner.bedType) return { isMatch: false, score: 0 };
+    if (tenant.bed_type && tenant.bed_type !== 'Any' && owner.bed_type) {
+      if (tenant.bed_type !== owner.bed_type) return { isMatch: false, score: 0 };
     }
-    if (!isGenderMatch(owner.gender, tenant.gender)) return { isMatch: false, score: 0 };
+    if (!isGenderMatch(owner.gender_pref, tenant.gender_pref)) return { isMatch: false, score: 0 };
   }
 
   let score = 0;
@@ -3418,8 +3457,8 @@ function isPropertyMatch(tenant, owner) {
   }
 
   // Timeline (20 pts): 20 if owner available <= tenant movein, scale to 0 if 7 days later
-  const tenantDate = normalizeMoveinDate(tenant.movein);
-  const ownerDate = normalizeMoveinDate(owner.movein);
+  const tenantDate = normalizeMoveinDate(tenant.movein_date);
+  const ownerDate = normalizeMoveinDate(owner.movein_date);
   if (tenantDate && ownerDate) {
     const diffMs = ownerDate - tenantDate;
     const diffDays = diffMs / (1000 * 60 * 60 * 24);
@@ -3436,7 +3475,7 @@ function isPropertyMatch(tenant, owner) {
   }
 
   // Washroom (10 pts): only for Private Room
-  if (tenant.propType === 'room') {
+  if (tenant.prop_type === 'room') {
     const tenantWR = tenant.washroom || 'Any';
     if (tenantWR === 'Any') {
       score += 10;
@@ -3469,44 +3508,44 @@ function scoreFurnishingProperty(tenantF, ownerF) {
 // Full buddy matching: tenant finding another tenant
 function isBuddyMatch(myListing, other) {
   // Only for room and bed types
-  if (myListing.propType === 'entire' || other.propType === 'entire') return { isMatch: false, score: 0 };
+  if (myListing.prop_type === 'entire' || other.prop_type === 'entire') return { isMatch: false, score: 0 };
 
   // 1. Same goal: both want the same type
-  if (myListing.propType !== other.propType) return { isMatch: false, score: 0 };
+  if (myListing.prop_type !== other.prop_type) return { isMatch: false, score: 0 };
 
   // 2. For beds: sharing type matching is flexible
   // - If either has "Any", they match
   // - Otherwise, both should be looking for shared beds (any sharing type matches)
   // This allows Double, Triple, Four+ sharing tenants to buddy up
-  if (myListing.propType === 'bed') {
+  if (myListing.prop_type === 'bed') {
     // Both must have bed type (unless Any is selected)
-    const myBedType = myListing.bedType || 'Any';
-    const otherBedType = other.bedType || 'Any';
+    const myBedType = myListing.bed_type || 'Any';
+    const otherBedType = other.bed_type || 'Any';
     // If neither is "Any" and they're different, still allow match since they're all looking for shared beds
     // No hard filter on bed type for buddy matching - they can team up regardless of sharing preference
   }
 
   // 3. Location: search circles must overlap
   const dist = haversineKm(myListing.lat, myListing.lng, other.lat, other.lng);
-  const myRadius = myListing.radiusKm || 1;
-  const theirRadius = other.radiusKm || 1;
+  const myRadius = myListing.radius_km || 1;
+  const theirRadius = other.radius_km || 1;
   const sumRadii = myRadius + theirRadius;
   if (dist >= sumRadii) return { isMatch: false, score: 0 };
 
   // 4. Gender: must be the exact same gender
-  if (!isSameGenderForBuddy(myListing.gender, other.gender)) return { isMatch: false, score: 0 };
+  if (!isSameGenderForBuddy(myListing.gender_pref, other.gender_pref)) return { isMatch: false, score: 0 };
 
   // 5. Budget alignment: cannot be more than 25% apart
-  const myBudget = myListing.budget || 0;
-  const theirBudget = other.budget || 0;
+  const myBudget = myListing.price || 0;
+  const theirBudget = other.price || 0;
   const higherBudget = Math.max(myBudget, theirBudget);
   if (higherBudget <= 0) return { isMatch: false, score: 0 };
   const budgetDiff = Math.abs(myBudget - theirBudget);
   if ((budgetDiff / higherBudget) > 0.25) return { isMatch: false, score: 0 };
 
   // 6. Timeline: within 10 days of each other
-  const myDate = normalizeMoveinDate(myListing.movein);
-  const theirDate = normalizeMoveinDate(other.movein);
+  const myDate = normalizeMoveinDate(myListing.movein_date);
+  const theirDate = normalizeMoveinDate(other.movein_date);
   if (myDate && theirDate) {
     const daysDiff = Math.abs(myDate - theirDate) / (1000 * 60 * 60 * 24);
     if (daysDiff > 10) return { isMatch: false, score: 0 };
@@ -3558,14 +3597,14 @@ function updateMatchesBadge() {
   if (!badge) return;
   
   // Only show badge for tenants looking for room or bed
-  if (!profile || profile.role !== 'tenant' || !myListings || myListings.length === 0) {
+  if (!profile || profile.role !== 'tenant' || !my_listings || my_listings.length === 0) {
     badge.classList.remove('show');
     cachedBuddyCount = null;
     return;
   }
   
-  const myListing = myListings[0];
-  if (myListing.propType === 'entire') {
+  const myListing = my_listings[0];
+  if (myListing.prop_type === 'entire') {
     badge.classList.remove('show');
     cachedBuddyCount = null;
     return;
@@ -3586,14 +3625,14 @@ function updateMatchesBadge() {
 
 // Calculate buddy matches lazily when Matches tab is opened
 function calculateBuddyMatchesLazy() {
-  if (!profile || profile.role !== 'tenant' || !myListings || myListings.length === 0) {
+  if (!profile || profile.role !== 'tenant' || !my_listings || my_listings.length === 0) {
     cachedBuddyCount = 0;
     buddyCountNeedsRefresh = false;
     return 0;
   }
   
-  const myListing = myListings[0];
-  if (myListing.propType === 'entire') {
+  const myListing = my_listings[0];
+  if (myListing.prop_type === 'entire') {
     cachedBuddyCount = 0;
     buddyCountNeedsRefresh = false;
     return 0;
@@ -3605,7 +3644,7 @@ function calculateBuddyMatchesLazy() {
   }
   
   // Count buddy matches using the full buddy matching logic
-  const otherTenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
+  const otherTenants = live_listings.filter(l => l.role === 'tenant' && !l.ismine);
   let buddyCount = 0;
   
   otherTenants.forEach(t => {
@@ -3775,7 +3814,7 @@ async function fetchLiveListings() {
       return; 
     }
 
-    liveListings = data.map(row => {
+    live_listings = data.map(row => {
       const isOwner = row.role === 'owner';
       const isMine = profile && profile.id === row.user_id;
 
@@ -3783,17 +3822,17 @@ async function fetchLiveListings() {
         id: row.id, role: row.role, 
         user_id: row.user_id,
         name: row.profiles?.name || 'User', phone: row.profiles?.phone || 'No phone',
-        lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type, ismine: isMine, movein: row.movein_date,
-        gender: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, desc: row.description,
-        radiusKm: row.radius_km ? parseFloat(row.radius_km) : null, bedType: row.bed_type, capacity: row.capacity_allowed,
-        peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room, people: row.tenant_people_count, photo_urls: row.photo_urls || [],
-        washroom: row.washroom || null, brokerageAmt: row.brokerage_amt || null,
+        lat: parseFloat(row.lat), lng: parseFloat(row.lng), prop_type: row.prop_type, ismine: isMine, movein_date: row.movein_date,
+        gender_pref: row.gender_pref || 'Any', furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No', bhk: row.bhk, description: row.description,
+        radius_km: row.radius_km ? parseFloat(row.radius_km) : null, bed_type: row.bed_type, capacity_allowed: row.capacity_allowed,
+        people_in_flat: row.people_in_flat, people_in_room: row.people_in_room, tenant_people_count: row.tenant_people_count, photo_urls: row.photo_urls || [],
+        washroom: row.washroom || null, brokerage_amt: row.brokerage_amt || null,
         status: row.status || 'active', // Include status field
         created_at: row.created_at
       };
 
-      if (isOwner) { uiListing.rent = parseFloat(row.price); uiListing.deposit = parseFloat(row.deposit); } 
-      else { uiListing.budget = parseFloat(row.price); }
+      if (isOwner) { uiListing.price = parseFloat(row.price); uiListing.deposit = parseFloat(row.deposit); } 
+      else { uiListing.price = parseFloat(row.price); }
       
       return uiListing;
     });
@@ -3815,7 +3854,7 @@ async function fetchLiveListings() {
     const openCard = document.querySelector('.listing-card.active');
     if (openCard) {
       const id = openCard.getAttribute('data-id');
-      const listing = liveListings.find(l => l.id === id);
+      const listing = live_listings.find(l => l.id === id);
       if (listing) renderSingleDetailById(id);
     }
   } catch(e) {
@@ -3864,7 +3903,7 @@ function initExploreMap() {
 
 function applyFilters() {
   if (!exploreMap) return;
-  const ownerListings = liveListings.filter(l => l.role === 'owner');
+  const ownerListings = live_listings.filter(l => l.role === 'owner');
   const rentMax  = parseInt(document.getElementById('rent-max').value);
   const moveinImmediateChk = document.getElementById('movein-immediate-filter');
   const moveinImmediate = moveinImmediateChk && moveinImmediateChk.checked;
@@ -3874,7 +3913,7 @@ function applyFilters() {
     // Property Type filter (multi-select)
     if (proptypeFilter.length > 0) {
       const map = { 'Entire Place':'entire', 'Private Room':'room', 'Shared Bed':'bed' };
-      const matchesPropType = proptypeFilter.some(pt => l.propType === map[pt]);
+      const matchesPropType = proptypeFilter.some(pt => l.prop_type === map[pt]);
       if (!matchesPropType) return false;
     }
     // BHK filter (multi-select)
@@ -3882,7 +3921,7 @@ function applyFilters() {
       if (!l.bhk) return false;
       if (!bhkFilter.includes(l.bhk)) return false;
     }
-    if (l.rent > rentMax) return false;
+    if (l.price > rentMax) return false;
     // Furnishing filter (multi-select)
     if (furnishingFilter.length > 0) {
       if (!furnishingFilter.includes(l.furnishing)) return false;
@@ -3890,26 +3929,26 @@ function applyFilters() {
     // Gender filter (multi-select)
     if (genderFilter.length > 0) {
       // If the listing accepts 'Any', it matches all gender filters
-      if (l.gender !== 'Any') {
+      if (l.gender_pref !== 'Any') {
         // Check if listing's gender is in the selected filters
-        if (!genderFilter.includes(l.gender)) return false;
+        if (!genderFilter.includes(l.gender_pref)) return false;
       }
     }
     if (brokerageFilter !== 'Any' && l.brokerage !== brokerageFilter) return false;
     if (brokerageFilter === 'Yes') {
       const brokerageMax = parseInt(document.getElementById('brokerage-max').value);
       if (brokerageMax < 100000) {
-        const listingBrokerageAmt = parseInt(l.brokerageAmt) || 0;
+        const listingBrokerageAmt = parseInt(l.brokerage_amt) || 0;
         if (listingBrokerageAmt > brokerageMax) return false;
       }
     }
     if (moveinImmediate) {
       const today = new Date(new Date().toISOString().split('T')[0]);
-      const listingDate = normalizeMoveinDate(l.movein);
+      const listingDate = normalizeMoveinDate(l.movein_date);
       if (!listingDate || listingDate > today) return false;
     } else if (movein) {
       const filterDate = new Date(movein);
-      const listingDate = normalizeMoveinDate(l.movein);
+      const listingDate = normalizeMoveinDate(l.movein_date);
       if (listingDate && listingDate > filterDate) return false;
     }
     return true;
@@ -3930,9 +3969,9 @@ function haversineKm(lat1, lng1, lat2, lng2) {
 }
 
 function getMySearchArea() {
-  if (!profile || profile.role !== 'tenant' || !myListings || myListings.length === 0) return null;
-  const l = myListings[0];
-  if (l.lat && l.radiusKm) return { lat: l.lat, lng: l.lng, radiusKm: l.radiusKm };
+  if (!profile || profile.role !== 'tenant' || !my_listings || my_listings.length === 0) return null;
+  const l = my_listings[0];
+  if (l.lat && l.radius_km) return { lat: l.lat, lng: l.lng, radius_km: l.radius_km };
   return null;
 }
 
@@ -3945,7 +3984,7 @@ function renderMarkers(owners) {
   const myArea = getMySearchArea();
   if (myArea) {
     const myCircle = L.circle([myArea.lat, myArea.lng], {
-      radius: myArea.radiusKm * 1000,
+      radius: myArea.radius_km * 1000,
       color: '#a855f7', fillColor: '#f3e8ff', fillOpacity: .12, weight: 1.5,
       dashArray: '6 4', interactive: false, className: 'my-search-boundary'
     });
@@ -3954,7 +3993,7 @@ function renderMarkers(owners) {
 
   // Render owner listings as price bubble markers
   owners.forEach(l => {
-    const icon = makePriceIcon(l.rent, l.ismine);
+    const icon = makePriceIcon(l.price, l.ismine);
     const m = L.marker([l.lat, l.lng], { icon });
 
     m.on('click', () => {
@@ -4005,8 +4044,8 @@ function renderMultiDetail(matches, lat, lng) {
             <span class="lc-name" style="font-size:14px;">${escHTML(l.name)}</span>
             <span class="lc-badge ${badgeClass}">${badgeText}</span>
         </div>
-        <div class="lc-rent" style="font-size:16px; margin-top:4px;">${isOwner ? `₹${l.rent.toLocaleString()}/mo` : `Budget ₹${l.budget.toLocaleString()}`}</div>
-        <div class="lc-meta" style="margin-top:4px;">${isOwner ? propTypeLabel(l.propType) : `Looking: ${propTypeLabel(l.propType)}`}</div>
+        <div class="lc-rent" style="font-size:16px; margin-top:4px;">${isOwner ? `₹${l.price.toLocaleString()}/mo` : `Budget ₹${l.price.toLocaleString()}`}</div>
+        <div class="lc-meta" style="margin-top:4px;">${isOwner ? propTypeLabel(l.prop_type) : `Looking: ${propTypeLabel(l.prop_type)}`}</div>
     </div>`;
 });
 
@@ -4015,7 +4054,7 @@ function renderMultiDetail(matches, lat, lng) {
 }
 
 function renderSingleDetailById(id, showBackBtn = false) {
-  const l = liveListings.find(x => x.id === id);
+  const l = live_listings.find(x => x.id === id);
   if (l) renderSingleDetail(l, showBackBtn);
 }
 
@@ -4042,7 +4081,7 @@ function renderSingleDetail(l, showBackBtn = false) {
   const myArea = getMySearchArea();
   if (myArea && isOwner && !l.ismine) {
     const dist = haversineKm(myArea.lat, myArea.lng, l.lat, l.lng);
-    const isMatch = dist <= myArea.radiusKm;
+    const isMatch = dist <= myArea.radius_km;
     matchBanner = isMatch
       ? `<div class="dp-match-banner yes">✅ Match — this property is within your search area</div>`
       : `<div class="dp-match-banner no">📍 ${dist.toFixed(2)} km from your search center — outside your area</div>`;
@@ -4051,13 +4090,13 @@ function renderSingleDetail(l, showBackBtn = false) {
   const ownBanner = l.ismine ? `<div class="own-listing-banner">This is your listing</div>` : '';
 
   let fields = '';
-  const brokerageDisplay = l.brokerage === 'Yes' && l.brokerageAmt ? `Yes (₹${parseInt(l.brokerageAmt).toLocaleString()})` : (l.brokerage || 'No');
+  const brokerageDisplay = l.brokerage === 'Yes' && l.brokerage_amt ? `Yes (₹${parseInt(l.brokerage_amt).toLocaleString()})` : (l.brokerage || 'No');
   if (isOwner) {
-    if (l.propType === 'entire') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div><div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${escHTML(l.capacity)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; } 
-    else if (l.propType === 'room') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div><div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${escHTML(l.capacity)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${escHTML(l.washroom)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>`; } 
-    else { fields = `<div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${escHTML(l.bedType)||'Shared Bed'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; }
+    if (l.prop_type === 'entire') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div><div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${escHTML(l.capacity_allowed)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div><div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; } 
+    else if (l.prop_type === 'room') { fields = `<div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div><div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${escHTML(l.capacity_allowed)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${escHTML(l.washroom)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender_pref)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div>`; } 
+    else { fields = `<div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${escHTML(l.bed_type)||'Shared Bed'}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender_pref)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div><div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`; }
   } else {
-    fields = `<div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div><div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${escHTML(l.people)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div>`;
+    fields = `<div class="dp-field"><div class="dp-field-lbl">Looking for</div><div class="dp-field-val">${propTypeLabel(l.prop_type)}</div></div><div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${escHTML(l.tenant_people_count)||'—'}</div></div><div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'Any'}</div></div><div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div><div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender_pref)||'Any'}</div></div>`;
   }
 
   // Build contact section based on connection status
@@ -4078,11 +4117,11 @@ function renderSingleDetail(l, showBackBtn = false) {
     ${backHtml}
     <div class="dp-role ${l.ismine?'mine':l.role}">${l.ismine?(isOwner?'🟠 YOUR LISTING':'🟣 YOUR SEARCH AREA'):(isOwner?'🏠 OWNER':'🔍 TENANT')}</div>
     <div class="dp-name">${escHTML(l.name)} ${!l.ismine ? renderTrustBadge(l) : ''}</div>
-    <div class="dp-rent">₹${(isOwner?l.rent:l.budget).toLocaleString()}<small>${isOwner?'/month':'/mo budget'}</small></div>
+    <div class="dp-rent">₹${(isOwner?l.price:l.price).toLocaleString()}<small>${isOwner?'/month':'/mo budget'}</small></div>
     ${matchBanner}
     ${ownBanner}
     <div class="dp-grid">${fields}</div>
-    <div class="dp-desc">${escHTML(l.desc)||'—'}</div>
+    <div class="dp-desc">${escHTML(l.description)||'—'}</div>
     ${contactSection}`;
 
   document.getElementById('detail-panel').classList.add('open');
@@ -4383,7 +4422,7 @@ async function sendConnectionRequest(listingId, receiverId) {
 
     // Refresh the listing to show updated state
     setTimeout(() => {
-      const l = liveListings.find(x => x.id === listingId);
+      const l = live_listings.find(x => x.id === listingId);
       if (l) renderSingleDetail(l);
     }, 1000);
 
@@ -4412,7 +4451,7 @@ async function acceptConnection(connectionId, listingId) {
     if (conn) conn.status = 'accepted';
 
     // Re-render the detail panel
-    const l = liveListings.find(x => x.id === listingId);
+    const l = live_listings.find(x => x.id === listingId);
     if (l) renderSingleDetail(l);
 
     updateMessagesBadge();
@@ -4437,7 +4476,7 @@ async function declineConnection(connectionId, listingId) {
     if (conn) conn.status = 'declined';
 
     // Re-render
-    const l = liveListings.find(x => x.id === listingId);
+    const l = live_listings.find(x => x.id === listingId);
     if (l) renderSingleDetail(l);
 
     updateMessagesBadge();
@@ -4460,7 +4499,7 @@ function updateCount(n) {
   
   // Update mobile listing count
   const mobileEl = document.getElementById('mobile-listing-count');
-  if (mobileEl) mobileEl.textContent = n + ' room' + (n!==1?'s':'');
+  if (mobileEl) mobileEl.textContent = n + ' listing' + (n!==1?'s':'');
 }
 
 function fmtDate(d) {
@@ -4482,14 +4521,14 @@ function renderMatchesContent() {
   const container = document.getElementById('matches-container');
   const tabsEl = document.getElementById('match-tabs');
 
-  // --- NEW LOGGED OUT STATE ---
+  // --- LOGGED OUT STATE ---
   if (!profile) {
     if (tabsEl) tabsEl.style.display = 'none'; 
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
         <div class="emoji-lg">✨</div>
-        <h3>Log in to unlock your Matches</h3>
-        <p>Owners see potential tenants. Tenants see matching rooms and can find potential roommates to buddy up with.</p>
+        <h3>Sign in to see your Matches</h3>
+        <p>Create an account to unlock smart matching. Owners see tenants looking in their area. Tenants see matching rooms and can find roommates to buddy up with.</p>
         <button class="btn btn-primary" onclick="showPage('profile')" style="margin-top:12px; justify-content:center;">Sign In / Sign Up →</button>
       </div>
     `;
@@ -4497,7 +4536,7 @@ function renderMatchesContent() {
   }
 
   // --- EXISTING LOGGED IN BUT NO LISTING STATE ---
-  if (profile && (!myListings || myListings.length === 0)) {
+  if (profile && (!my_listings || my_listings.length === 0)) {
     if (tabsEl) tabsEl.style.display = 'none';
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:20px;">
@@ -4511,12 +4550,18 @@ function renderMatchesContent() {
   }
 
   if (tabsEl) {
-    tabsEl.style.display = 'flex';
-    // Owners don't need buddy up
-    const myListing = myListings[0];
-    if (profile.role === 'owner' || (myListing && myListing.propType === 'entire')) {
+    // Owners: completely hide the tabs and only show Property Matches
+    // Tenants looking for entire place: also hide tabs (no buddy up needed)
+    // Tenants looking for room/bed: show both tabs
+    const myListing = my_listings[0];
+    const isOwner = profile.role === 'owner';
+    const isEntirePlaceTenant = !isOwner && myListing && myListing.prop_type === 'entire';
+    
+    if (isOwner || isEntirePlaceTenant) {
       tabsEl.style.display = 'none';
-      activeMatchTab = 'properties';
+      activeMatchTab = 'properties'; // Force to properties tab
+    } else {
+      tabsEl.style.display = 'flex';
     }
   }
 
@@ -4530,7 +4575,7 @@ function renderMatchesContent() {
 }
 
 function renderPropertyMatches(container) {
-  if (!myListings || myListings.length === 0) {
+  if (!my_listings || my_listings.length === 0) {
     container.innerHTML = `<div class="already-listed-card" style="margin-top:4px;"><h3>No Active Listing</h3><p>Post a listing first to see your matches.</p></div>`;
     return;
   }
@@ -4539,11 +4584,11 @@ function renderPropertyMatches(container) {
 
   if (isOwner) {
     // Check tenants against ALL owner listings
-    const tenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
+    const tenants = live_listings.filter(l => l.role === 'tenant' && !l.ismine);
     tenants.forEach(t => {
       let bestScore = 0;
       let matched = false;
-      myListings.forEach(myListing => {
+      my_listings.forEach(myListing => {
         const result = isPropertyMatch(t, myListing);
         if (result.isMatch && result.score > bestScore) {
           bestScore = result.score;
@@ -4553,8 +4598,8 @@ function renderPropertyMatches(container) {
       if (matched) matches.push({ ...t, matchScore: bestScore });
     });
   } else {
-    const myListing = myListings[0];
-    const owners = liveListings.filter(l => l.role === 'owner' && !l.ismine);
+    const myListing = my_listings[0];
+    const owners = live_listings.filter(l => l.role === 'owner' && !l.ismine);
     owners.forEach(o => {
       const result = isPropertyMatch(myListing, o);
       if (result.isMatch) matches.push({ ...o, matchScore: result.score });
@@ -4585,9 +4630,9 @@ function renderPropertyMatches(container) {
     // For owners, find the closest listing distance
     let dist;
     if (isOwner) {
-      dist = Math.min(...myListings.map(ml => haversineKm(ml.lat, ml.lng, m.lat, m.lng))).toFixed(1);
+      dist = Math.min(...my_listings.map(ml => haversineKm(ml.lat, ml.lng, m.lat, m.lng))).toFixed(1);
     } else {
-      dist = haversineKm(myListings[0].lat, myListings[0].lng, m.lat, m.lng).toFixed(1);
+      dist = haversineKm(my_listings[0].lat, my_listings[0].lng, m.lat, m.lng).toFixed(1);
     }
     
     const connectionHtml = buildMatchConnectionButton(m);
@@ -4605,19 +4650,19 @@ function renderPropertyMatches(container) {
           </div>
           <div class="match-card-right" style="text-align:right;">
             <div style="display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:100px;background:${scoreBg};color:${scoreColor};margin-bottom:6px;">⭐ Match Score: ${m.matchScore}%</div>
-            <div class="dp-rent" style="margin-bottom:2px; font-size:22px;">₹${(mIsOwner ? m.rent : m.budget).toLocaleString()}</div>
+            <div class="dp-rent" style="margin-bottom:2px; font-size:22px;">₹${(mIsOwner ? m.price : m.price).toLocaleString()}</div>
             <div style="font-size:12px; color:var(--gray-500); font-weight:600;">${dist} km away</div>
           </div>
         </div>
         
         <div class="dp-grid" style="margin-bottom:16px;">
-          <div class="dp-field"><div class="dp-field-lbl">${mIsOwner ? 'Offering' : 'Looking For'}</div><div class="dp-field-val">${propTypeLabel(m.propType)}</div></div>
-          <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(m.gender) || 'Any'}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">${mIsOwner ? 'Offering' : 'Looking For'}</div><div class="dp-field-val">${propTypeLabel(m.prop_type)}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(m.gender_pref) || 'Any'}</div></div>
           <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(m.furnishing) || 'Any'}</div></div>
-          <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(m.movein)}</div></div>
+          <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(m.movein_date)}</div></div>
         </div>
         
-        ${m.desc ? `<div class="dp-desc" style="margin-bottom:16px;">${escHTML(m.desc)}</div>` : ''}
+        ${m.description ? `<div class="dp-desc" style="margin-bottom:16px;">${escHTML(m.description)}</div>` : ''}
         
         ${connectionHtml}
       </div>
@@ -4628,24 +4673,26 @@ function renderPropertyMatches(container) {
 }
 
 function renderBuddyUp(container) {
-  if (profile.role !== 'tenant') {
+  // Double-check: Owners should NEVER see this content
+  if (!profile || profile.role === 'owner') {
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
         <div class="emoji-lg">🏠</div>
-        <h3>Buddy Up is for tenants</h3>
-        <p>This section helps tenants find each other to share a room. As an owner, check your Property Matches instead.</p>
+        <h3>Buddy Up is for tenants only</h3>
+        <p>This feature helps tenants find each other to share a room or split rent. As a property owner, your matches are shown in Property Matches.</p>
+        <button class="btn btn-secondary" onclick="switchMatchTab('properties', document.querySelector('.match-tab'))" style="margin-top:12px;">View Property Matches →</button>
       </div>
     `;
     return;
   }
 
-  const myListing = myListings[0];
+  const myListing = my_listings[0];
   if (!myListing || !myListing.lat) {
     container.innerHTML = `<div class="already-listed-card" style="margin-top:4px;"><h3>Post a search listing first</h3></div>`;
     return;
   }
 
-  if (myListing.propType === 'entire') {
+  if (myListing.prop_type === 'entire') {
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
         <div class="emoji-lg">🏠</div>
@@ -4657,7 +4704,7 @@ function renderBuddyUp(container) {
     return;
   }
 
-  const otherTenants = liveListings.filter(l => l.role === 'tenant' && !l.ismine);
+  const otherTenants = live_listings.filter(l => l.role === 'tenant' && !l.ismine);
   
   let buddies = [];
   otherTenants.forEach(t => {
@@ -4672,7 +4719,7 @@ function renderBuddyUp(container) {
   buddies.sort((a, b) => b.compatScore - a.compatScore);
 
   if (buddies.length === 0) {
-    const typeLabel = myListing.propType === 'room' ? 'private room' : 'shared bed';
+    const typeLabel = myListing.prop_type === 'room' ? 'private room' : 'shared bed';
     container.innerHTML = `
       <div class="already-listed-card" style="margin-top:4px;">
         <div class="emoji-lg">👋</div>
@@ -4683,7 +4730,7 @@ function renderBuddyUp(container) {
     return;
   }
 
-  const typeExplainer = myListing.propType === 'room' 
+  const typeExplainer = myListing.prop_type === 'room' 
     ? 'These tenants are also looking for a private room near your area. Team up to rent an apartment together — one room each!'
     : 'These tenants are also looking for a shared bed near your area. Team up to rent a room together and split the cost!';
 
@@ -4705,18 +4752,18 @@ function renderBuddyUp(container) {
         <div class="buddy-header">
           <div>
             <div class="buddy-name clickable-name" onclick="openProfileModal('${b.id}')">${escHTML(b.name)}</div>
-            <div class="buddy-meta">${propTypeLabel(b.propType)} · ${escHTML(b.gender) || '—'} · Move-in ${fmtDate(b.movein)}</div>
+            <div class="buddy-meta">${propTypeLabel(b.prop_type)} · ${escHTML(b.gender_pref) || '—'} · Move-in ${fmtDate(b.movein_date)}</div>
           </div>
           <div style="text-align:right;">
             <div style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:100px;background:${scoreBg};color:${scoreColor};margin-bottom:4px;">💫 Compatibility: ${b.compatScore}%</div>
-            <div class="buddy-budget">₹${b.budget.toLocaleString()}</div>
+            <div class="buddy-budget">₹${b.price.toLocaleString()}</div>
             <div style="font-size:11px; color:var(--gray-500);">budget/mo</div>
           </div>
         </div>
         <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
           <span class="buddy-overlap">📍 ${distLabel}</span>
         </div>
-        ${b.desc ? `<div class="dp-desc" style="margin-bottom:12px;">${escHTML(b.desc)}</div>` : ''}
+        ${b.description ? `<div class="dp-desc" style="margin-bottom:12px;">${escHTML(b.description)}</div>` : ''}
         
         ${connectionHtml}
       </div>
@@ -4818,7 +4865,7 @@ async function renderConnectionsList(container) {
     </div>`;
     
     incomingPending.forEach(c => {
-      const listing = liveListings.find(l => l.id === c.listing_id);
+      const listing = live_listings.find(l => l.id === c.listing_id);
       const requester = getProfileInfo(c.requester_id);
       const requesterListingId = requester?.listingId;
       
@@ -4836,7 +4883,7 @@ async function renderConnectionsList(container) {
           </div>
           ${listing ? `
             <div class="connection-listing">
-              <strong>${propTypeLabel(listing.propType)}</strong> · ₹${(listing.rent || listing.budget || 0).toLocaleString()}/mo
+              <strong>${propTypeLabel(listing.prop_type)}</strong> · ₹${(listing.price || listing.price || 0).toLocaleString()}/mo
             </div>
           ` : ''}
           <div class="connection-actions">
@@ -4855,7 +4902,7 @@ async function renderConnectionsList(container) {
     </div>`;
     
     outgoingPending.forEach(c => {
-      const listing = liveListings.find(l => l.id === c.listing_id);
+      const listing = live_listings.find(l => l.id === c.listing_id);
       const receiver = getProfileInfo(c.receiver_id);
       
       html += `
@@ -4872,7 +4919,7 @@ async function renderConnectionsList(container) {
           </div>
           ${listing ? `
             <div class="connection-listing">
-              <strong>${propTypeLabel(listing.propType)}</strong> · ₹${(listing.rent || listing.budget || 0).toLocaleString()}/mo
+              <strong>${propTypeLabel(listing.prop_type)}</strong> · ₹${(listing.price || listing.price || 0).toLocaleString()}/mo
             </div>
           ` : ''}
           <div class="connection-actions">
@@ -4890,10 +4937,10 @@ async function renderConnectionsList(container) {
     </div>`;
     
     accepted.forEach(c => {
-      const listing = liveListings.find(l => l.id === c.listing_id);
+      const listing = live_listings.find(l => l.id === c.listing_id);
       const otherId = c.requester_id === profile.id ? c.receiver_id : c.requester_id;
       const other = getProfileInfo(otherId);
-      const otherListingId = other?.listingId || listing?.id;
+      const other_listing_id = other?.listingId || listing?.id;
       
       html += `
         <div class="connection-card accepted" onclick="openChat('${c.id}')" style="cursor:pointer;">
@@ -4901,7 +4948,7 @@ async function renderConnectionsList(container) {
             <div style="display:flex; align-items:center;">
               <div class="connection-avatar" style="background:var(--green-light);color:var(--green);">${(other?.name || '?')[0].toUpperCase()}</div>
               <div class="connection-info">
-                <div class="connection-name clickable-name" onclick="event.stopPropagation(); openProfileModal('${otherListingId}')">${escHTML(other?.name || 'User')}</div>
+                <div class="connection-name clickable-name" onclick="event.stopPropagation(); openProfileModal('${other_listing_id}')">${escHTML(other?.name || 'User')}</div>
                 <div class="connection-meta">Tap to chat · <span style="color:var(--blue-mid);">View profile</span></div>
               </div>
             </div>
@@ -4909,7 +4956,7 @@ async function renderConnectionsList(container) {
           </div>
           ${listing ? `
             <div class="connection-listing">
-              <strong>${propTypeLabel(listing.propType)}</strong> · ₹${(listing.rent || listing.budget || 0).toLocaleString()}/mo
+              <strong>${propTypeLabel(listing.prop_type)}</strong> · ₹${(listing.price || listing.price || 0).toLocaleString()}/mo
             </div>
           ` : ''}
         </div>
@@ -4946,8 +4993,8 @@ async function renderChatsList(container) {
   acceptedConnections.forEach(c => {
     const otherId = c.requester_id === profile.id ? c.receiver_id : c.requester_id;
     const other = getProfileInfo(otherId);
-    const listing = liveListings.find(l => l.id === c.listing_id);
-    const otherListingId = other?.listingId || listing?.id;
+    const listing = live_listings.find(l => l.id === c.listing_id);
+    const other_listing_id = other?.listingId || listing?.id;
     
     html += `
       <div class="connection-card" onclick="openChat('${c.id}')" style="cursor:pointer;">
@@ -4955,8 +5002,8 @@ async function renderChatsList(container) {
           <div style="display:flex; align-items:center;">
             <div class="connection-avatar">${(other?.name || '?')[0].toUpperCase()}</div>
             <div class="connection-info">
-              <div class="connection-name clickable-name" onclick="event.stopPropagation(); openProfileModal('${otherListingId}')">${escHTML(other?.name || 'User')}</div>
-              <div class="connection-meta">${listing ? propTypeLabel(listing.propType) : 'Connection'} · <span style="color:var(--blue-mid);">View profile</span></div>
+              <div class="connection-name clickable-name" onclick="event.stopPropagation(); openProfileModal('${other_listing_id}')">${escHTML(other?.name || 'User')}</div>
+              <div class="connection-meta">${listing ? propTypeLabel(listing.prop_type) : 'Connection'} · <span style="color:var(--blue-mid);">View profile</span></div>
             </div>
           </div>
         </div>
@@ -4972,8 +5019,8 @@ async function renderChatsList(container) {
 const _profileCache = {};
 
 async function getProfileInfoAsync(userId) {
-  // 1. Check liveListings first (fastest)
-  const listing = liveListings.find(l => l.user_id === userId);
+  // 1. Check live_listings first (fastest)
+  const listing = live_listings.find(l => l.user_id === userId);
   if (listing) {
     return { name: listing.name, phone: listing.phone, listingId: listing.id };
   }
@@ -4997,7 +5044,7 @@ async function getProfileInfoAsync(userId) {
 
 // Synchronous fallback — checks listings + cache only (no network)
 function getProfileInfo(userId) {
-  const listing = liveListings.find(l => l.user_id === userId);
+  const listing = live_listings.find(l => l.user_id === userId);
   if (listing) {
     return { name: listing.name, phone: listing.phone, listingId: listing.id };
   }
@@ -5101,11 +5148,11 @@ function daysUntilReRequest(connection) {
 }
 
 // Re-request connection (delete old declined one and create new)
-async function reRequestConnection(oldConnectionId, listingId, receiverId) {
+async function reRequestConnection(old_connection_id, listingId, receiverId) {
   try {
     // Delete the old declined connection
-    await _supabase.from('connections').delete().eq('id', oldConnectionId);
-    connections = connections.filter(c => c.id !== oldConnectionId);
+    await _supabase.from('connections').delete().eq('id', old_connection_id);
+    connections = connections.filter(c => c.id !== old_connection_id);
     
     // Create a new connection request
     const { data, error } = await _supabase
@@ -5123,7 +5170,7 @@ async function reRequestConnection(oldConnectionId, listingId, receiverId) {
     connections.push(data);
     
     // Re-render detail panel
-    const l = liveListings.find(x => x.id === listingId);
+    const l = live_listings.find(x => x.id === listingId);
     if (l) renderSingleDetail(l);
     
     updateMessagesBadge();
@@ -5134,11 +5181,11 @@ async function reRequestConnection(oldConnectionId, listingId, receiverId) {
 }
 
 // Re-request from matches page
-async function reRequestConnectionFromMatches(oldConnectionId, listingId, receiverId) {
+async function reRequestConnectionFromMatches(old_connection_id, listingId, receiverId) {
   try {
     // Delete the old declined connection
-    await _supabase.from('connections').delete().eq('id', oldConnectionId);
-    connections = connections.filter(c => c.id !== oldConnectionId);
+    await _supabase.from('connections').delete().eq('id', old_connection_id);
+    connections = connections.filter(c => c.id !== old_connection_id);
     
     // Create a new connection request
     const { data, error } = await _supabase
@@ -5184,7 +5231,7 @@ async function undoDeclineAndRefreshDetail(connectionId, listingId) {
     }
 
     // Re-render detail panel
-    const l = liveListings.find(x => x.id === listingId);
+    const l = live_listings.find(x => x.id === listingId);
     if (l) renderSingleDetail(l);
     
     updateMessagesBadge();
@@ -5257,7 +5304,7 @@ async function withdrawAndRefreshDetail(connectionId, listingId) {
     connections = connections.filter(c => c.id !== connectionId);
     
     // Re-render the detail panel
-    const l = liveListings.find(x => x.id === listingId);
+    const l = live_listings.find(x => x.id === listingId);
     if (l) renderSingleDetail(l);
     
     updateMessagesBadge();
@@ -5309,18 +5356,18 @@ async function withdrawConnection(connectionId) {
 
 // Chat pagination settings
 const CHAT_PAGE_SIZE = 20;
-let chatOffset = 0;
+let chat_offset = 0;
 let hasMoreMessages = false;
 
 // Open chat with a connection
 async function openChat(connectionId) {
-  currentChat = connections.find(c => c.id === connectionId);
-  if (!currentChat) return;
+  current_chat = connections.find(c => c.id === connectionId);
+  if (!current_chat) return;
 
   // Reset pagination state
-  chatOffset = 0;
+  chat_offset = 0;
   hasMoreMessages = false;
-  chatMessages = [];
+  chat_messages = [];
 
   // Ensure we're on the messages page
   const messagesPage = document.getElementById('page-messages');
@@ -5330,10 +5377,10 @@ async function openChat(connectionId) {
   }
 
   const container = document.getElementById('messages-container');
-  const otherId = currentChat.requester_id === profile.id ? currentChat.receiver_id : currentChat.requester_id;
+  const otherId = current_chat.requester_id === profile.id ? current_chat.receiver_id : current_chat.requester_id;
   const other = await getProfileInfoAsync(otherId);
-  const listing = liveListings.find(l => l.id === currentChat.listing_id);
-  const otherListingId = other?.listingId || listing?.id;
+  const listing = live_listings.find(l => l.id === current_chat.listing_id);
+  const other_listing_id = other?.listingId || listing?.id;
 
   // Fetch first page of messages (most recent) using pagination
   await loadMoreMessages(connectionId, true);
@@ -5343,7 +5390,7 @@ async function openChat(connectionId) {
   if (tabsEl) tabsEl.style.display = 'none';
 
   // Render chat UI
-  renderChatUI(container, other, otherListingId);
+  renderChatUI(container, other, other_listing_id);
 
   // Scroll to bottom
   setTimeout(() => {
@@ -5369,30 +5416,30 @@ async function loadMoreMessages(connectionId, isInitialLoad = false) {
       .select('*')
       .eq('connection_id', connectionId)
       .order('created_at', { ascending: false })
-      .range(chatOffset, chatOffset + CHAT_PAGE_SIZE - 1);
+      .range(chat_offset, chat_offset + CHAT_PAGE_SIZE - 1);
 
     if (error) throw error;
     
     const newMessages = (data || []).reverse(); // Reverse to get chronological order
     
     if (isInitialLoad) {
-      chatMessages = newMessages;
+      chat_messages = newMessages;
     } else {
       // Prepend older messages
-      chatMessages = [...newMessages, ...chatMessages];
+      chat_messages = [...newMessages, ...chat_messages];
     }
     
-    chatOffset += newMessages.length;
-    hasMoreMessages = chatOffset < count;
+    chat_offset += newMessages.length;
+    hasMoreMessages = chat_offset < count;
     
   } catch (err) {
     console.error('Failed to fetch messages:', err);
-    if (isInitialLoad) chatMessages = [];
+    if (isInitialLoad) chat_messages = [];
   }
 }
 
 // Render chat UI
-function renderChatUI(container, other, otherListingId) {
+function renderChatUI(container, other, other_listing_id) {
   let loadMoreBtn = hasMoreMessages ? `
     <div style="text-align:center; padding:12px;">
       <button onclick="loadOlderMessages()" class="btn btn-secondary" style="font-size:12px; padding:6px 16px;">
@@ -5401,14 +5448,14 @@ function renderChatUI(container, other, otherListingId) {
     </div>
   ` : '';
 
-  let messagesHtml = chatMessages.map(m => `
+  let messagesHtml = chat_messages.map(m => `
     <div class="chat-message ${m.sender_id === profile.id ? 'sent' : 'received'}">
       ${escHTML(m.content)}
       <div class="time">${formatChatTime(m.created_at)}</div>
     </div>
   `).join('');
 
-  if (chatMessages.length === 0) {
+  if (chat_messages.length === 0) {
     messagesHtml = `<div style="text-align:center; color:var(--gray-400); padding:40px 20px; font-size:14px;">
       No messages yet. Say hello! 👋
     </div>`;
@@ -5418,7 +5465,7 @@ function renderChatUI(container, other, otherListingId) {
     <div class="chat-container">
       <div class="chat-header">
         <button class="chat-back" onclick="closeChat()">←</button>
-        <div class="chat-user-info" ${otherListingId ? `onclick="openProfileModal('${otherListingId}')" style="cursor:pointer;"` : ''}>
+        <div class="chat-user-info" ${other_listing_id ? `onclick="openProfileModal('${other_listing_id}')" style="cursor:pointer;"` : ''}>
           <div class="chat-user-name clickable-name">${escHTML(other?.name || 'User')}</div>
           <div class="chat-user-meta">Connected · <span style="color:var(--blue-mid);">View profile</span></div>
         </div>
@@ -5443,21 +5490,21 @@ function renderChatUI(container, other, otherListingId) {
 
 // Load older messages when button clicked
 async function loadOlderMessages() {
-  if (!currentChat || !hasMoreMessages) return;
+  if (!current_chat || !hasMoreMessages) return;
   
   const area = document.getElementById('chat-messages-area');
   const previousScrollHeight = area ? area.scrollHeight : 0;
   
-  await loadMoreMessages(currentChat.id, false);
+  await loadMoreMessages(current_chat.id, false);
   
   // Re-render and maintain scroll position
   const container = document.getElementById('messages-container');
-  const otherId = currentChat.requester_id === profile.id ? currentChat.receiver_id : currentChat.requester_id;
+  const otherId = current_chat.requester_id === profile.id ? current_chat.receiver_id : current_chat.requester_id;
   const other = await getProfileInfoAsync(otherId);
-  const listing = liveListings.find(l => l.id === currentChat.listing_id);
-  const otherListingId = other?.listingId || listing?.id;
+  const listing = live_listings.find(l => l.id === current_chat.listing_id);
+  const other_listing_id = other?.listingId || listing?.id;
   
-  renderChatUI(container, other, otherListingId);
+  renderChatUI(container, other, other_listing_id);
   
   // Maintain scroll position after loading older messages
   setTimeout(() => {
@@ -5470,8 +5517,8 @@ async function loadOlderMessages() {
 }
 
 function closeChat() {
-  currentChat = null;
-  chatMessages = [];
+  current_chat = null;
+  chat_messages = [];
   const tabsEl = document.getElementById('message-tabs');
   if (tabsEl) tabsEl.style.display = 'flex';
   renderMessagesPage();
@@ -5487,7 +5534,7 @@ async function sendChatMessage() {
   const input = document.getElementById('chat-input');
   const content = input.value.trim();
   
-  if (!content || !currentChat) return;
+  if (!content || !current_chat) return;
 
   input.value = '';
 
@@ -5495,7 +5542,7 @@ async function sendChatMessage() {
     const { data, error } = await _supabase
       .from('messages')
       .insert({
-        connection_id: currentChat.id,
+        connection_id: current_chat.id,
         sender_id: profile.id,
         content: content
       })
@@ -5504,7 +5551,7 @@ async function sendChatMessage() {
 
     if (error) throw error;
 
-    chatMessages.push(data);
+    chat_messages.push(data);
     
     const area = document.getElementById('chat-messages-area');
     if (area) {
@@ -6455,7 +6502,7 @@ function checkTenantAlreadyListed() {
     </div>
   `;
 
-  if (profile.role === 'tenant' && myListings.length > 0) {
+  if (profile.role === 'tenant' && my_listings.length > 0) {
     alreadyDiv.style.display = 'block';
     formDiv.style.display    = 'none';
   } else {
@@ -6467,14 +6514,14 @@ function checkTenantAlreadyListed() {
 async function deleteTenantListing() {
   if (!confirm('Delete your current search area? It will be removed from the map.')) return;
 
-  if (myListings.length > 0 && myListings[0].id) {
+  if (my_listings.length > 0 && my_listings[0].id) {
     // Delete DB row first to avoid orphaned files if DB delete fails
-    const photoUrls = myListings[0].photo_urls ? [...myListings[0].photo_urls] : [];
+    const photoUrls = my_listings[0].photo_urls ? [...my_listings[0].photo_urls] : [];
 
     const { error } = await _supabase
       .from('listings')
       .delete()
-      .eq('id', myListings[0].id); 
+      .eq('id', my_listings[0].id); 
 
     if (error) {
       console.error("Error deleting:", error);
@@ -6490,7 +6537,7 @@ async function deleteTenantListing() {
     }
   }
 
-  myListings = [];
+  my_listings = [];
   saveProfile();
   checkTenantAlreadyListed();
   
@@ -6518,7 +6565,7 @@ function revealCreateMap() {
 }
 
 function selectPropType(type) {
-  selectedPropType = type;
+  selected_prop_type = type;
   ['entire','room','bed'].forEach(t => {
     document.getElementById('pt-'+t).classList.toggle('selected', t===type);
     document.getElementById('fields-'+t+'-owner').classList.toggle('show', t===type);
@@ -6529,7 +6576,7 @@ function selectPropType(type) {
 }
 
 function selectTenantLooking(type) {
-  selectedTenantLooking = type;
+  selected_tenant_looking = type;
   ['entire','room','bed'].forEach(t => {
     document.getElementById('tl-'+t).classList.toggle('selected', t===type);
     document.getElementById('fields-'+t+'-tenant').classList.toggle('show', t===type);
@@ -6629,7 +6676,7 @@ async function initPickerMap() {
       }
       if (pickerMarker) pickerMap.removeLayer(pickerMarker);
       pickerMarker = L.marker([lat,lng], { icon:pickerIconFn() }).addTo(pickerMap);
-      pinLat = lat; pinLng = lng;
+      pin_lat = lat; pin_lng = lng;
       document.getElementById('pin-location').textContent =
         `📍 Pinned at ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
     });
@@ -6653,17 +6700,17 @@ async function initPickerMap() {
       drawnItems.clearLayers();
       drawnItems.addLayer(e.layer);
       const radius = e.layer.getRadius() / 1000;
-      circleCenter = { lat:center.lat, lng:center.lng };
-      circleRadiusKm = parseFloat(radius.toFixed(2));
+      circle_center = { lat:center.lat, lng:center.lng };
+      circle_radius_km = parseFloat(radius.toFixed(2));
       document.getElementById('pin-location').textContent =
-        `🔵 Area set — ${circleRadiusKm} km radius around ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
+        `🔵 Area set — ${circle_radius_km} km radius around ${center.lat.toFixed(4)}, ${center.lng.toFixed(4)}`;
     });
   }
 }
 
 function validateListingFields() {
   const role = profile.role;
-  const type = role === 'owner' ? selectedPropType : selectedTenantLooking;
+  const type = role === 'owner' ? selected_prop_type : selected_tenant_looking;
   if (!type) return 'Please select a property type.';
 
   const missing = [];
@@ -6685,8 +6732,8 @@ function validateListingFields() {
         if (!customVal || customVal <= 0) missing.push('Exact Number of People');
       }
       if (document.getElementById('o-entire-brokerage').value === 'Yes') {
-        const brokerageAmt = parseInt(document.getElementById('o-entire-brokerage-amt').value);
-        if (!brokerageAmt || brokerageAmt <= 0) missing.push('Brokerage Amount');
+        const brokerage_amt = parseInt(document.getElementById('o-entire-brokerage-amt').value);
+        if (!brokerage_amt || brokerage_amt <= 0) missing.push('Brokerage Amount');
       }
     } else if (type === 'room') {
       if (!document.getElementById('o-room-bhk').value) missing.push('Apartment Size');
@@ -6699,8 +6746,8 @@ function validateListingFields() {
         if (!customVal || customVal <= 0) missing.push('Exact Number of People Allowed');
       }
       if (document.getElementById('o-room-brokerage').value === 'Yes') {
-        const brokerageAmt = parseInt(document.getElementById('o-room-brokerage-amt').value);
-        if (!brokerageAmt || brokerageAmt <= 0) missing.push('Brokerage Amount');
+        const brokerage_amt = parseInt(document.getElementById('o-room-brokerage-amt').value);
+        if (!brokerage_amt || brokerage_amt <= 0) missing.push('Brokerage Amount');
       }
     } else {
       if (!document.getElementById('o-bed-type').value) missing.push('Room Type');
@@ -6708,8 +6755,8 @@ function validateListingFields() {
       if (!rent || rent <= 0) missing.push('Rent per Bed');
       if (!isImmediate('o-bed-immediate') && !document.getElementById('o-bed-movein').value) missing.push('Available From date');
       if (document.getElementById('o-bed-brokerage').value === 'Yes') {
-        const brokerageAmt = parseInt(document.getElementById('o-bed-brokerage-amt').value);
-        if (!brokerageAmt || brokerageAmt <= 0) missing.push('Brokerage Amount');
+        const brokerage_amt = parseInt(document.getElementById('o-bed-brokerage-amt').value);
+        if (!brokerage_amt || brokerage_amt <= 0) missing.push('Brokerage Amount');
       }
     }
   } else {
@@ -6756,59 +6803,59 @@ async function submitListing() {
   let listing = { role: profile.role, name: profile.name, phone: profile.phone, ismine: true };
 
   if (profile.role === 'owner') {
-    if (!selectedPropType) { alert('Please select what you are offering.'); resetBtn(btn); return; }
-    if (!pinLat) { alert('Please drop a pin on the map.'); resetBtn(btn); return; }
+    if (!selected_prop_type) { alert('Please select what you are offering.'); resetBtn(btn); return; }
+    if (!pin_lat) { alert('Please drop a pin on the map.'); resetBtn(btn); return; }
 
-    listing.lat = pinLat; 
-    listing.lng = pinLng; 
-    listing.propType = selectedPropType;
+    listing.lat = pin_lat; 
+    listing.lng = pin_lng; 
+    listing.prop_type = selected_prop_type;
     
-    if (selectedPropType === 'entire') {
+    if (selected_prop_type === 'entire') {
       const peopleVal = document.getElementById('o-entire-people').value;
       const peopleCustom = document.getElementById('o-entire-people-custom').value;
       const finalPeople = peopleVal === 'Others' && peopleCustom ? peopleCustom : peopleVal;
       const immChk = document.getElementById('o-entire-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-entire-movein').value;
-      listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, capacity: finalPeople, brokerage: document.getElementById('o-entire-brokerage').value, brokerageAmt: document.getElementById('o-entire-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-entire-brokerage-amt').value) || 0 : null, gender: document.getElementById('o-entire-gender').value, rent: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein: moveinVal, furnishing: document.getElementById('o-entire-furnishing').value, desc: document.getElementById('o-entire-desc').value };
-    } else if (selectedPropType === 'room') {
+      listing = { ...listing, bhk: document.getElementById('o-entire-bhk').value, capacity_allowed: finalPeople, brokerage: document.getElementById('o-entire-brokerage').value, brokerage_amt: document.getElementById('o-entire-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-entire-brokerage-amt').value) || 0 : null, gender_pref: document.getElementById('o-entire-gender').value, price: parseInt(document.getElementById('o-entire-rent').value)||15000, deposit: parseInt(document.getElementById('o-entire-deposit').value)||0, movein_date: moveinVal, furnishing: document.getElementById('o-entire-furnishing').value, description: document.getElementById('o-entire-desc').value };
+    } else if (selected_prop_type === 'room') {
       const capacityVal = document.getElementById('o-room-capacity').value;
       const capacityCustom = document.getElementById('o-room-capacity-custom').value;
       const finalCapacity = capacityVal === 'Others' && capacityCustom ? capacityCustom : capacityVal;
       const immChk = document.getElementById('o-room-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-room-movein').value;
-      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, capacity: finalCapacity, brokerage: document.getElementById('o-room-brokerage').value, brokerageAmt: document.getElementById('o-room-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-room-brokerage-amt').value) || 0 : null, washroom: document.getElementById('o-room-washroom').value, rent: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-room-gender').value, furnishing: document.getElementById('o-room-furnishing').value, desc: document.getElementById('o-room-desc').value };
+      listing = { ...listing, bhk: document.getElementById('o-room-bhk').value, capacity_allowed: finalCapacity, brokerage: document.getElementById('o-room-brokerage').value, brokerage_amt: document.getElementById('o-room-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-room-brokerage-amt').value) || 0 : null, washroom: document.getElementById('o-room-washroom').value, price: parseInt(document.getElementById('o-room-rent').value)||12000, deposit: parseInt(document.getElementById('o-room-deposit').value)||0, movein_date: moveinVal, gender_pref: document.getElementById('o-room-gender').value, furnishing: document.getElementById('o-room-furnishing').value, description: document.getElementById('o-room-desc').value };
     } else {
       const immChk = document.getElementById('o-bed-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('o-bed-movein').value;
-      listing = { ...listing, bedType: document.getElementById('o-bed-type').value, brokerage: document.getElementById('o-bed-brokerage').value, brokerageAmt: document.getElementById('o-bed-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-bed-brokerage-amt').value) || 0 : null, rent: parseInt(document.getElementById('o-bed-rent').value)||7000, deposit: parseInt(document.getElementById('o-bed-deposit').value)||0, movein: moveinVal, gender: document.getElementById('o-bed-gender').value, furnishing: document.getElementById('o-bed-furnishing').value, desc: document.getElementById('o-bed-desc').value };
+      listing = { ...listing, bed_type: document.getElementById('o-bed-type').value, brokerage: document.getElementById('o-bed-brokerage').value, brokerage_amt: document.getElementById('o-bed-brokerage').value === 'Yes' ? parseInt(document.getElementById('o-bed-brokerage-amt').value) || 0 : null, price: parseInt(document.getElementById('o-bed-rent').value)||7000, deposit: parseInt(document.getElementById('o-bed-deposit').value)||0, movein_date: moveinVal, gender_pref: document.getElementById('o-bed-gender').value, furnishing: document.getElementById('o-bed-furnishing').value, description: document.getElementById('o-bed-desc').value };
     }
   } else {
-    if (!selectedTenantLooking) { alert('Please select what you are looking for.'); resetBtn(btn); return; }
-    if (!circleCenter) { alert('Please draw a circle on the map.'); resetBtn(btn); return; }
+    if (!selected_tenant_looking) { alert('Please select what you are looking for.'); resetBtn(btn); return; }
+    if (!circle_center) { alert('Please draw a circle on the map.'); resetBtn(btn); return; }
 
-    listing.lat = circleCenter.lat; 
-    listing.lng = circleCenter.lng; 
-    listing.radiusKm = circleRadiusKm; 
-    listing.propType = selectedTenantLooking;
+    listing.lat = circle_center.lat; 
+    listing.lng = circle_center.lng; 
+    listing.radius_km = circle_radius_km; 
+    listing.prop_type = selected_tenant_looking;
     
-    if (selectedTenantLooking === 'entire') {
+    if (selected_tenant_looking === 'entire') {
       const peopleVal = document.getElementById('t-entire-people').value;
       const peopleCustom = document.getElementById('t-entire-people-custom').value;
       const finalPeople = peopleVal === 'Others' && peopleCustom ? peopleCustom : peopleVal;
       const immChk = document.getElementById('t-entire-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-entire-movein').value;
-      listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, people: finalPeople, budget: parseInt(document.getElementById('t-entire-budget').value)||15000, movein: moveinVal, gender: document.getElementById('t-entire-gender').value, furnishing: document.getElementById('t-entire-furnishing').value, desc: document.getElementById('t-entire-desc').value };
-    } else if (selectedTenantLooking === 'room') {
+      listing = { ...listing, bhk: document.getElementById('t-entire-bhk').value, tenant_people_count: finalPeople, price: parseInt(document.getElementById('t-entire-budget').value)||15000, movein_date: moveinVal, gender_pref: document.getElementById('t-entire-gender').value, furnishing: document.getElementById('t-entire-furnishing').value, description: document.getElementById('t-entire-desc').value };
+    } else if (selected_tenant_looking === 'room') {
       const peopleVal = document.getElementById('t-room-people').value;
       const peopleCustom = document.getElementById('t-room-people-custom').value;
       const finalPeople = peopleVal === 'Others' && peopleCustom ? peopleCustom : peopleVal;
       const immChk = document.getElementById('t-room-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-room-movein').value;
-      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, people: finalPeople, budget: parseInt(document.getElementById('t-room-budget').value)||12000, movein: moveinVal, gender: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, washroom: document.getElementById('t-room-washroom').value, desc: document.getElementById('t-room-desc').value };
+      listing = { ...listing, bhk: document.getElementById('t-room-bhk').value, tenant_people_count: finalPeople, price: parseInt(document.getElementById('t-room-budget').value)||12000, movein_date: moveinVal, gender_pref: document.getElementById('t-room-gender').value, furnishing: document.getElementById('t-room-furnishing').value, washroom: document.getElementById('t-room-washroom').value, description: document.getElementById('t-room-desc').value };
     } else {
       const immChk = document.getElementById('t-bed-immediate');
       const moveinVal = immChk && immChk.checked ? new Date().toISOString().split('T')[0] : document.getElementById('t-bed-movein').value;
-      listing = { ...listing, bedType: document.getElementById('t-bed-type').value, budget: parseInt(document.getElementById('t-bed-budget').value)||7000, movein: moveinVal, gender: document.getElementById('t-bed-gender').value, furnishing: document.getElementById('t-bed-furnishing').value, desc: document.getElementById('t-bed-desc').value };
+      listing = { ...listing, bed_type: document.getElementById('t-bed-type').value, price: parseInt(document.getElementById('t-bed-budget').value)||7000, movein_date: moveinVal, gender_pref: document.getElementById('t-bed-gender').value, furnishing: document.getElementById('t-bed-furnishing').value, description: document.getElementById('t-bed-desc').value };
     }
   }
 
@@ -6818,25 +6865,25 @@ async function submitListing() {
   const dbListingData = {
     user_id: profile.id, 
     role: listing.role,
-    prop_type: listing.propType,
+    prop_type: listing.prop_type,
     lat: listing.lat,
     lng: listing.lng,
-    radius_km: listing.radiusKm || null,
-    price: listing.rent || listing.budget || 0,
+    radius_km: listing.radius_km || null,
+    price: listing.price || 0,
     deposit: listing.deposit || 0,
-    movein_date: listing.movein || null,
-    gender_pref: listing.gender || null,
+    movein_date: listing.movein_date || null,
+    gender_pref: listing.gender_pref || null,
     furnishing: listing.furnishing || null,
     brokerage: listing.brokerage || null,
     bhk: listing.bhk || null,
-    description: listing.desc || null,
-    bed_type: listing.bedType || null,
-    capacity_allowed: listing.capacity || null,
-    people_in_flat: listing.peopleInFlat || null,
-    people_in_room: listing.peopleInRoom || null,
-    tenant_people_count: listing.people || null,
+    description: listing.description || null,
+    bed_type: listing.bed_type || null,
+    capacity_allowed: listing.capacity_allowed || null,
+    people_in_flat: listing.people_in_flat || null,
+    people_in_room: listing.people_in_room || null,
+    tenant_people_count: listing.tenant_people_count || null,
     washroom: listing.washroom || null,
-    brokerage_amt: listing.brokerageAmt || null,
+    brokerage_amt: listing.brokerage_amt || null,
     photo_urls: null,
     created_at: new Date().toISOString() 
   };
@@ -6857,11 +6904,11 @@ async function submitListing() {
   const insertedId = data[0].id;
 
   // Step 2: Upload photos (only if insert succeeded)
-  if (selectedPropertyPhotos.length > 0 && profile.role === 'owner') {
+  if (selected_property_photos.length > 0 && profile.role === 'owner') {
     btn.textContent = "Uploading photos...";
     
-    for (let i = 0; i < selectedPropertyPhotos.length; i++) {
-      const file = selectedPropertyPhotos[i];
+    for (let i = 0; i < selected_property_photos.length; i++) {
+      const file = selected_property_photos[i];
       const fileExt = file.name.split('.').pop();
       const fileName = `${profile.id}-${Date.now()}-${i}.${fileExt}`;
       
@@ -6891,17 +6938,17 @@ async function submitListing() {
   listing.photo_urls = finalPhotoUrls; 
 
   if (profile.role === 'owner') {
-    myListings.push(listing);
+    my_listings.push(listing);
     document.getElementById('post-another-btn').style.display = 'flex';
   } else {
-    myListings = [listing];
+    my_listings = [listing];
     document.getElementById('post-another-btn').style.display = 'none';
   }
   
   lastPostedListing = listing;
   saveProfile(); 
   
-  selectedPropertyPhotos = [];
+  selected_property_photos = [];
   document.getElementById('prop-photo-preview').innerHTML = `<span style="font-size:32px; color:var(--gray-300);" id="photo-placeholder-icon">📷</span>`;
   
   resetCreateForm();
@@ -6947,8 +6994,8 @@ function resetCreateForm() {
     if (el) el.style.display = 'none';
   });
 
-  selectedPropType = null;
-  selectedTenantLooking = null;
+  selected_prop_type = null;
+  selected_tenant_looking = null;
   ['entire','room','bed'].forEach(t => {
     const ptEl = document.getElementById('pt-'+t);
     const tlEl = document.getElementById('tl-'+t);
@@ -6960,8 +7007,8 @@ function resetCreateForm() {
     if (tenantFields) tenantFields.classList.remove('show');
   });
 
-  pinLat = null; pinLng = null;
-  circleCenter = null; circleRadiusKm = null;
+  pin_lat = null; pin_lng = null;
+  circle_center = null; circle_radius_km = null;
   if (pickerMarker && pickerMap) { pickerMap.removeLayer(pickerMarker); pickerMarker = null; }
   if (drawnItems) drawnItems.clearLayers();
   
@@ -6983,7 +7030,7 @@ function goToExploreAfterPost() {
   closeSuccess();
   if (lastPostedListing) {
     const ptMap = { entire:'Entire Place', room:'Private Room', bed:'Shared Bed' };
-    const pt = ptMap[lastPostedListing.propType];
+    const pt = ptMap[lastPostedListing.prop_type];
     if (pt) {
       proptypeFilter = pt;
       document.querySelectorAll('#proptype-chips .chip').forEach(c => {
@@ -7001,7 +7048,7 @@ function closeSuccess() {
 // PROFILE MODAL (View profiles from Matches/Messages)
 
 function openProfileModal(listingId) {
-  const listing = liveListings.find(l => l.id === listingId);
+  const listing = live_listings.find(l => l.id === listingId);
   if (!listing) {
     console.error('Listing not found:', listingId);
     return;
@@ -7041,47 +7088,47 @@ function renderProfileModal(l) {
   
   // Build fields based on role and property type
   let fields = '';
-  const brokerageDisplay = l.brokerage === 'Yes' && l.brokerageAmt ? `Yes (₹${parseInt(l.brokerageAmt).toLocaleString()})` : (l.brokerage || 'No');
+  const brokerageDisplay = l.brokerage === 'Yes' && l.brokerage_amt ? `Yes (₹${parseInt(l.brokerage_amt).toLocaleString()})` : (l.brokerage || 'No');
   
   if (isOwner) {
-    if (l.propType === 'entire') {
+    if (l.prop_type === 'entire') {
       fields = `
         <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Entire Place</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Size</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${escHTML(l.capacity)||'Any'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Max People</div><div class="dp-field-val">${escHTML(l.capacity_allowed)||'Any'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div>
         <div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
-    } else if (l.propType === 'room') {
+    } else if (l.prop_type === 'room') {
       fields = `
         <div class="dp-field"><div class="dp-field-lbl">Type</div><div class="dp-field-val">Private Room</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Apartment</div><div class="dp-field-val">${escHTML(l.bhk)||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${escHTML(l.capacity)||'—'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Room Capacity</div><div class="dp-field-val">${escHTML(l.capacity_allowed)||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Washroom</div><div class="dp-field-val">${escHTML(l.washroom)||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender_pref)||'Any'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
     } else {
       fields = `
-        <div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${escHTML(l.bedType)||'Shared Bed'}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender)||'Any'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Sharing Type</div><div class="dp-field-val">${escHTML(l.bed_type)||'Shared Bed'}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender_pref)||'Any'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing)||'—'}</div></div>
         <div class="dp-field"><div class="dp-field-lbl">Brokerage</div><div class="dp-field-val">${escHTML(brokerageDisplay)}</div></div>
-        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
+        <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div>
         <div class="dp-field span-2"><div class="dp-field-lbl">Deposit</div><div class="dp-field-val">₹${(l.deposit||0).toLocaleString()}</div></div>`;
     }
   } else {
     // Tenant
     fields = `
-      <div class="dp-field"><div class="dp-field-lbl">Looking For</div><div class="dp-field-val">${propTypeLabel(l.propType)}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender) || 'Any'}</div></div>
+      <div class="dp-field"><div class="dp-field-lbl">Looking For</div><div class="dp-field-val">${propTypeLabel(l.prop_type)}</div></div>
+      <div class="dp-field"><div class="dp-field-lbl">Gender</div><div class="dp-field-val">${escHTML(l.gender_pref) || 'Any'}</div></div>
       <div class="dp-field"><div class="dp-field-lbl">Furnishing</div><div class="dp-field-val">${escHTML(l.furnishing) || 'Any'}</div></div>
-      <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein)}</div></div>
-      ${l.people ? `<div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${escHTML(l.people)}</div></div>` : ''}
-      ${l.radiusKm ? `<div class="dp-field"><div class="dp-field-lbl">Search Radius</div><div class="dp-field-val">${l.radiusKm} km</div></div>` : ''}`;
+      <div class="dp-field"><div class="dp-field-lbl">Move-in</div><div class="dp-field-val">${fmtDate(l.movein_date)}</div></div>
+      ${l.tenant_people_count ? `<div class="dp-field"><div class="dp-field-lbl">People</div><div class="dp-field-val">${escHTML(l.tenant_people_count)}</div></div>` : ''}
+      ${l.radius_km ? `<div class="dp-field"><div class="dp-field-lbl">Search Radius</div><div class="dp-field-val">${l.radius_km} km</div></div>` : ''}`;
   }
   
   // Build connection button
@@ -7096,10 +7143,10 @@ function renderProfileModal(l) {
     </div>
     <div class="dp-name" style="font-size:18px; margin-bottom:4px;">${escHTML(l.name)} ${!l.ismine ? renderTrustBadge(l) : ''}</div>
     <div class="dp-rent" style="margin-bottom:16px;">
-      ₹${(isOwner ? l.rent : l.budget).toLocaleString()}<small>${isOwner ? '/month' : '/mo budget'}</small>
+      ₹${(isOwner ? l.price : l.price).toLocaleString()}<small>${isOwner ? '/month' : '/mo budget'}</small>
     </div>
     <div class="dp-grid" style="margin-bottom:14px;">${fields}</div>
-    ${l.desc ? `<div class="dp-desc" style="margin-bottom:16px;">${escHTML(l.desc)}</div>` : ''}
+    ${l.description ? `<div class="dp-desc" style="margin-bottom:16px;">${escHTML(l.description)}</div>` : ''}
     ${contactSection}
   `;
 }
@@ -7172,7 +7219,7 @@ function buildProfileModalConnectionButton(l) {
 
 // Connection actions from within modal
 async function sendConnectionFromModal(listingId, receiverId) {
-  if (!profile || !myListings || myListings.length === 0) {
+  if (!profile || !my_listings || my_listings.length === 0) {
     alert('Please create a listing first to connect with others.');
     return;
   }
@@ -7193,7 +7240,7 @@ async function sendConnectionFromModal(listingId, receiverId) {
     connections.push(data);
     
     // Re-render modal
-    const listing = liveListings.find(l => l.id === listingId);
+    const listing = live_listings.find(l => l.id === listingId);
     if (listing) renderProfileModal(listing);
     
     updateMessagesBadge();
@@ -7216,7 +7263,7 @@ async function withdrawFromModal(connectionId, listingId) {
     connections = connections.filter(c => c.id !== connectionId);
     
     // Re-render modal
-    const listing = liveListings.find(l => l.id === listingId);
+    const listing = live_listings.find(l => l.id === listingId);
     if (listing) renderProfileModal(listing);
     
     updateMessagesBadge();
@@ -7239,7 +7286,7 @@ async function acceptFromModal(connectionId, listingId) {
     if (conn) conn.status = 'accepted';
     
     // Re-render modal
-    const listing = liveListings.find(l => l.id === listingId);
+    const listing = live_listings.find(l => l.id === listingId);
     if (listing) renderProfileModal(listing);
     
     updateMessagesBadge();
@@ -7262,7 +7309,7 @@ async function declineFromModal(connectionId, listingId) {
     if (conn) conn.status = 'declined';
     
     // Re-render modal
-    const listing = liveListings.find(l => l.id === listingId);
+    const listing = live_listings.find(l => l.id === listingId);
     if (listing) renderProfileModal(listing);
     
     updateMessagesBadge();
@@ -7314,9 +7361,9 @@ if (avatarUrl) {
   const body  = document.getElementById('profile-listings-body');
   title.textContent = profile.role === 'owner' ? 'My Listings' : 'My Search Listing';
 
-  if (myListings.length === 0) {
-    const emptyMessage = profile.role === 'owner' ? 'No room posted yet.' : 'Not yet looking for a room.';
-    const btnText = profile.role === 'owner' ? 'Post a Room →' : 'Post Your Search →';
+  if (my_listings.length === 0) {
+    const emptyMessage = profile.role === 'owner' ? 'No listing posted yet.' : 'Not searching for a place yet.';
+    const btnText = profile.role === 'owner' ? 'Post a Listing →' : 'Post Your Search →';
     const iconStr = profile.role === 'owner' ? '🏠' : '🔍';
     body.innerHTML = `<div class="no-listings"><div class="icon">${iconStr}</div>${emptyMessage}<br><br>
       <button class="btn btn-primary" onclick="showPage('create')" style="margin-top:12px">${btnText}</button></div>`;
@@ -7324,7 +7371,7 @@ if (avatarUrl) {
   }
 
   body.innerHTML = '';
-  myListings.forEach((l, idx) => {
+  my_listings.forEach((l, idx) => {
     const isOwner = l.role === 'owner';
     const status = l.status || 'active';
     const isPaused = status === 'paused';
@@ -7336,11 +7383,11 @@ if (avatarUrl) {
     div.onclick = () => openListingDetail(idx);
     div.innerHTML = `
       <div class="listing-item-head">
-        <span class="listing-item-title">${propTypeLabel(l.propType)}</span>
+        <span class="listing-item-title">${propTypeLabel(l.prop_type)}</span>
         <span class="lc-badge ${statusBadgeClass}">${statusText}</span>
       </div>
-      <div class="listing-item-rent">${isOwner ? `₹${l.rent.toLocaleString()}/mo` : `Budget ₹${l.budget.toLocaleString()}/mo`}</div>
-      <div class="listing-item-meta">${isOwner ? `${escHTML(l.bhk||l.bedType||'')} · ${escHTML(l.gender||'Any')}` : `Search radius: ${l.radiusKm} km`}</div>
+      <div class="listing-item-rent">${isOwner ? `₹${l.price.toLocaleString()}/mo` : `Budget ₹${l.price.toLocaleString()}/mo`}</div>
+      <div class="listing-item-meta">${isOwner ? `${escHTML(l.bhk||l.bed_type||'')} · ${escHTML(l.gender_pref||'Any')}` : `Search radius: ${l.radius_km} km`}</div>
       <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px;">
         <span class="listing-item-hint">Tap to view details & edit →</span>
         <button class="btn ${isPaused ? 'btn-primary' : 'btn-secondary'}" 
@@ -7364,7 +7411,7 @@ if (avatarUrl) {
 
 function openListingDetail(idx) {
   currentEditingListingIdx = idx;
-  const l = myListings[idx];
+  const l = my_listings[idx];
   const isOwner = l.role === 'owner';
   
   // Hide listings card and account buttons, show detail view
@@ -7382,10 +7429,10 @@ function openListingDetail(idx) {
   }
   
   // Set header
-  document.getElementById('listing-detail-type').textContent = propTypeLabel(l.propType);
+  document.getElementById('listing-detail-type').textContent = propTypeLabel(l.prop_type);
   document.getElementById('listing-detail-price').innerHTML = isOwner 
-    ? `₹${l.rent.toLocaleString()}<small>/month</small>` 
-    : `₹${l.budget.toLocaleString()}<small>/mo budget</small>`;
+    ? `₹${l.price.toLocaleString()}<small>/month</small>` 
+    : `₹${l.price.toLocaleString()}<small>/mo budget</small>`;
   
   // Build editable fields based on role and property type
   const editableContainer = document.getElementById('editable-fields-container');
@@ -7402,13 +7449,13 @@ function openListingDetail(idx) {
 
 function buildOwnerEditableFields(l) {
   let genderOptionsList;
-  if (l.propType === 'bed') {
+  if (l.prop_type === 'bed') {
     genderOptionsList = ['Only Men', 'Only Women'];
   } else {
     genderOptionsList = ['Any', 'Only Men', 'Only Women', 'Family', 'Couple (Unmarried)', 'Mixed Group (Friends)'];
   }
   const genderOptions = genderOptionsList.map(g => 
-    `<option value="${g}" ${l.gender === g ? 'selected' : ''}>${g}</option>`
+    `<option value="${g}" ${l.gender_pref === g ? 'selected' : ''}>${g}</option>`
   ).join('');
   
   const furnishingOptions = ['Any', 'Fully furnished', 'Semi-furnished', 'Unfurnished'].map(f => 
@@ -7420,21 +7467,21 @@ function buildOwnerEditableFields(l) {
   ).join('');
   
   let capacityFields = '';
-  if (l.propType === 'entire') {
+  if (l.prop_type === 'entire') {
     const standardOptions = ['', '1 (Single)', '2 (Couple/Friends)', 'Bachelors (Max 3)', 'Others'];
-    const isCustomCapacity = l.capacity && !standardOptions.includes(l.capacity);
+    const isCustomCapacity = l.capacity_allowed && !standardOptions.includes(l.capacity_allowed);
     const entirePeopleOptions = standardOptions.map(p => {
-      const isSelected = isCustomCapacity ? (p === 'Others') : (l.capacity === p);
+      const isSelected = isCustomCapacity ? (p === 'Others') : (l.capacity_allowed === p);
       return `<option value="${p}" ${isSelected ? 'selected' : ''}>${p || 'Select'}</option>`;
     }).join('');
     const customDisplay = isCustomCapacity ? 'block' : 'none';
-    const customValue = isCustomCapacity ? l.capacity : '';
+    const customValue = isCustomCapacity ? l.capacity_allowed : '';
     capacityFields = `
       <div class="form-row">
         <div class="fg">
           <label>Brokerage</label>
           <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
-          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerage_amt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
         </div>
         <div class="fg">
           <label>Max People Allowed</label>
@@ -7442,19 +7489,19 @@ function buildOwnerEditableFields(l) {
           <input type="number" id="edit-people-custom" placeholder="Enter exact number" value="${customValue}" style="display:${customDisplay};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
         </div>
       </div>`;
-  } else if (l.propType === 'room') {
+  } else if (l.prop_type === 'room') {
     const washroomOptions = ['', 'Yes', 'No'].map(w => 
       `<option value="${w}" ${l.washroom === w ? 'selected' : ''}>${w || 'Select'}</option>`
     ).join('');
     const roomCapacityOptions = ['', '1 (Single Occupancy)', '2 (Couple/Two Friends)', '3 (Group/Friends)'].map(c =>
-      `<option value="${c}" ${l.capacity === c ? 'selected' : ''}>${c || 'Select'}</option>`
+      `<option value="${c}" ${l.capacity_allowed === c ? 'selected' : ''}>${c || 'Select'}</option>`
     ).join('');
     capacityFields = `
       <div class="form-row">
         <div class="fg">
           <label>Brokerage</label>
           <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
-          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerage_amt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
         </div>
         <div class="fg">
           <label>Room Capacity</label>
@@ -7474,7 +7521,7 @@ function buildOwnerEditableFields(l) {
         <div class="fg">
           <label>Brokerage</label>
           <select id="edit-brokerage" onchange="toggleBrokerageAmount('edit-brokerage','edit-brokerage-amt')">${brokerageOptions}</select>
-          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerageAmt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
+          <input type="number" id="edit-brokerage-amt" placeholder="Brokerage Amount (₹)" value="${l.brokerage_amt || ''}" class="hidden-input" style="display:${l.brokerage === 'Yes' ? 'block' : 'none'}">
         </div>
         <div class="fg"></div>
       </div>`;
@@ -7484,9 +7531,9 @@ function buildOwnerEditableFields(l) {
     <div class="form-row">
       <div class="fg">
         <label>Move-in Date</label>
-        <input type="date" id="edit-movein" value="${l.movein || ''}">
+        <input type="date" id="edit-movein" value="${l.movein_date || ''}">
         <label class="immediate-label">
-          <input type="checkbox" id="edit-immediate" onchange="handleImmediateCheck('edit-immediate','edit-movein')"${l.movein === new Date().toISOString().split('T')[0] ? ' checked' : ''}> Immediate
+          <input type="checkbox" id="edit-immediate" onchange="handleImmediateCheck('edit-immediate','edit-movein')"${l.movein_date === new Date().toISOString().split('T')[0] ? ' checked' : ''}> Immediate
         </label>
       </div>
       <div class="fg">
@@ -7501,7 +7548,7 @@ function buildOwnerEditableFields(l) {
     ${capacityFields}
     <div class="fg">
       <label>Description</label>
-      <textarea id="edit-desc" rows="3" placeholder="Describe your property...">${escHTML(l.desc || '')}</textarea>
+      <textarea id="edit-desc" rows="3" placeholder="Describe your property...">${escHTML(l.description || '')}</textarea>
     </div>
   `;
 }
@@ -7510,17 +7557,17 @@ function buildTenantEditableFields(l) {
   let genderLabel = 'Your Gender';
   let genderOptionsList;
   
-  if (l.propType === 'entire' || l.propType === 'room') {
+  if (l.prop_type === 'entire' || l.prop_type === 'room') {
     genderLabel = 'People Living';
     genderOptionsList = ['Only Men', 'Only Women', 'Family', 'Couple (Unmarried)', 'Mixed Group (Friends)'];
-  } else if (l.propType === 'bed') {
+  } else if (l.prop_type === 'bed') {
     genderOptionsList = ['Men', 'Women'];
   } else {
     genderOptionsList = ['Only Men', 'Only Women'];
   }
   
   const genderOptions = genderOptionsList.map(g => 
-    `<option ${l.gender === g ? 'selected' : ''}>${g}</option>`
+    `<option ${l.gender_pref === g ? 'selected' : ''}>${g}</option>`
   ).join('');
   
   const furnishingOptions = ['Any', 'Fully furnished', 'Semi-furnished', 'Unfurnished'].map(f => 
@@ -7528,33 +7575,33 @@ function buildTenantEditableFields(l) {
   ).join('');
   
   let extraField = '';
-  if (l.propType === 'entire') {
+  if (l.prop_type === 'entire') {
     const standardPeopleOptions = ['', '1', '2', '3', 'Others'];
-    const isCustomPeople = l.people && !standardPeopleOptions.includes(String(l.people));
+    const isCustomPeople = l.tenant_people_count && !standardPeopleOptions.includes(String(l.tenant_people_count));
     const entirePeopleOptions = standardPeopleOptions.map(p => {
-      const isSelected = isCustomPeople ? (p === 'Others') : (String(l.people) === p);
+      const isSelected = isCustomPeople ? (p === 'Others') : (String(l.tenant_people_count) === p);
       return `<option value="${p}" ${isSelected ? 'selected' : ''}>${p || 'Select'}</option>`;
     }).join('');
     const customDisplay = isCustomPeople ? 'block' : 'none';
-    const customValue = isCustomPeople ? l.people : '';
+    const customValue = isCustomPeople ? l.tenant_people_count : '';
     extraField = `
       <div class="fg">
         <label>Number of People</label>
         <select id="edit-people" onchange="handlePeopleOthers('edit-people','edit-people-custom')">${entirePeopleOptions}</select>
         <input type="number" id="edit-people-custom" placeholder="Enter exact number" value="${customValue}" style="display:${customDisplay};margin-top:8px;width:100%;padding:0 12px;height:44px;border:1.5px solid var(--gray-200);border-radius:7px;font-size:14px;font-family:inherit;outline:none;">
       </div>`;
-  } else if (l.propType === 'room') {
+  } else if (l.prop_type === 'room') {
     const roomPeopleOptions = ['', 'Just me (1 person)', 'Me + Partner/Friend (2 people)', '3 (Group/Friends)'].map(p =>
-      `<option value="${p}" ${l.people === p ? 'selected' : ''}>${p || 'Select'}</option>`
+      `<option value="${p}" ${l.tenant_people_count === p ? 'selected' : ''}>${p || 'Select'}</option>`
     ).join('');
     extraField = `
       <div class="fg">
         <label>Number of People</label>
         <select id="edit-people">${roomPeopleOptions}</select>
       </div>`;
-  } else if (l.propType === 'bed') {
+  } else if (l.prop_type === 'bed') {
     const bedTypeOptions = ['', 'Any', '2 Sharing', '3 Sharing', '4 Sharing'].map(b =>
-      `<option value="${b}" ${l.bedType === b ? 'selected' : ''}>${b || 'Select'}</option>`
+      `<option value="${b}" ${l.bed_type === b ? 'selected' : ''}>${b || 'Select'}</option>`
     ).join('');
     extraField = `
       <div class="fg">
@@ -7566,9 +7613,9 @@ function buildTenantEditableFields(l) {
   return `
     <div class="fg">
       <label>Move-in Date</label>
-      <input type="date" id="edit-movein" value="${l.movein || ''}">
+      <input type="date" id="edit-movein" value="${l.movein_date || ''}">
       <label class="immediate-label">
-        <input type="checkbox" id="edit-immediate" onchange="handleImmediateCheck('edit-immediate','edit-movein')"${l.movein === new Date().toISOString().split('T')[0] ? ' checked' : ''}> Immediate
+        <input type="checkbox" id="edit-immediate" onchange="handleImmediateCheck('edit-immediate','edit-movein')"${l.movein_date === new Date().toISOString().split('T')[0] ? ' checked' : ''}> Immediate
       </label>
     </div>
     <div class="form-row">
@@ -7584,7 +7631,7 @@ function buildTenantEditableFields(l) {
     ${extraField}
     <div class="fg">
       <label>About You</label>
-      <textarea id="edit-desc" rows="3" placeholder="Describe what you're looking for...">${escHTML(l.desc || '')}</textarea>
+      <textarea id="edit-desc" rows="3" placeholder="Describe what you're looking for...">${escHTML(l.description || '')}</textarea>
     </div>
   `;
 }
@@ -7593,7 +7640,7 @@ function buildOwnerLockedFields(l) {
   return `
     <div class="locked-field">
       <span class="locked-field-label">Monthly Rent</span>
-      <span class="locked-field-value">₹${l.rent.toLocaleString()} <span class="lock-icon">🔒</span></span>
+      <span class="locked-field-value">₹${l.price.toLocaleString()} <span class="lock-icon">🔒</span></span>
     </div>
     <div class="locked-field">
       <span class="locked-field-label">Deposit</span>
@@ -7601,7 +7648,7 @@ function buildOwnerLockedFields(l) {
     </div>
     <div class="locked-field">
       <span class="locked-field-label">Property Type</span>
-      <span class="locked-field-value">${propTypeLabel(l.propType)} <span class="lock-icon">🔒</span></span>
+      <span class="locked-field-value">${propTypeLabel(l.prop_type)} <span class="lock-icon">🔒</span></span>
     </div>
     ${l.bhk ? `<div class="locked-field">
       <span class="locked-field-label">Size</span>
@@ -7616,33 +7663,33 @@ function buildOwnerLockedFields(l) {
 
 function buildTenantLockedFields(l) {
   let extraLockedFields = '';
-  if (l.propType === 'room' && l.people) {
+  if (l.prop_type === 'room' && l.tenant_people_count) {
     extraLockedFields += `
     <div class="locked-field">
       <span class="locked-field-label">Number of People</span>
-      <span class="locked-field-value">${l.people} <span class="lock-icon">🔒</span></span>
+      <span class="locked-field-value">${l.tenant_people_count} <span class="lock-icon">🔒</span></span>
     </div>`;
   }
-  if (l.propType === 'bed' && l.bedType) {
+  if (l.prop_type === 'bed' && l.bed_type) {
     extraLockedFields += `
     <div class="locked-field">
       <span class="locked-field-label">Sharing Preference</span>
-      <span class="locked-field-value">${l.bedType} <span class="lock-icon">🔒</span></span>
+      <span class="locked-field-value">${l.bed_type} <span class="lock-icon">🔒</span></span>
     </div>`;
   }
   return `
     <div class="locked-field">
       <span class="locked-field-label">Max Budget</span>
-      <span class="locked-field-value">₹${l.budget.toLocaleString()}/mo <span class="lock-icon">🔒</span></span>
+      <span class="locked-field-value">₹${l.price.toLocaleString()}/mo <span class="lock-icon">🔒</span></span>
     </div>
     <div class="locked-field">
       <span class="locked-field-label">Looking For</span>
-      <span class="locked-field-value">${propTypeLabel(l.propType)} <span class="lock-icon">🔒</span></span>
+      <span class="locked-field-value">${propTypeLabel(l.prop_type)} <span class="lock-icon">🔒</span></span>
     </div>
     ${extraLockedFields}
     <div class="locked-field">
       <span class="locked-field-label">Search Area</span>
-      <span class="locked-field-value">${l.radiusKm} km radius <span class="lock-icon">🔒</span></span>
+      <span class="locked-field-value">${l.radius_km} km radius <span class="lock-icon">🔒</span></span>
     </div>
     <div class="locked-field">
       <span class="locked-field-label">Center Point</span>
@@ -7661,7 +7708,7 @@ function closeListingDetail() {
 async function saveListingChanges() {
   if (currentEditingListingIdx === null) return;
   
-  const l = myListings[currentEditingListingIdx];
+  const l = my_listings[currentEditingListingIdx];
   const btn = document.getElementById('save-listing-btn');
   btn.disabled = true;
   btn.textContent = 'Saving...';
@@ -7688,14 +7735,14 @@ async function saveListingChanges() {
     const brokerageAmtEl = document.getElementById('edit-brokerage-amt');
     updateData.brokerage_amt = (newBrokerage === 'Yes' && brokerageAmtEl) ? parseInt(brokerageAmtEl.value) || null : null;
     
-    if (l.propType === 'entire') {
+    if (l.prop_type === 'entire') {
       let newCapacity = document.getElementById('edit-capacity').value;
       const customPeopleEl = document.getElementById('edit-people-custom');
       if (newCapacity === 'Others' && customPeopleEl && customPeopleEl.value) {
         newCapacity = customPeopleEl.value;
       }
       updateData.capacity_allowed = newCapacity || null;
-    } else if (l.propType === 'room') {
+    } else if (l.prop_type === 'room') {
       const newCapacity = document.getElementById('edit-capacity').value;
       const newWashroom = document.getElementById('edit-washroom')?.value;
       updateData.capacity_allowed = newCapacity || null;
@@ -7703,18 +7750,18 @@ async function saveListingChanges() {
     }
   } else {
     // Tenant
-    if (l.propType === 'entire') {
+    if (l.prop_type === 'entire') {
       let newPeople = document.getElementById('edit-people')?.value;
       const customPeopleEl = document.getElementById('edit-people-custom');
       if (newPeople === 'Others' && customPeopleEl && customPeopleEl.value) {
         newPeople = customPeopleEl.value;
       }
       updateData.tenant_people_count = newPeople || null;
-    } else if (l.propType === 'room') {
+    } else if (l.prop_type === 'room') {
       const newPeople = document.getElementById('edit-people')?.value;
       updateData.tenant_people_count = newPeople || null;
     }
-    if (l.propType === 'bed') {
+    if (l.prop_type === 'bed') {
       const newBedType = document.getElementById('edit-bed-type')?.value;
       updateData.bed_type = newBedType || null;
     }
@@ -7729,37 +7776,37 @@ async function saveListingChanges() {
     if (error) throw error;
     
     // Update local data
-    l.movein = newMovein;
-    l.gender = newGender;
+    l.movein_date = newMovein;
+    l.gender_pref = newGender;
     l.furnishing = newFurnishing;
-    l.desc = newDesc;
+    l.description = newDesc;
     
     if (l.role === 'owner') {
       l.brokerage = document.getElementById('edit-brokerage').value;
       const brokerageAmtEl = document.getElementById('edit-brokerage-amt');
-      l.brokerageAmt = (l.brokerage === 'Yes' && brokerageAmtEl) ? parseInt(brokerageAmtEl.value) || null : null;
-      if (l.propType === 'entire') {
+      l.brokerage_amt = (l.brokerage === 'Yes' && brokerageAmtEl) ? parseInt(brokerageAmtEl.value) || null : null;
+      if (l.prop_type === 'entire') {
         let cap = document.getElementById('edit-capacity')?.value;
         const customEl = document.getElementById('edit-people-custom');
         if (cap === 'Others' && customEl && customEl.value) cap = customEl.value;
-        l.capacity = cap;
+        l.capacity_allowed = cap;
       }
-      if (l.propType === 'room') {
-        l.capacity = document.getElementById('edit-capacity')?.value;
+      if (l.prop_type === 'room') {
+        l.capacity_allowed = document.getElementById('edit-capacity')?.value;
         l.washroom = document.getElementById('edit-washroom')?.value;
       }
     } else {
-      if (l.propType === 'entire') {
+      if (l.prop_type === 'entire') {
         let ppl = document.getElementById('edit-people')?.value;
         const customEl = document.getElementById('edit-people-custom');
         if (ppl === 'Others' && customEl && customEl.value) ppl = customEl.value;
-        l.people = ppl;
+        l.tenant_people_count = ppl;
       }
-      if (l.propType === 'room') {
-        l.people = document.getElementById('edit-people')?.value;
+      if (l.prop_type === 'room') {
+        l.tenant_people_count = document.getElementById('edit-people')?.value;
       }
-      if (l.propType === 'bed') {
-        l.bedType = document.getElementById('edit-bed-type')?.value;
+      if (l.prop_type === 'bed') {
+        l.bed_type = document.getElementById('edit-bed-type')?.value;
       }
     }
     
@@ -7790,7 +7837,7 @@ async function deleteListingFromDetail() {
 
 // Toggle listing status between active and paused
 async function toggleListingStatus(idx) {
-  const listing = myListings[idx];
+  const listing = my_listings[idx];
   if (!listing || !listing.id) return;
   
   const currentStatus = listing.status || 'active';
@@ -7829,7 +7876,7 @@ async function toggleListingStatus(idx) {
 async function deleteMyListing(idx) {
   if (!confirm('Delete this listing? It will be removed from the map permanently.')) return;
   
-  const listingToDelete = myListings[idx];
+  const listingToDelete = my_listings[idx];
 
   if (listingToDelete.id) {
     // Save photo URLs before deletion for cleanup
@@ -7857,7 +7904,7 @@ async function deleteMyListing(idx) {
     }
   }
 
-  myListings.splice(idx, 1);
+  my_listings.splice(idx, 1);
   saveProfile();
   renderProfilePage();
   
@@ -7924,10 +7971,10 @@ window.addEventListener('load', async () => {
       const { data: { session } } = await _supabase.auth.getSession();
       if (!session) {
         console.warn("Supabase session expired. Clearing local cache.");
-        localStorage.removeItem('roompin_profile');
-        localStorage.removeItem('roompin_listings');
+        localStorage.removeItem('roompin_profile_v2');
+        localStorage.removeItem('roompin_listings_v2');
         profile = null;
-        myListings = [];
+        my_listings = [];
         applyProfileToUI();
         // Don't return - continue to mobile initialization below
       } else {
@@ -7949,29 +7996,29 @@ window.addEventListener('load', async () => {
       }
 
       if (listingsResult.data && listingsResult.data.length > 0) {
-        myListings = listingsResult.data.map(row => {
+        my_listings = listingsResult.data.map(row => {
           const isOwner = row.role === 'owner';
           let listing = {
             id: row.id, role: row.role, name: profile.name, phone: profile.phone, ismine: true,
-            lat: parseFloat(row.lat), lng: parseFloat(row.lng), propType: row.prop_type,
-            movein: row.movein_date, gender: row.gender_pref || 'Any',
+            lat: parseFloat(row.lat), lng: parseFloat(row.lng), prop_type: row.prop_type,
+            movein_date: row.movein_date, gender_pref: row.gender_pref || 'Any',
             furnishing: row.furnishing || 'Any', brokerage: row.brokerage || 'No',
-            bhk: row.bhk, desc: row.description, photo_url: row.photo_url,
+            bhk: row.bhk, description: row.description, photo_url: row.photo_url,
             photo_urls: row.photo_urls,
-            radiusKm: row.radius_km ? parseFloat(row.radius_km) : null,
-            bedType: row.bed_type, capacity: row.capacity_allowed,
-            peopleInFlat: row.people_in_flat, peopleInRoom: row.people_in_room,
-            people: row.tenant_people_count, washroom: row.washroom || null,
-            brokerageAmt: row.brokerage_amt || null,
+            radius_km: row.radius_km ? parseFloat(row.radius_km) : null,
+            bed_type: row.bed_type, capacity_allowed: row.capacity_allowed,
+            people_in_flat: row.people_in_flat, people_in_room: row.people_in_room,
+            tenant_people_count: row.tenant_people_count, washroom: row.washroom || null,
+            brokerage_amt: row.brokerage_amt || null,
             status: row.status || 'active',
             created_at: row.created_at
           };
-          if (isOwner) { listing.rent = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
-          else { listing.budget = parseFloat(row.price); }
+          if (isOwner) { listing.price = parseFloat(row.price); listing.deposit = parseFloat(row.deposit); }
+          else { listing.price = parseFloat(row.price); }
           return listing;
         });
       } else {
-        myListings = [];
+        my_listings = [];
       }
 
       saveProfile();
@@ -7986,11 +8033,17 @@ window.addEventListener('load', async () => {
     }
   }
   
-  // Initialize bottom nav - on mobile, go to explore by default
+  // Initialize navigation based on device type
+  // Mobile: bypass landing page, go directly to Explore
+  // Desktop: show landing page
   const isMobile = window.innerWidth <= 768;
   if (isMobile) {
+    // Mobile users start on Explore map - no landing page
+    document.getElementById('page-landing').classList.remove('active');
     showPage('explore');
   } else {
+    // Desktop users see the landing page first
+    document.getElementById('page-landing').classList.add('active');
     updateBottomNav('landing');
   }
   
@@ -8190,7 +8243,7 @@ function toggleBrokerageAmount(selectId, inputId) {
   }
 }
 
-let selectedPropertyPhotos = [];
+let selected_property_photos = [];
 const MAX_FILE_SIZE_MB = 2;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
@@ -8227,12 +8280,12 @@ function previewPropertyPhotos(e) {
     alert("You can only upload a maximum of 5 photos. We have selected the first 5.");
   }
   
-  selectedPropertyPhotos = validFiles.slice(0, 5); 
+  selected_property_photos = validFiles.slice(0, 5); 
 
   const previewDiv = document.getElementById('prop-photo-preview');
   previewDiv.innerHTML = ''; 
   
-  selectedPropertyPhotos.forEach(file => {
+  selected_property_photos.forEach(file => {
     const reader = new FileReader();
     reader.onload = function(event) {
       const fileSizeKB = Math.round(file.size / 1024);
