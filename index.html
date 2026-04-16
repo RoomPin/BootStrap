@@ -3126,13 +3126,13 @@ async function finishSetup() {
 }
 
 function saveProfile() {
-  localStorage.setItem('roompin_profile_v2', JSON.stringify(profile));
-  localStorage.setItem('roompin_listings_v2', JSON.stringify(my_listings));
+  localStorage.setItem('roompin_profile', JSON.stringify(profile));
+  localStorage.setItem('roompin_listings', JSON.stringify(my_listings));
 }
 
 function loadProfile() {
-  const p = localStorage.getItem('roompin_profile_v2');
-  const l = localStorage.getItem('roompin_listings_v2');
+  const p = localStorage.getItem('roompin_profile');
+  const l = localStorage.getItem('roompin_listings');
   if (p) { profile = JSON.parse(p); my_listings = l ? JSON.parse(l) : []; return true; }
   return false;
 }
@@ -7971,8 +7971,8 @@ window.addEventListener('load', async () => {
       const { data: { session } } = await _supabase.auth.getSession();
       if (!session) {
         console.warn("Supabase session expired. Clearing local cache.");
-        localStorage.removeItem('roompin_profile_v2');
-        localStorage.removeItem('roompin_listings_v2');
+        localStorage.removeItem('roompin_profile');
+        localStorage.removeItem('roompin_listings');
         profile = null;
         my_listings = [];
         applyProfileToUI();
