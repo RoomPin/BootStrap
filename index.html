@@ -199,13 +199,7 @@ input[type=date]:focus{border-color:var(--blue)}
 .buddy-card .buddy-meta{font-size:12px;color:var(--gray-600);margin-bottom:8px}
 .buddy-overlap{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:3px 8px;border-radius:100px;background:#dbeafe;color:#1d4ed8}
 
-/* Trust Factor metric — replaces legacy star-rating */
-.trust-factor{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;padding:4px 10px;border-radius:100px}
-.trust-factor.high{background:#dcfce7;color:#15803d}
-.trust-factor.medium{background:#fef3c7;color:#b45309}
-.trust-factor.low{background:#fee2e2;color:#dc2626}
-.trust-factor .tf-icon{font-size:13px}
-.trust-factor .tf-label{letter-spacing:.3px}
+
 
 /* Detail panel */
 .detail-panel {
@@ -2907,40 +2901,6 @@ function mapRowToListing(row, profileData) {
   return listing;
 }
 
-// Trust Factor: calculates a user's reliability score based on activity and response time
-function calcTrustFactor(listing) {
-  let score = 0;
-  // Has photos uploaded (+30)
-  if (listing.photo_urls && listing.photo_urls.length > 0) score += 30;
-  // Has a description (+20)
-  if (listing.description && listing.description.trim().length > 20) score += 20;
-  // Account age: older accounts get more trust (+20 max)
-  if (listing.created_at) {
-    const ageMs = Date.now() - new Date(listing.created_at).getTime();
-    const ageDays = ageMs / (1000 * 60 * 60 * 24);
-    score += Math.min(20, Math.floor(ageDays));
-  }
-  // Has move-in date set (+10)
-  if (listing.movein_date) score += 10;
-  // Has gender preference set (+10)
-  if (listing.gender_pref && listing.gender_pref !== 'Any') score += 10;
-  // Has furnishing info (+10)
-  if (listing.furnishing && listing.furnishing !== 'Any') score += 10;
-
-  return Math.min(100, score);
-}
-
-function getTrustLevel(score) {
-  if (score >= 70) return { level: 'high', label: 'High Trust', icon: '🛡️' };
-  if (score >= 40) return { level: 'medium', label: 'Moderate', icon: '🔶' };
-  return { level: 'low', label: 'New User', icon: '🔹' };
-}
-
-function renderTrustBadge(listing) {
-  const score = calcTrustFactor(listing);
-  const trust = getTrustLevel(score);
-  return `<span class="trust-factor ${trust.level}"><span class="tf-icon">${trust.icon}</span><span class="tf-label">${trust.label}</span></span>`;
-}
 
 function checkStep1() {
   const phone = document.getElementById('setup-phone').value.trim();
@@ -3876,6 +3836,8 @@ function initExploreMap() {
     chunkedLoading: true,
     spiderfyOnMaxZoom: true,
     showCoverageOnHover: false,
+    zoomToBoundsOnClick: true,
+    disableClusteringAtZoom: 17,
     maxClusterRadius: 40 
   });
   exploreMap.addLayer(markerLayer);
@@ -4116,7 +4078,7 @@ function renderSingleDetail(l, showBackBtn = false) {
   document.getElementById('dp-body').innerHTML = `
     ${backHtml}
     <div class="dp-role ${l.ismine?'mine':l.role}">${l.ismine?(isOwner?'🟠 YOUR LISTING':'🟣 YOUR SEARCH AREA'):(isOwner?'🏠 OWNER':'🔍 TENANT')}</div>
-    <div class="dp-name">${escHTML(l.name)} ${!l.ismine ? renderTrustBadge(l) : ''}</div>
+    <div class="dp-name">${escHTML(l.name)}</div>
     <div class="dp-rent">₹${(isOwner?l.price:l.price).toLocaleString()}<small>${isOwner?'/month':'/mo budget'}</small></div>
     ${matchBanner}
     ${ownBanner}
@@ -6720,68 +6682,108 @@ function validateListingFields() {
     return el && el.checked;
   }
 
+  function reqSelect(id, label) {
+    if (!document.getElementById(id).value) missing.push(label);
+  }
+
+  function reqNumber(id, label) {
+    const val = parseInt(document.getElementById(id).value);
+    if (!val || val <= 0) missing.push(label);
+  }
+
+  function reqText(id, label) {
+    const val = document.getElementById(id).value.trim();
+    if (!val) missing.push(label);
+  }
+
   if (role === 'owner') {
     if (type === 'entire') {
-      if (!document.getElementById('o-entire-bhk').value) missing.push('Apartment Size');
-      const rent = parseInt(document.getElementById('o-entire-rent').value);
-      if (!rent || rent <= 0) missing.push('Monthly Rent');
-      if (!isImmediate('o-entire-immediate') && !document.getElementById('o-entire-movein').value) missing.push('Available From date');
+      reqSelect('o-entire-bhk', 'Apartment Size');
+      reqSelect('o-entire-furnishing', 'Furnishing');
+      reqNumber('o-entire-rent', 'Monthly Rent');
+      reqNumber('o-entire-deposit', 'Security Deposit');
+      reqSelect('o-entire-people', 'Number of People Allowed');
       const peopleVal = document.getElementById('o-entire-people').value;
       if (peopleVal === 'Others') {
         const customVal = parseInt(document.getElementById('o-entire-people-custom').value);
         if (!customVal || customVal <= 0) missing.push('Exact Number of People');
       }
+      reqSelect('o-entire-gender', 'Tenant Type Preference');
+      if (!isImmediate('o-entire-immediate') && !document.getElementById('o-entire-movein').value) missing.push('Available From date');
+      reqSelect('o-entire-brokerage', 'Brokerage Applicable');
       if (document.getElementById('o-entire-brokerage').value === 'Yes') {
         const brokerage_amt = parseInt(document.getElementById('o-entire-brokerage-amt').value);
         if (!brokerage_amt || brokerage_amt <= 0) missing.push('Brokerage Amount');
       }
+      reqText('o-entire-desc', 'Description');
     } else if (type === 'room') {
-      if (!document.getElementById('o-room-bhk').value) missing.push('Apartment Size');
-      const rent = parseInt(document.getElementById('o-room-rent').value);
-      if (!rent || rent <= 0) missing.push('Rent per Room');
-      if (!isImmediate('o-room-immediate') && !document.getElementById('o-room-movein').value) missing.push('Available From date');
+      reqSelect('o-room-bhk', 'Apartment Size');
+      reqSelect('o-room-washroom', 'Attached Washroom');
+      reqSelect('o-room-furnishing', 'Furnishing');
+      reqNumber('o-room-rent', 'Rent per Room');
+      reqNumber('o-room-deposit', 'Security Deposit');
+      reqSelect('o-room-capacity', 'Number of People Allowed');
       const capacityVal = document.getElementById('o-room-capacity').value;
       if (capacityVal === 'Others') {
         const customVal = parseInt(document.getElementById('o-room-capacity-custom').value);
         if (!customVal || customVal <= 0) missing.push('Exact Number of People Allowed');
       }
+      reqSelect('o-room-gender', 'Tenant Type Preference');
+      if (!isImmediate('o-room-immediate') && !document.getElementById('o-room-movein').value) missing.push('Available From date');
+      reqSelect('o-room-brokerage', 'Brokerage Applicable');
       if (document.getElementById('o-room-brokerage').value === 'Yes') {
         const brokerage_amt = parseInt(document.getElementById('o-room-brokerage-amt').value);
         if (!brokerage_amt || brokerage_amt <= 0) missing.push('Brokerage Amount');
       }
+      reqText('o-room-desc', 'Description');
     } else {
-      if (!document.getElementById('o-bed-type').value) missing.push('Room Type');
-      const rent = parseInt(document.getElementById('o-bed-rent').value);
-      if (!rent || rent <= 0) missing.push('Rent per Bed');
+      reqSelect('o-bed-type', 'Sharing Type');
+      reqSelect('o-bed-furnishing', 'Furnishing');
+      reqNumber('o-bed-rent', 'Rent per Bed');
+      reqNumber('o-bed-deposit', 'Security Deposit');
+      reqSelect('o-bed-gender', 'Tenant Type Preference');
       if (!isImmediate('o-bed-immediate') && !document.getElementById('o-bed-movein').value) missing.push('Available From date');
+      reqSelect('o-bed-brokerage', 'Brokerage Applicable');
       if (document.getElementById('o-bed-brokerage').value === 'Yes') {
         const brokerage_amt = parseInt(document.getElementById('o-bed-brokerage-amt').value);
         if (!brokerage_amt || brokerage_amt <= 0) missing.push('Brokerage Amount');
       }
+      reqText('o-bed-desc', 'Description');
     }
   } else {
     if (type === 'entire') {
-      const budget = parseInt(document.getElementById('t-entire-budget').value);
-      if (!budget || budget <= 0) missing.push('Max Budget');
+      reqSelect('t-entire-bhk', 'Apartment Preference');
+      reqSelect('t-entire-furnishing', 'Furnishing Preference');
+      reqNumber('t-entire-budget', 'Max Budget');
       if (!isImmediate('t-entire-immediate') && !document.getElementById('t-entire-movein').value) missing.push('Move-in Date');
+      reqSelect('t-entire-people', 'Number of People');
       const peopleVal = document.getElementById('t-entire-people').value;
       if (peopleVal === 'Others') {
         const customVal = parseInt(document.getElementById('t-entire-people-custom').value);
         if (!customVal || customVal <= 0) missing.push('Exact Number of People');
       }
+      reqSelect('t-entire-gender', 'People Living');
+      reqText('t-entire-desc', 'About You');
     } else if (type === 'room') {
-      const budget = parseInt(document.getElementById('t-room-budget').value);
-      if (!budget || budget <= 0) missing.push('Max Budget');
+      reqSelect('t-room-bhk', 'Apartment Preference');
+      reqSelect('t-room-furnishing', 'Furnishing Preference');
+      reqNumber('t-room-budget', 'Max Budget');
       if (!isImmediate('t-room-immediate') && !document.getElementById('t-room-movein').value) missing.push('Move-in Date');
+      reqSelect('t-room-people', 'Number of People');
       const peopleVal = document.getElementById('t-room-people').value;
       if (peopleVal === 'Others') {
         const customVal = parseInt(document.getElementById('t-room-people-custom').value);
         if (!customVal || customVal <= 0) missing.push('Exact Number of People');
       }
+      reqSelect('t-room-gender', 'People Living');
+      reqText('t-room-desc', 'About You');
     } else {
-      const budget = parseInt(document.getElementById('t-bed-budget').value);
-      if (!budget || budget <= 0) missing.push('Max Budget');
+      reqSelect('t-bed-type', 'Sharing Preference');
+      reqSelect('t-bed-furnishing', 'Furnishing Preference');
+      reqNumber('t-bed-budget', 'Max Budget');
       if (!isImmediate('t-bed-immediate') && !document.getElementById('t-bed-movein').value) missing.push('Move-in Date');
+      reqSelect('t-bed-gender', 'Your Gender');
+      reqText('t-bed-desc', 'About You');
     }
   }
 
@@ -7141,7 +7143,7 @@ function renderProfileModal(l) {
     <div class="dp-role ${l.ismine ? 'mine' : l.role}" style="margin-bottom:10px;">
       ${l.ismine ? (isOwner ? '🟠 YOUR LISTING' : '🟣 YOUR SEARCH') : (isOwner ? '🏠 OWNER' : '🔍 TENANT')}
     </div>
-    <div class="dp-name" style="font-size:18px; margin-bottom:4px;">${escHTML(l.name)} ${!l.ismine ? renderTrustBadge(l) : ''}</div>
+    <div class="dp-name" style="font-size:18px; margin-bottom:4px;">${escHTML(l.name)}</div>
     <div class="dp-rent" style="margin-bottom:16px;">
       ₹${(isOwner ? l.price : l.price).toLocaleString()}<small>${isOwner ? '/month' : '/mo budget'}</small>
     </div>
